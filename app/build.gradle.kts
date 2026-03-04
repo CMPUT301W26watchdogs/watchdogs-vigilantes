@@ -44,4 +44,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    testImplementation("org.mockito:mockito-core:5.3.1")
+// Allows mocking of static methods like FirebaseAuth.getInstance()
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 }
