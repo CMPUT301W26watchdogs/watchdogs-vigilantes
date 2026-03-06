@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextEmail = (EditText) findViewById(R.id.editTextTextEmailAddress);
         EditText editTextPassword = (EditText) findViewById(R.id.editTextTextPassword);
         Button login_button = (Button) findViewById(R.id.login_button);
+        Button register_button = (Button) findViewById(R.id.register_button);
         mAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -77,6 +78,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+
+        register_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, RegisterPage.class));
+                finish();
             }
         });
     }
