@@ -26,9 +26,8 @@ public class RegisterTest {
     @Test
     public void testRegister_Success() {
         String email = "test@test.com";
-        String name = "test123";
         String password = "test123";
-
+        when(mockedTask.isSuccessful()).thenReturn(true);
         // Tell Mockito: When mAuth tries to sign in, return a "Task"
         when(mAuth.createUserWithEmailAndPassword(email, password)).thenReturn(mockedTask);
 
