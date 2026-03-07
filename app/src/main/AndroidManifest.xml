@@ -28,6 +28,10 @@
         <activity android:name=".WaitingListActivity" />
         <activity android:name=".WaitingListLimitActivity" />
         <activity android:name=".GeolocationToggleActivity" />
+        <activity android:name=".EntrantMapActivity" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY_HERE" />
     </application>
 
 </manifest>
