@@ -2,6 +2,7 @@ package com.example.vigilante;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,6 +58,9 @@ public class EventDetailActivity extends AppCompatActivity {
             price.setText("-");
             registration.setText("-");
         }
+
+        findViewById(R.id.registerButton).setOnClickListener(v ->
+                Toast.makeText(this, "Joined waiting list (placeholder)", Toast.LENGTH_SHORT).show());
 
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
