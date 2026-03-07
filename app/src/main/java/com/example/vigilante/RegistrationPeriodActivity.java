@@ -32,6 +32,8 @@ public class RegistrationPeriodActivity extends AppCompatActivity {
         TextView startDateDisplay = findViewById(R.id.startDateDisplay);
         TextView endDateDisplay = findViewById(R.id.endDateDisplay);
 
+        /* DatePickerDialog used to let the organizer select registration open/close dates
+         * https://developer.android.com/reference/android/app/DatePickerDialog */
         findViewById(R.id.pickStartDateButton).setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
             new DatePickerDialog(this, (view, year, month, day) -> {
