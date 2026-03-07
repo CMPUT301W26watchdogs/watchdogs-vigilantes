@@ -67,5 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.waitingListLimitButton).setOnClickListener(v ->
                 startActivity(new Intent(this, WaitingListLimitActivity.class)));
+
+        findViewById(R.id.geolocationToggleButton).setOnClickListener(v ->
+                startActivity(new Intent(this, GeolocationToggleActivity.class)));
     }
 }
