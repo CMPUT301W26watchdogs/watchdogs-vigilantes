@@ -175,6 +175,18 @@
             app:layout_constraintTop_toBottomOf="@id/eventRegistration" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/lotteryInfoButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Lottery Info"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registerButton" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/backButton"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
@@ -183,7 +195,7 @@
             android:text="Back"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerButton" />
+            app:layout_constraintTop_toBottomOf="@id/lotteryInfoButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

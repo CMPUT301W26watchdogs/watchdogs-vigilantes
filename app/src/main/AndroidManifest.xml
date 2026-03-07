@@ -29,6 +29,7 @@
         <activity android:name=".WaitingListLimitActivity" />
         <activity android:name=".GeolocationToggleActivity" />
         <activity android:name=".EntrantMapActivity" />
+        <activity android:name=".LotteryInfoActivity" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_API_KEY_HERE" />
