@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfilePage extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class ProfilePage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.profile_page);
         Button back_button = (Button) findViewById(R.id.back_button);
+        Button signout_button = (Button) findViewById(R.id.signout_account_button);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profile_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -95,6 +97,18 @@ public class ProfilePage extends AppCompatActivity {
         });
         builder.show();
     });
+
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(ProfilePage.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        Button deleteBtn = findViewById(R.id.delete_account_button);
+        deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 //Gemini March 6th 2026 , how do i update information in Firebase Database
     private void showUpdateDialog(String fieldName, String currentValue){
@@ -142,5 +156,43 @@ public class ProfilePage extends AppCompatActivity {
             if(key.equals("email")) emailTv.setText(value);
             if(key.equals("phone")) phoneTv.setText(value);
         });
+    }
+    //Gemini March 7th 2026 , how do i delete data from firebase
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(("Delete Account"));
+        builder.setMessage("Are you sure you want to delete your account ? This action cannot be undone all your data will be removed");
+        builder.setPositiveButton("Delete", (dialog, main) -> {
+            deleteUserAccount();
+        });
+        builder.setNegativeButton("Cancel",  (dialog, main) -> {
+            dialog.cancel();
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void deleteUserAccount() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if(user !=null) {
+            String userId = user.getUid();
+
+            db.collection("users").document(userId).delete().addOnSuccessListener(aVoid -> {
+                user.delete().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                    Toast.makeText(ProfilePage.this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ProfilePage.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else{
+                    Toast.makeText(ProfilePage.this, "Error: Requires Recent Login", Toast.LENGTH_LONG).show();
+
+                }
+
+                });
+            }).addOnFailureListener(e-> Toast.makeText(ProfilePage.this, "Failed to delete database record", Toast.LENGTH_SHORT).show());
+        }
     }
 }
