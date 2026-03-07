@@ -52,5 +52,8 @@ public class MainActivity extends AppCompatActivity {
             options.setOrientationLocked(true);
             scanLauncher.launch(options);
         });
+
+        findViewById(R.id.createEventButton).setOnClickListener(v ->
+                startActivity(new Intent(this, CreateEventActivity.class)));
     }
 }
