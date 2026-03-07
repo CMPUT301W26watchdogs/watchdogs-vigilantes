@@ -70,5 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.geolocationToggleButton).setOnClickListener(v ->
                 startActivity(new Intent(this, GeolocationToggleActivity.class)));
+
+        findViewById(R.id.entrantMapButton).setOnClickListener(v ->
+                startActivity(new Intent(this, EntrantMapActivity.class)));
     }
 }

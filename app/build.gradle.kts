@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.zxing.core)
     implementation(libs.zxing.embedded)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
