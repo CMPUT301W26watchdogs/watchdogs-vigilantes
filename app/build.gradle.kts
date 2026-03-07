@@ -47,4 +47,5 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.3.1")
 // Allows mocking of static methods like FirebaseAuth.getInstance()
     testImplementation("org.mockito:mockito-inline:5.2.0")
+    implementation("com.google.android.material:material:1.9.0")
 }
