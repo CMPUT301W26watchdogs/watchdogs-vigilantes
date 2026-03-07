@@ -16,12 +16,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
-/*
- * QR code generation using ZXing MultiFormatWriter and BitMatrix.
- * https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/MultiFormatWriter.java
- * https://zxing.github.io/zxing/apidocs/com/google/zxing/MultiFormatWriter.html
- * https://gist.github.com/adrianoluis/fa9374d7f2f8ca1115b00cc83cd7aacd
- */
 public class EventCreatedActivity extends AppCompatActivity {
 
     @Override
@@ -38,6 +32,10 @@ public class EventCreatedActivity extends AppCompatActivity {
         Event event = (Event) getIntent().getSerializableExtra("event");
 
         TextView titleView = findViewById(R.id.createdEventTitle);
+        /* QR code generation using ZXing MultiFormatWriter and BitMatrix
+         * https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/MultiFormatWriter.java
+         * https://zxing.github.io/zxing/apidocs/com/google/zxing/MultiFormatWriter.html
+         * https://gist.github.com/adrianoluis/fa9374d7f2f8ca1115b00cc83cd7aacd */
         ImageView qrView = findViewById(R.id.generatedQrCode);
 
         titleView.setText(event.getTitle());

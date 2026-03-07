@@ -51,6 +51,8 @@ public class CreateEventActivity extends AppCompatActivity {
                 return;
             }
 
+            /* UUID.randomUUID() used to generate a unique event ID
+             * https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html */
             String eventId = UUID.randomUUID().toString();
             Event event = new Event(eventId, title, description, date, location, capacity, price, regStart, regEnd);
 
