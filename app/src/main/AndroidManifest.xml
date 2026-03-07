@@ -27,6 +27,7 @@
         <activity android:name=".RegistrationPeriodActivity" />
         <activity android:name=".WaitingListActivity" />
         <activity android:name=".WaitingListLimitActivity" />
+        <activity android:name=".GeolocationToggleActivity" />
     </application>
 
 </manifest>
