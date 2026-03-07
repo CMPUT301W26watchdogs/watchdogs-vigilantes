@@ -58,5 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.setRegistrationButton).setOnClickListener(v ->
                 startActivity(new Intent(this, RegistrationPeriodActivity.class)));
+
+        findViewById(R.id.viewWaitingListButton).setOnClickListener(v -> {
+            Intent intent = new Intent(this, WaitingListActivity.class);
+            intent.putExtra("event_id", "event_a");
+            startActivity(intent);
+        });
     }
 }
