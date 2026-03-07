@@ -26,6 +26,7 @@
         <activity android:name=".EventCreatedActivity" />
         <activity android:name=".RegistrationPeriodActivity" />
         <activity android:name=".WaitingListActivity" />
+        <activity android:name=".WaitingListLimitActivity" />
     </application>
 
 </manifest>
