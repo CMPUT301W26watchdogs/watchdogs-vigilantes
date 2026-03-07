@@ -1,5 +1,6 @@
 package com.example.vigilante;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,12 @@ public class EventDetailActivity extends AppCompatActivity {
 
         findViewById(R.id.registerButton).setOnClickListener(v ->
                 Toast.makeText(this, "Joined waiting list (placeholder)", Toast.LENGTH_SHORT).show());
+
+        findViewById(R.id.lotteryInfoButton).setOnClickListener(v -> {
+            Intent intent = new Intent(this, LotteryInfoActivity.class);
+            intent.putExtra("event_id", eventId);
+            startActivity(intent);
+        });
 
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
