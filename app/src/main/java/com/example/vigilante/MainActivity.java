@@ -1,9 +1,7 @@
 package com.example.vigilante;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -13,14 +11,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 public class MainActivity extends AppCompatActivity {
 
+    /*
+     * QR code scanning using zxing-android-embedded ScanContract with ActivityResultLauncher.
+     * https://github.com/journeyapps/zxing-android-embedded
+     * https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/MainActivity.java
+     * https://github.com/journeyapps/zxing-android-embedded/releases/tag/v4.3.0
+     */
     private final ActivityResultLauncher<ScanOptions> scanLauncher =
             registerForActivityResult(new ScanContract(), result -> {
                 if (result.getContents() != null) {
@@ -43,12 +44,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        ImageView qrEventA = findViewById(R.id.qrCodeEventA);
-        ImageView qrEventB = findViewById(R.id.qrCodeEventB);
-
-        qrEventA.setImageBitmap(generateQrCode("event_a"));
-        qrEventB.setImageBitmap(generateQrCode("event_b"));
-
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();
             options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -57,22 +52,5 @@ public class MainActivity extends AppCompatActivity {
             options.setOrientationLocked(true);
             scanLauncher.launch(options);
         });
-    }
-
-    private Bitmap generateQrCode(String content) {
-        try {
-            BitMatrix matrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 400, 400);
-            int width = matrix.getWidth();
-            int height = matrix.getHeight();
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    bitmap.setPixel(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
-                }
-            }
-            return bitmap;
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

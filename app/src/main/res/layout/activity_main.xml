@@ -11,7 +11,7 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:text="Event Lottery System"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -19,71 +19,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/subtitleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Scan a QR code to view event details"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleText" />
-
-    <TextView
-        android:id="@+id/eventALabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Event A"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/eventBLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/subtitleText" />
-
-    <ImageView
-        android:id="@+id/qrCodeEventA"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="QR Code for Event A"
-        app:layout_constraintEnd_toStartOf="@id/qrCodeEventB"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eventALabel" />
-
-    <TextView
-        android:id="@+id/eventBLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Event B"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/eventALabel"
-        app:layout_constraintTop_toBottomOf="@id/subtitleText" />
-
-    <ImageView
-        android:id="@+id/qrCodeEventB"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="8dp"
-        android:contentDescription="QR Code for Event B"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/qrCodeEventA"
-        app:layout_constraintTop_toBottomOf="@id/eventBLabel" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/scanQrButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:text="Scan QR Code"
         android:textSize="16sp"
         app:icon="@android:drawable/ic_menu_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/qrCodeEventA" />
+        app:layout_constraintTop_toBottomOf="@id/titleText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
