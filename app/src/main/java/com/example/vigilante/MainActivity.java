@@ -64,5 +64,8 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("event_id", "event_a");
             startActivity(intent);
         });
+
+        findViewById(R.id.waitingListLimitButton).setOnClickListener(v ->
+                startActivity(new Intent(this, WaitingListLimitActivity.class)));
     }
 }
