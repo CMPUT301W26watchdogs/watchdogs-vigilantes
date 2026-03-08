@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -61,6 +62,8 @@ public class RegisterPage extends AppCompatActivity {
                     return;
                 }
                 //Gemini March 6th 2026, Help me write a firebase registration for my registration page
+                CheckBox organizerCheck = findViewById(R.id.organizer_checkbox);
+                boolean isOrganizer = organizerCheck.isChecked();
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();
@@ -68,6 +71,7 @@ public class RegisterPage extends AppCompatActivity {
                         Map<String, Object> userMap = new HashMap<>();
                         userMap.put("name", name);
                         userMap.put("email", email);
+                        userMap.put("isOrganizer", isOrganizer);
                         if (!phone.isEmpty()) {
                             userMap.put("phone", phone);
                         }
