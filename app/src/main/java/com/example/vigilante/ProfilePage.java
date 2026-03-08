@@ -96,6 +96,11 @@ public class ProfilePage extends AppCompatActivity {
             startActivity(new Intent(ProfilePage.this, AddEvent.class));
             finish();
         });
+
+        myEventsBtn.setOnClickListener(view -> {
+            startActivity(new Intent(ProfilePage.this, MyEventsOrg.class));
+            finish();
+        });
 //Gemini March 6th 2026 , how do i update information in Firebase Database
     nameTv.setOnClickListener(v -> showUpdateDialog("Name", nameTv.getText().toString()));
     phoneTv.setOnClickListener(v -> showUpdateDialog("Phone", phoneTv.getText().toString()));

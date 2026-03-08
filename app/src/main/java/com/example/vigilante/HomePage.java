@@ -23,6 +23,8 @@ public class HomePage extends AppCompatActivity {
         setContentView(R.layout.homepage);
 
         Button profile_button = (Button) findViewById(R.id.profile_button);
+        Button events_button = (Button) findViewById(R.id.events_button);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homepage), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -37,5 +39,15 @@ public class HomePage extends AppCompatActivity {
                 finish();
             }
         });
+
+        events_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePage.this, AllEventsActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
     }
 }
