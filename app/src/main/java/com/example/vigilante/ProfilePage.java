@@ -36,6 +36,8 @@ public class ProfilePage extends AppCompatActivity {
         setContentView(R.layout.profile_page);
         Button back_button = (Button) findViewById(R.id.back_button);
         Button signout_button = (Button) findViewById(R.id.signout_account_button);
+        Button addEventBtn = findViewById(R.id.add_event_button);
+        Button myEventsBtn = findViewById(R.id.my_event_button);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profile_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -60,6 +62,16 @@ public class ProfilePage extends AppCompatActivity {
                     nameTv.setText(name);
                     emailTv.setText(email);
 
+                    Boolean isOrganizer = documentSnapshot.getBoolean("isOrganizer");
+
+                    if(Boolean.TRUE.equals(isOrganizer)) {
+                        addEventBtn.setVisibility(View.VISIBLE);
+                        myEventsBtn.setVisibility(View.VISIBLE);
+                    } else {
+                        addEventBtn.setVisibility(View.GONE);
+                        myEventsBtn.setVisibility(View.GONE);
+                    }
+
                     if(phone != null && !phone.isEmpty()){
                         phoneTv.setText(phone);
                     } else {
@@ -79,6 +91,10 @@ public class ProfilePage extends AppCompatActivity {
                 startActivity(new Intent(ProfilePage.this, HomePage.class));
                 finish();
             }
+        });
+        addEventBtn.setOnClickListener(view -> {
+            startActivity(new Intent(ProfilePage.this, AddEvent.class));
+            finish();
         });
 //Gemini March 6th 2026 , how do i update information in Firebase Database
     nameTv.setOnClickListener(v -> showUpdateDialog("Name", nameTv.getText().toString()));
