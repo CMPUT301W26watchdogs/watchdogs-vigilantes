@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class EventsPage extends AppCompatActivity {
     ListView eventsList;
-    LinearLayout eventLayout;
+    //LinearLayout eventLayout;
     ArrayAdapter<String> eventsAdapter;
     ArrayList<String> dataList;
 
