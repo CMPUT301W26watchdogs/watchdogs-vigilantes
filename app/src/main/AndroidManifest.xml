@@ -24,6 +24,15 @@
         <activity android:name=".EventDetailActivity" />
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".EventCreatedActivity" />
+        <activity android:name=".RegistrationPeriodActivity" />
+        <activity android:name=".WaitingListActivity" />
+        <activity android:name=".WaitingListLimitActivity" />
+        <activity android:name=".GeolocationToggleActivity" />
+        <activity android:name=".EntrantMapActivity" />
+        <activity android:name=".LotteryInfoActivity" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY_HERE" />
     </application>
 
 </manifest>
