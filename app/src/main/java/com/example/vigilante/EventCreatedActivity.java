@@ -1,3 +1,4 @@
+//Success screen after creating Event showing the generated QR code for the event
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -29,39 +30,48 @@ public class EventCreatedActivity extends AppCompatActivity {
             return insets;
         });
 
+        // retrieving the Event object passed from CreateEventActivity
         Event event = (Event) getIntent().getSerializableExtra("event");
 
         TextView titleView = findViewById(R.id.createdEventTitle);
-        /* QR code generation using ZXing MultiFormatWriter and BitMatrix
-         * https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/MultiFormatWriter.java
-         * https://zxing.github.io/zxing/apidocs/com/google/zxing/MultiFormatWriter.html
-         * https://gist.github.com/adrianoluis/fa9374d7f2f8ca1115b00cc83cd7aacd */
+        
         ImageView qrView = findViewById(R.id.generatedQrCode);
 
+        // showing the event title above the QR code
         titleView.setText(event.getTitle());
+
+        // generating and displaying a QR code that encodes the event's UUID
         qrView.setImageBitmap(generateQrCode(event.getId()));
 
+        // done button navigates back to home and clears the activity stack above it
         findViewById(R.id.doneButton).setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // removes CreateEvent and EventCreated from back stack
             startActivity(intent);
         });
     }
 
+    // converting a string into a QR code bitmap using ZXing
+    /* sources:
+    - https://github.com/journeyapps/zxing-android-embedded
+    - https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/MainActivity.java */
     private Bitmap generateQrCode(String content) {
         try {
+            // encoding the string into a 400x400 QR code bit matrix
             BitMatrix matrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 400, 400);
             int width = matrix.getWidth();
             int height = matrix.getHeight();
+            // creating a blank bitmap the same size as the matrix
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
+                    // black pixel for true (module), white pixel for false (background)
                     bitmap.setPixel(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
             return bitmap;
         } catch (Exception e) {
-            return null;
+            return null; // if encoding fails for any reason, return null (QR won't display)
         }
     }
 }
