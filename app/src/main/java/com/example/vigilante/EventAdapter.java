@@ -1,11 +1,22 @@
 package com.example.vigilante;
 
+import android.content.Context;
+import android.content.Intent;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -14,9 +25,12 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
+    private boolean isMyEventsPage;
 
-    public EventAdapter(List<Event> eventList){
+
+    public EventAdapter(List<Event> eventList, boolean isMyEventsPage) {
         this.eventList = eventList;
+        this.isMyEventsPage = isMyEventsPage;
     }
 
     @NotNull
@@ -31,21 +45,74 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         Event event = eventList.get(position);
         holder.titleText.setText(event.getTitle());
         holder.descriptionText.setText(event.getDescription());
+        //Gemini March 8th 2026, view image poster in the list of events
+        if (isMyEventsPage) {
+            holder.editUrl.setVisibility(View.VISIBLE);
+
+            holder.editUrl.setOnClickListener(v -> {
+                showUpdateDialog(v.getContext(), event, position);
+            });
+        }else {
+            holder.editUrl.setVisibility(View.GONE);
+        }
+        if (event.getPosterUrl() != null) {
+            Glide.with(holder.itemView.getContext()).load(event.getPosterUrl()).placeholder(android.R.drawable.ic_menu_gallery).error(android.R.drawable.ic_delete).into(holder.posterImageView);
+        }
     }
 
     @Override
-    public int getItemCount(){
+    public int getItemCount() {
         return eventList.size();
     }
+
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText;
+        ImageView posterImageView;
+
+        Button editUrl;
 
         public EventViewHolder(@NotNull View itemView) {
             super(itemView);
-            titleText  = itemView.findViewById(R.id.item_event_title);
+            titleText = itemView.findViewById(R.id.item_event_title);
             descriptionText = itemView.findViewById(R.id.event_description);
 
-
+            posterImageView = itemView.findViewById(R.id.item_event_poster);
+            editUrl = itemView.findViewById(R.id.editUrl);
         }
+    }
+//Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
+    private void showUpdateDialog(Context context, Event event, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Update Poster URL");
+
+        final EditText input = new EditText(context);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        input.setText(event.getPosterUrl() != null ? event.getPosterUrl() : "");
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newURL = input.getText().toString().trim();
+            if (!newURL.isEmpty()) {
+                updateEventPosterUrl(context, event, newURL, position);
+
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    private void updateEventPosterUrl(Context context, Event event, String newURL, int position) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("events").document(event.getId()).update("posterUrl", newURL).addOnSuccessListener(aVoid -> {
+            Toast.makeText(context, "Poster Updated!" ,Toast.LENGTH_SHORT).show();
+            //event.setPosterUrl(newURL);
+
+            notifyItemChanged(position);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(context, "Update Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        });
+
     }
 }

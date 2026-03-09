@@ -28,7 +28,7 @@ public class LoginTest {
     onView(withId(R.id.editTextTextPassword)).perform(typeText("test123"));
     onView(withId(R.id.login_button)).perform(click());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(4000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

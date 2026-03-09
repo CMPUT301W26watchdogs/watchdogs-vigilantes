@@ -41,11 +41,16 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation ("com.google.firebase:firebase-storage")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     testImplementation("org.mockito:mockito-core:5.3.1")
 // Allows mocking of static methods like FirebaseAuth.getInstance()
     testImplementation("org.mockito:mockito-inline:5.2.0")
     implementation("com.google.android.material:material:1.9.0")
+
 }

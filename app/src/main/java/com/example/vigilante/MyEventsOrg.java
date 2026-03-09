@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,8 @@ public class MyEventsOrg extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
+    private ImageView imageTv;
+
     private  String organizerId;
 
     @Override
@@ -40,12 +44,13 @@ public class MyEventsOrg extends AppCompatActivity {
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
+        //imageTv = findViewById(R.id.item_event_poster);
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(eventList);
+        //eventAdapter = new EventAdapter(eventList);
+        eventAdapter = new EventAdapter(eventList, true);
         recyclerView.setAdapter(eventAdapter);
 
         fetchMyEvents();
@@ -57,6 +62,9 @@ public class MyEventsOrg extends AppCompatActivity {
                 finish();
             }
         });
+
+
+
     }
 
     private void fetchMyEvents() {
@@ -66,6 +74,7 @@ public class MyEventsOrg extends AppCompatActivity {
 
             for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
+                event.setId(document.getId());
                 eventList.add(event);
 
             }
