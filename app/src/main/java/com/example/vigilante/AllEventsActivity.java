@@ -37,7 +37,8 @@ public class AllEventsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(eventList);
+        //eventAdapter = new EventAdapter(eventList);
+        eventAdapter = new EventAdapter(eventList, false);
         recyclerView.setAdapter(eventAdapter);
 
         fetchAllEvents();
