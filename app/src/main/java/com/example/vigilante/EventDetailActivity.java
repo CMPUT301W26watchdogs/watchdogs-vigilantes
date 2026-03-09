@@ -1,9 +1,10 @@
-//  displays event detailed info page
+//  displays event detailed info page and handles entrant sign-up
 
 package com.example.vigilante;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,10 +45,14 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView capacity = findViewById(R.id.eventCapacity);
         TextView price = findViewById(R.id.eventPrice);
         TextView registration = findViewById(R.id.eventRegistration);
+        TextView signUpStatus = findViewById(R.id.signUpStatus);
+        Button registerButton = findViewById(R.id.registerButton);
 
         // querying Firestore for the event document using the scanned event ID
         if (eventId != null) {
-            FirebaseFirestore.getInstance().collection("events").document(eventId)
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("events").document(eventId)
                     .get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
@@ -80,16 +85,41 @@ public class EventDetailActivity extends AppCompatActivity {
                         title.setText("Error Loading Event");
                         description.setText(e.getMessage());
                     });
+
+            // checking if the current user is already signed up for this event
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                db.collection("events").document(eventId)
+                        .collection("waitingList").document(currentUser.getUid())
+                        .get()
+                        .addOnSuccessListener(doc -> {
+                            if (doc.exists()) {
+                                // user is already signed up — showing their status and disabling the button
+                                String status = doc.getString("status") != null ? doc.getString("status") : "Signed Up";
+                                signUpStatus.setText("Your status: " + status);
+                                registerButton.setText("Already Signed Up");
+                                registerButton.setEnabled(false);
+                            } else {
+                                // user has not signed up yet
+                                signUpStatus.setText("You have not signed up for this event");
+                            }
+                        })
+                        .addOnFailureListener(e ->
+                                signUpStatus.setText("Could not check sign-up status"));
+            } else {
+                signUpStatus.setText("Log in to sign up");
+                registerButton.setEnabled(false);
+            }
         } else {
             title.setText("No Event ID");
             description.setText("No event ID was provided.");
         }
 
-        // "Join Waiting List"  writes the current user to the event's waitingList subcollection in Firestore
-        findViewById(R.id.registerButton).setOnClickListener(v -> {
+        // signing up the current user for the event by writing to the waitingList subcollection
+        registerButton.setOnClickListener(v -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser == null || eventId == null) {
-                Toast.makeText(this, "You must be logged in to join a waiting list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "You must be logged in to sign up", Toast.LENGTH_SHORT).show();
                 return;
             }
             // building a map with the entrant's data from their Firebase Auth profile
@@ -103,10 +133,15 @@ public class EventDetailActivity extends AppCompatActivity {
                     .collection("events").document(eventId)
                     .collection("waitingList").document(currentUser.getUid())
                     .set(entrantData)
-                    .addOnSuccessListener(unused ->
-                            Toast.makeText(this, "Joined waiting list!", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
+                        // updating the button and status after successful sign-up
+                        signUpStatus.setText("Your status: Waiting");
+                        registerButton.setText("Already Signed Up");
+                        registerButton.setEnabled(false);
+                    })
                     .addOnFailureListener(e ->
-                            Toast.makeText(this, "Failed to join: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            Toast.makeText(this, "Failed to sign up: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
 
         // opening lottery info screen, passing the same event ID so it can show the right data
