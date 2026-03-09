@@ -1,3 +1,5 @@
+// form screen for creating event
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -11,7 +13,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.util.UUID;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -26,6 +33,7 @@ public class CreateEventActivity extends AppCompatActivity {
             return insets;
         });
 
+        // getting references to all the input fields in the form
         EditText titleField = findViewById(R.id.fieldTitle);
         EditText descriptionField = findViewById(R.id.fieldDescription);
         EditText dateField = findViewById(R.id.fieldDate);
@@ -35,7 +43,11 @@ public class CreateEventActivity extends AppCompatActivity {
         EditText regStartField = findViewById(R.id.fieldRegistrationStart);
         EditText regEndField = findViewById(R.id.fieldRegistrationEnd);
 
+        // Firestore instance for saving events
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         findViewById(R.id.createEventButton).setOnClickListener(v -> {
+            // reading and trimming whitespace from each field
             String title = titleField.getText().toString().trim();
             String description = descriptionField.getText().toString().trim();
             String date = dateField.getText().toString().trim();
@@ -45,22 +57,51 @@ public class CreateEventActivity extends AppCompatActivity {
             String regStart = regStartField.getText().toString().trim();
             String regEnd = regEndField.getText().toString().trim();
 
+            // validating that all required fields are filled — price is optional since event can be free
             if (title.isEmpty() || description.isEmpty() || date.isEmpty() || location.isEmpty()
                     || capacity.isEmpty() || regStart.isEmpty() || regEnd.isEmpty()) {
                 Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
-                return;
+                return; // stopping here, not proceeding to next screen
             }
 
-            /* UUID.randomUUID() used to generate a unique event ID
-             * https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html */
-            String eventId = UUID.randomUUID().toString();
-            Event event = new Event(eventId, title, description, date, location, capacity, price, regStart, regEnd);
+            // building a map of event data to save to Firestore
+            Map<String, Object> eventData = new HashMap<>();
+            eventData.put("title", title);
+            eventData.put("description", description);
+            eventData.put("date", date);
+            eventData.put("location", location);
+            eventData.put("capacity", capacity);
+            eventData.put("price", price);
+            eventData.put("registrationStart", regStart);
+            eventData.put("registrationEnd", regEnd);
+            eventData.put("timestamp", com.google.firebase.Timestamp.now());
 
-            Intent intent = new Intent(this, EventCreatedActivity.class);
-            intent.putExtra("event", event);
-            startActivity(intent);
+            // attaching the organizer's Firebase Auth UID if logged in
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                eventData.put("organizerId", currentUser.getUid());
+            }
+
+            // saving to Firestore "events" collection — Firestore auto-generates the document ID
+            db.collection("events").add(eventData)
+                    .addOnSuccessListener(docRef -> {
+                        // using Firestore-generated doc ID as the event ID
+                        String eventId = docRef.getId();
+                        Event event = new Event(eventId, title, description, date, location, capacity, price, regStart, regEnd);
+                        if (currentUser != null) {
+                            event.setOrganizerId(currentUser.getUid());
+                        }
+
+                        // passing the Event to the next screen via intent — Event implements Serializable so this works
+                        Intent intent = new Intent(this, EventCreatedActivity.class);
+                        intent.putExtra("event", event);
+                        startActivity(intent);
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Failed to save event: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
 
+        // cancel button — discarding the form and go back
         findViewById(R.id.cancelButton).setOnClickListener(v -> finish());
     }
 }
