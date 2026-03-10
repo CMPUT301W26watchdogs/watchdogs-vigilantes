@@ -88,5 +88,10 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+        Button adminButton = findViewById(R.id.adminButton);
+
+        adminButton.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, AdminProfilesActivity.class));
+        });
     }
 }
