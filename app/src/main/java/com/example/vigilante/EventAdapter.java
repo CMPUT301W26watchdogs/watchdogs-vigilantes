@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.bumptech.glide.Glide;
@@ -61,10 +62,39 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         if(isMyEventsPageUser){
             holder.signUpEvent.setVisibility(View.VISIBLE);
+            holder.signUpEvent.setEnabled(true);
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            //Gemini 11th March 2026, how do i change my signup button to cancel button
+            db.collection("events").document(event.getId()).collection("attendees").document(currentUserId).get().addOnSuccessListener(documentSnapshot -> {
+                if(documentSnapshot.exists()){
+                    String status = documentSnapshot.getString("status");
+                    if("pending".equals(status)) {
+                        holder.signUpEvent.setText("Cancel SignUp");
+                        holder.signUpEvent.setOnClickListener(v -> {
+                            cancelSignUp(v.getContext(), event, position);
+                        
+                        });
+                        
+                    } else if ("cancelled".equals(status)) {
 
-            holder.signUpEvent.setOnClickListener(v -> {
-                showSignUpDialog(v.getContext(), event, position);
-            });
+                        holder.signUpEvent.setText("Sign Up");
+                        holder.signUpEvent.setOnClickListener(v -> {
+                            showSignUpDialog(v.getContext(), event, position);
+                        });
+                        
+                    } else if ("selected".equals(status)) {
+                        holder.signUpEvent.setText("You're Selected");
+                        holder.signUpEvent.setEnabled(false);
+
+                    } else {
+                        holder.signUpEvent.setText("Sign Up");
+                        holder.signUpEvent.setOnClickListener(v -> {
+                            showSignUpDialog(v.getContext(), event, position);
+                        });
+                    }
+                }
+            }) ;
         }
         else {
             holder.signUpEvent.setVisibility(View.GONE);
@@ -190,6 +220,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 Toast.makeText(context, "Error while signing up to the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
 
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    private void cancelSignUp(Context context, Event event, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> attendeeData = new HashMap<>();
+        attendeeData.put("userId", event.getCurrentUser());
+        //attendeeData.put("name", currentUser.getName());
+        attendeeData.put("status", "cancelled"); // Default status when they first join
+        attendeeData.put("timestamp", FieldValue.serverTimestamp()); // Logs exact time
+        builder.setTitle("Cancel Event ?");
+
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
+                Toast.makeText(context, "Cancelled Successfully!", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener( e -> {
+                Toast.makeText(context, "Error while cancelling the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
