@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -25,6 +27,7 @@ public class AllEventsActivity extends AppCompatActivity {
     private List<Event> eventList;
 
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +35,14 @@ public class AllEventsActivity extends AppCompatActivity {
         setContentView(R.layout.allevents);
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     //Gemini March 8th 2026 , help add event list from firebase
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
         //eventAdapter = new EventAdapter(eventList);
-        eventAdapter = new EventAdapter(eventList, false, false);
+        eventAdapter = new EventAdapter(eventList, false, false, true);
         recyclerView.setAdapter(eventAdapter);
 
         fetchAllEvents();
@@ -54,11 +58,16 @@ public class AllEventsActivity extends AppCompatActivity {
     }
 
     private void fetchAllEvents() {
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
         db.collection("events").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
 
             for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
+                event.setId(document.getId());
+                event.setcurrentUser(currentUser.getUid());
                 eventList.add(event);
             }
             eventAdapter.notifyDataSetChanged();

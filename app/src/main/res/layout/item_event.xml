@@ -66,6 +66,16 @@
             app:layout_constraintStart_toStartOf="@id/event_description"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/signUp_button"
+            android:visibility="gone"
+            android:text="Sign Up"
+            app:layout_constraintTop_toBottomOf="@id/event_description"
+            app:layout_constraintStart_toStartOf="@id/event_description"
+            app:layout_constraintEnd_toEndOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
