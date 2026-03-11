@@ -1,6 +1,6 @@
 package com.example.vigilante;
 
-public class Event {
+public class Profile {
     private String title;
     private String description;
 
@@ -10,14 +10,13 @@ public class Event {
 
     private String id;
 
-    public Event(){
+    public Profile(){
     }
 
-    public Event(String title ,String description, String organizerId, String posterUrl, String id){
+    public Profile(String title , String description, String organizerId, String id){
         this.title = title;
         this.description = description;
         this.organizerId = organizerId;
-        this.posterUrl = posterUrl;
         this.id = id;
 
     }
@@ -28,6 +27,8 @@ public class Event {
     public  String getOrganizerId() {return  organizerId;}
     public  String getPosterUrl() {return  posterUrl;}
     public void setPosterUrl(String posterUrl){ this.posterUrl = posterUrl;}
+
     public String getId() { return id; }
+
     public void setId(String id) { this.id = id; }
 }

@@ -28,6 +28,9 @@
         <activity android:name=".AddEvent"/>
         <activity android:name=".AllEventsActivity"/>
         <activity android:name=".MyEventsOrg"/>
+        <activity android:name=".AdminPage"/>
+        <activity android:name=".MyEventsAdmin"/>
+        <activity android:name=".AllProfiles" />
     </application>
 
 </manifest>

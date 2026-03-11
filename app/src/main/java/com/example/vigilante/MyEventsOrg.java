@@ -50,7 +50,7 @@ public class MyEventsOrg extends AppCompatActivity {
 
         eventList = new ArrayList<>();
         //eventAdapter = new EventAdapter(eventList);
-        eventAdapter = new EventAdapter(eventList, true);
+        eventAdapter = new EventAdapter(eventList, true, false);
         recyclerView.setAdapter(eventAdapter);
 
         fetchMyEvents();
