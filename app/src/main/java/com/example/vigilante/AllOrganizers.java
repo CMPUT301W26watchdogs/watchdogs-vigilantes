@@ -17,12 +17,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllProfiles extends AppCompatActivity {
+public class AllOrganizers extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private ProfileAdapter profileAdapter;
+    private ProfileAdapter organizerAdapter;
 
-    private List<Profile> profileList;
+    private List<Profile> organizerList;
 
     private FirebaseFirestore db;
 
@@ -37,16 +37,16 @@ public class AllProfiles extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        profileList = new ArrayList<>();
+        organizerList = new ArrayList<>();
         //eventAdapter = new EventAdapter(eventList);
-        profileAdapter = new ProfileAdapter(profileList);
-        recyclerView.setAdapter(profileAdapter);
+        organizerAdapter = new ProfileAdapter(organizerList);
+        recyclerView.setAdapter(organizerAdapter);
 
         fetchAllProfiles();
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(AllProfiles.this, AdminPage.class);
+                Intent intent = new Intent(AllOrganizers.this, AdminPage.class);
                 startActivity(intent);
                 finish();
             }
@@ -56,18 +56,17 @@ public class AllProfiles extends AppCompatActivity {
 
     private void fetchAllProfiles() {
         db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
-            profileList.clear();
+            organizerList.clear();
 
             for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
                 Profile profile = document.toObject(Profile.class);
                 profile.setId(document.getId());
                 Boolean isOrg = document.getBoolean("isOrganizer");
-                if (isOrg != null && !isOrg) {
-                    profileList.add(profile);
+                if (isOrg != null && isOrg) {
+                    organizerList.add(profile);
                 }
-
             }
-            profileAdapter.notifyDataSetChanged();
+            organizerAdapter.notifyDataSetChanged();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
