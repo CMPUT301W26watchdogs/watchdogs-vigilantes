@@ -44,7 +44,7 @@ public class MyEventsOrg extends AppCompatActivity {
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        //imageTv = findViewById(R.id.item_event_poster);
+
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
