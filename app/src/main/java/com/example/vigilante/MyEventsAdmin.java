@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,14 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class MyEventsOrg extends AppCompatActivity {
+public class MyEventsAdmin extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
@@ -44,32 +41,27 @@ public class MyEventsOrg extends AppCompatActivity {
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
-        //eventAdapter = new EventAdapter(eventList);
-        eventAdapter = new EventAdapter(eventList, true, false, false);
+        eventAdapter = new EventAdapter(eventList, false, true, false);
         recyclerView.setAdapter(eventAdapter);
 
         fetchMyEvents();
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MyEventsOrg.this, ProfilePage.class);
+                Intent intent = new Intent(MyEventsAdmin.this, AdminPage.class);
                 startActivity(intent);
                 finish();
             }
         });
-
-
-
     }
 
     private void fetchMyEvents() {
         organizerId = mAuth.getCurrentUser().getUid();
-        db.collection("events").whereEqualTo("organizerId", organizerId).get().addOnSuccessListener(queryDocumentSnapshots -> {
+        db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
 
             for(QueryDocumentSnapshot document :queryDocumentSnapshots) {

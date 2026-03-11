@@ -16,21 +16,34 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.bumptech.glide.Glide;
+import com.google.firebase.Firebase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 //Gemini March 8th 2026, Help view a list of events from firebase
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
     private boolean isMyEventsPage;
 
+    private boolean isMyEventsPageAdmin;
 
-    public EventAdapter(List<Event> eventList, boolean isMyEventsPage) {
+    private boolean isMyEventsPageUser;
+
+
+    public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser) {
         this.eventList = eventList;
         this.isMyEventsPage = isMyEventsPage;
+        this.isMyEventsPageAdmin = isMyEventsPageAdmin;
+        this.isMyEventsPageUser = isMyEventsPageUser;
     }
 
     @NotNull
@@ -45,6 +58,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         Event event = eventList.get(position);
         holder.titleText.setText(event.getTitle());
         holder.descriptionText.setText(event.getDescription());
+
+        if(isMyEventsPageUser){
+            holder.signUpEvent.setVisibility(View.VISIBLE);
+
+            holder.signUpEvent.setOnClickListener(v -> {
+                showSignUpDialog(v.getContext(), event, position);
+            });
+        }
+        else {
+            holder.signUpEvent.setVisibility(View.GONE);
+        }
+
+        if(isMyEventsPageAdmin){
+            holder.deleteEvent.setVisibility(View.VISIBLE);
+
+            holder.deleteEvent.setOnClickListener(v -> {
+                showDeleteDialog(v.getContext(), event, position);
+            });
+        }
+        else {
+            holder.deleteEvent.setVisibility(View.GONE);
+        }
         //Gemini March 8th 2026, view image poster in the list of events
         if (isMyEventsPage) {
             holder.editUrl.setVisibility(View.VISIBLE);
@@ -55,6 +90,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }else {
             holder.editUrl.setVisibility(View.GONE);
         }
+
         if (event.getPosterUrl() != null) {
             Glide.with(holder.itemView.getContext()).load(event.getPosterUrl()).placeholder(android.R.drawable.ic_menu_gallery).error(android.R.drawable.ic_delete).into(holder.posterImageView);
         }
@@ -69,7 +105,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         TextView titleText, descriptionText;
         ImageView posterImageView;
 
-        Button editUrl;
+        Button editUrl, deleteEvent, signUpEvent;
 
         public EventViewHolder(@NotNull View itemView) {
             super(itemView);
@@ -78,6 +114,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
             posterImageView = itemView.findViewById(R.id.item_event_poster);
             editUrl = itemView.findViewById(R.id.editUrl);
+            deleteEvent = itemView.findViewById(R.id.deleteEvent);
+            signUpEvent = itemView.findViewById(R.id.signUp_button);
         }
     }
 //Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
@@ -114,5 +152,46 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         });
 
+    }
+
+    private void showDeleteDialog(Context context, Event event, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        builder.setTitle("Delete Event ?");
+
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            db.collection("events").document(event.getId()).delete().addOnSuccessListener(aVoid -> {
+                Toast.makeText(context, "Event Deleted Successfully!", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener( e -> {
+                Toast.makeText(context, "Error while deleting the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+
+    private void showSignUpDialog(Context context, Event event, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> attendeeData = new HashMap<>();
+        attendeeData.put("userId", event.getCurrentUser());
+        //attendeeData.put("name", currentUser.getName());
+        attendeeData.put("status", "pending"); // Default status when they first join
+        attendeeData.put("timestamp", FieldValue.serverTimestamp()); // Logs exact time
+        builder.setTitle("Sign Event ?");
+
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
+                Toast.makeText(context, "Signed Up Successfully!", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener( e -> {
+                Toast.makeText(context, "Error while signing up to the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
     }
 }
