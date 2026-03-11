@@ -1,34 +1,29 @@
 package com.example.vigilante;
 
 public class Profile {
-    private String title;
-    private String description;
-
+    private String name;
+    private String email;
     private String organizerId;
-
-    private String posterUrl;
-
     private String id;
 
     public Profile(){
     }
 
-    public Profile(String title , String description, String organizerId, String id){
-        this.title = title;
-        this.description = description;
+    public Profile(String name , String email, String organizerId, String id){
+        this.name = name;
+        this.email = email;
         this.organizerId = organizerId;
         this.id = id;
 
     }
 
-    public  String getTitle() { return title;}
-    public String getDescription() {return  description;}
-
+    public  String getName() { return name;}
+    public String getEmail() {return  email;}
     public  String getOrganizerId() {return  organizerId;}
-    public  String getPosterUrl() {return  posterUrl;}
-    public void setPosterUrl(String posterUrl){ this.posterUrl = posterUrl;}
-
     public String getId() { return id; }
 
     public void setId(String id) { this.id = id; }
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    public void setOrganizerId(String organizerId) { this.organizerId = organizerId; }
 }

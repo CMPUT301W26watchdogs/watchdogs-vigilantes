@@ -42,8 +42,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     @Override
     public void onBindViewHolder(@NotNull ProfileViewHolder holder, int position) {
         Profile profile = profileList.get(position);
-        holder.titleText.setText(profile.getTitle());
-        holder.descriptionText.setText(profile.getDescription());
+        holder.nameText.setText(profile.getName());
+        //holder.emailText.setText(profile.getEmail());
         holder.deleteProfile.setVisibility(View.VISIBLE);
         holder.deleteProfile.setOnClickListener(v -> {
             showDeleteDialog(v.getContext(), profile, position);
@@ -60,13 +60,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     }
 
     public static class ProfileViewHolder extends RecyclerView.ViewHolder {
-        TextView titleText, descriptionText;
+        TextView nameText, emailText;
         ImageView posterImageView;
         Button deleteProfile;
 
         public ProfileViewHolder(@NotNull View itemView) {
             super(itemView);
-            titleText = itemView.findViewById(R.id.item_profile_title);
+            nameText = itemView.findViewById(R.id.item_profile_title);
+            //emailText = itemView.findViewById(R.id.item_profile_email);
             deleteProfile = itemView.findViewById(R.id.deleteProfile);
         }
     }
