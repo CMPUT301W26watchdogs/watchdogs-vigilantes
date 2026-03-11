@@ -10,6 +10,8 @@ public class Event implements Serializable {
     private String posterUrl;
     // fields are NOT final so Firestore can set them during deserialization
     private String id;               // unique event ID (UUID placeholder for Firestore doc ID)
+
+    private String currentUser;
     private String title;            // event name
     private String description;      // full event description
     private String date;             // date/time string
@@ -45,6 +47,10 @@ public class Event implements Serializable {
     public String getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
+
+    public String getCurrentUser() {
+        return currentUser;
+    }
     public String getDate() { return date; }
     public String getLocation() { return location; }
     public String getCapacity() { return capacity; }
@@ -65,4 +71,8 @@ public class Event implements Serializable {
     public void setRegistrationStart(String registrationStart) { this.registrationStart = registrationStart; }
     public void setRegistrationEnd(String registrationEnd) { this.registrationEnd = registrationEnd; }
     public void setOrganizerId(String organizerId) { this.organizerId = organizerId; }
+
+    public  void   setcurrentUser(String currentUser) {
+        this.currentUser = currentUser;
+    }
 }
