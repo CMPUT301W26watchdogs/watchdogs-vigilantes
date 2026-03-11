@@ -95,5 +95,10 @@ public class RegisterPage extends AppCompatActivity {
                 finish();
             }
         });
+
+        Button joinButton = findViewById(R.id.joinButton);
+        Button leaveButton = findViewById(R.id.leaveButton);
+        joinButton.setOnClickListener(v -> {joinWaitingList(eventId);});
+        leaveButton.setOnClickListener(v -> {leaveWaitingList(eventId);});
     }
 }
