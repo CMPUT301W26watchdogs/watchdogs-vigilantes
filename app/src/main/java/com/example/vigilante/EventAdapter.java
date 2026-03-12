@@ -116,6 +116,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         if (isMyEventsPage) {
             holder.editUrl.setVisibility(View.VISIBLE);
             holder.viewAttendee.setVisibility(View.VISIBLE);
+            holder.viewAttendeeCancelled.setVisibility(View.VISIBLE);
+            holder.viewAttendeeSelected.setVisibility(View.VISIBLE);
 
             holder.editUrl.setOnClickListener(v -> {
                 showUpdateDialog(v.getContext(), event, position);
@@ -127,6 +129,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
+
+            holder.viewAttendeeCancelled.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
+                intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                v.getContext().startActivity(intent); // Send it!
+                //finish();
+            });
+
+            holder.viewAttendeeSelected.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
+                intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                v.getContext().startActivity(intent); // Send it!
+                //finish();
+            });
+
+
+
         }else {
             holder.editUrl.setVisibility(View.GONE);
         }
@@ -145,7 +164,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         TextView titleText, descriptionText;
         ImageView posterImageView;
 
-        Button editUrl, deleteEvent, signUpEvent, viewAttendee;
+        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected;
 
         public EventViewHolder(@NotNull View itemView) {
             super(itemView);
@@ -156,6 +175,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             deleteEvent = itemView.findViewById(R.id.deleteEvent);
             signUpEvent = itemView.findViewById(R.id.signUp_button);
             viewAttendee = itemView.findViewById(R.id.viewAttendee);
+            viewAttendeeCancelled = itemView.findViewById(R.id.viewAttendeeCancelled);
+            viewAttendeeSelected = itemView.findViewById(R.id.viewAttendeeSelected);
         }
     }
 //Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
