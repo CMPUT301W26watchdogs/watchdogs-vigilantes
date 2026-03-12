@@ -22,6 +22,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.bumptech.glide.Glide;
 import com.google.firebase.Firebase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.bumptech.glide.Glide;
+import com.google.firebase.Firebase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
