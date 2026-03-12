@@ -24,6 +24,7 @@ public class AdminPage extends AppCompatActivity {
         Button signout_button = (Button) findViewById(R.id.signout_button);
         Button browseevents_button = (Button) findViewById(R.id.browseevents_button);
         Button browseprofiles_button = (Button) findViewById(R.id.browseprofiles_button);
+        Button browseorganizers_button = (Button) findViewById(R.id.browseorganizers_button);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -52,6 +53,15 @@ public class AdminPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        browseorganizers_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent intent = new Intent(AdminPage.this, AllOrganizers.class);
                 startActivity(intent);
                 finish();
             }

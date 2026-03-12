@@ -45,7 +45,7 @@ public class MyEventsAdmin extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(eventList, false, true);
+        eventAdapter = new EventAdapter(eventList, false, true, false);
         recyclerView.setAdapter(eventAdapter);
 
         fetchMyEvents();

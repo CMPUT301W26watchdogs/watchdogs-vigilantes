@@ -34,6 +34,7 @@
         <activity android:name=".AdminPage"/>
         <activity android:name=".MyEventsAdmin"/>
         <activity android:name=".AllProfiles" />
+        <activity android:name=".AllOrganizers"/>
     </application>
 
 </manifest>
