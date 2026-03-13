@@ -102,5 +102,9 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+        Button notifyButton = findViewById(R.id.notifyButton);
+        notifyButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SendNotificationActivity.class);
+            startActivity(intent);});
     }
 }
