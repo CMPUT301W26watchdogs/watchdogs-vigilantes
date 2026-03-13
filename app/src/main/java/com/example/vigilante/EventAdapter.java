@@ -155,6 +155,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         }else {
             holder.editUrl.setVisibility(View.GONE);
+            holder.viewAttendee.setVisibility(View.GONE);
+            holder.viewAttendeeCancelled.setVisibility(View.GONE);
+            holder.viewAttendeeSelected.setVisibility(View.GONE);
         }
 
         if (event.getPosterUrl() != null) {

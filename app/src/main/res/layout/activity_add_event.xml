@@ -42,18 +42,28 @@
         android:id="@+id/et_poster_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Paste Image Link (e.g http://imgur.com/photo.jpg"
+        android:hint="Paste Image Link (e.g http://imgur.com/photo.jpg)"
         android:inputType="textUri"
         app:layout_constraintTop_toBottomOf="@id/event_description"
         android:layout_marginTop="8dp"/>
-    <TextView
-        android:id="@+id/startLabel"
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/startLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
         android:text="Registration Opens"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/guideline_center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_poster_url" />
 
@@ -62,54 +72,61 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
+        android:layout_marginEnd="8dp"
         android:hint="No date selected"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline_center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/startLabel" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/pickStartDateButton"
         style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Pick Start Date"
+        android:layout_marginEnd="8dp"
+        android:text="Pick Start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/startDateDisplay" />
 
     <TextView
         android:id="@+id/endLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="Registration Closes"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pickStartDateButton" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_center"
+        app:layout_constraintTop_toBottomOf="@id/et_poster_url" />
 
     <TextView
         android:id="@+id/endDateDisplay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="6dp"
         android:hint="No date selected"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_center"
         app:layout_constraintTop_toBottomOf="@id/endLabel" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/pickEndDateButton"
         style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Pick End Date"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Pick End"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_center"
         app:layout_constraintTop_toBottomOf="@id/endDateDisplay" />
-
     <CheckBox
         android:id="@+id/geolocation_checkbox"
         android:layout_width="wrap_content"
@@ -118,14 +135,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pickEndDateButton"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginTop="24dp" />
 
     <EditText
         android:id="@+id/fieldMaxEntrants"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Max Entrant Number"
-        android:inputType="textUri"
+        android:inputType="number"
         app:layout_constraintTop_toBottomOf="@id/geolocation_checkbox"
         android:layout_marginTop="8dp"/>
 
@@ -134,7 +151,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Publish Event"
-        app:layout_constraintTop_toBottomOf="@id/geolocation_checkbox"
+        app:layout_constraintTop_toBottomOf="@id/fieldMaxEntrants"
         android:layout_marginTop="32dp" />
 
     <Button
@@ -143,6 +160,6 @@
         android:layout_height="wrap_content"
         android:text="Go Back"
         app:layout_constraintTop_toBottomOf="@id/publish_button"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

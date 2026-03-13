@@ -91,7 +91,7 @@ public class HomePage extends AppCompatActivity {
             ScanOptions options = new ScanOptions();
             options.setDesiredBarcodeFormats(ScanOptions.QR_CODE); // only accepting QR codes, not barcodes
             options.setPrompt("Scan an event QR code"); // text shown on the scanner overlay
-            options.setBeepEnabled(false); // no sound on successful scan
+            options.setBeepEnabled(true);
             options.setOrientationLocked(true); // keep scanner in portrait
             scanLauncher.launch(options); // open the camera scanner
         });
