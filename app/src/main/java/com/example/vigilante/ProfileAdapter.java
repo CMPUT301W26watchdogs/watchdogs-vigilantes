@@ -2,6 +2,8 @@
 
 package com.example.vigilante;
 
+import static androidx.core.app.ActivityCompat.recreate;
+
 import android.content.Context;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -83,6 +85,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("users").document(profile.getId()).delete().addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Profile Deleted Successfully!", Toast.LENGTH_SHORT).show();
+               notifyItemChanged(position);
             }).addOnFailureListener( e -> {
                 Toast.makeText(context, "Error while deleting the profile " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });

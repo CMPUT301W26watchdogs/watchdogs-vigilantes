@@ -215,7 +215,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         db.collection("events").document(event.getId()).update("posterUrl", newURL).addOnSuccessListener(aVoid -> {
             Toast.makeText(context, "Poster Updated!" ,Toast.LENGTH_SHORT).show();
-            //event.setPosterUrl(newURL);
+            event.setPosterUrl(newURL);
 
             notifyItemChanged(position);
         }).addOnFailureListener(e -> {
@@ -233,6 +233,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("events").document(event.getId()).delete().addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Event Deleted Successfully!", Toast.LENGTH_SHORT).show();
+                notifyItemChanged(position);
             }).addOnFailureListener( e -> {
                 Toast.makeText(context, "Error while deleting the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
@@ -265,6 +266,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                     db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(context, "Signed Up Successfully!", Toast.LENGTH_SHORT).show();
+                        notifyItemChanged(position);
                     }).addOnFailureListener(e -> {
                         Toast.makeText(context, "Error while signing up to the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
@@ -289,6 +291,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Cancelled Successfully!", Toast.LENGTH_SHORT).show();
+                notifyItemChanged(position);
             }).addOnFailureListener( e -> {
                 Toast.makeText(context, "Error while cancelling the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
