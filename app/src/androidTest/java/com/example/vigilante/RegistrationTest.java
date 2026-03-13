@@ -21,12 +21,15 @@ public class RegistrationTest {
     @Test
     public void testSuccessfulRegistration() {
         onView(withId(R.id.name_register)).perform(typeText("NewTest User"));
-        String uniqueEmail = "test" + System.currentTimeMillis()+ "@example.com";
+        String uniqueEmail = "test" + System.currentTimeMillis() + "@example.com";
         onView(withId(R.id.email_register)).perform(typeText(uniqueEmail));
         onView(withId(R.id.password_register)).perform(typeText("pass123"));
         onView(withId(R.id.phone_number_register)).perform(typeText("1234567890"));
         onView(withId(R.id.register_button)).perform(click());
-        try { Thread.sleep(3000); } catch (InterruptedException e) {}
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+        }
         onView(withId(R.id.home_button)).check(matches(isDisplayed()));
     }
 
