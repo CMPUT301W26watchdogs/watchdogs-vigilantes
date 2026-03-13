@@ -68,6 +68,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.titleText.setText(event.getTitle());
         holder.descriptionText.setText(event.getDescription());
 
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+            intent.putExtra("event_id", event.getId()); // Pass the ID so the detail page knows what to load
+            v.getContext().startActivity(intent);
+        });
+
         if(isMyEventsPageUser){
             holder.signUpEvent.setVisibility(View.VISIBLE);
 
