@@ -25,6 +25,7 @@ public class Profile {
     public  String getName() { return name;}
     public String getEmail() {return  email;}
     public  String getOrganizerId() {return  organizerId;}
+
     public String getId() { return id; }
     public Boolean getIsOrganizer() { return isOrganizer;}
 
