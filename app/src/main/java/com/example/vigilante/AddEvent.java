@@ -45,7 +45,9 @@ import com.google.zxing.common.BitMatrix;
 import java.io.OutputStream;
 
 
-
+/**
+ * This class helps an organizer to add new events
+ */
 public class AddEvent extends AppCompatActivity {
 
     private EditText titleInput , descriptionInput, posterUrlInput,  maxEntrantsField;
@@ -122,7 +124,11 @@ public class AddEvent extends AppCompatActivity {
             }
         });
     }
+
 //Gemini March 7th 2026, how do i add my event to firebase database
+    /*
+    * This helper functions allows us to save the event information in firebase
+     */
     private void saveEventToFirestore(){
         String title = titleInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
@@ -185,6 +191,10 @@ public class AddEvent extends AppCompatActivity {
 
     }
     //Gemini march 13th 2026, help generate qr for the event published.
+    /*
+    * This helper function is called after saveEventToFirestore is completed and it generates a qr code , saves it the
+    * organizers devices and shows it to organizer as well.
+     */
     private Bitmap generateQrCode(String content) {
         try {
             BitMatrix matrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 400, 400);
@@ -203,6 +213,9 @@ public class AddEvent extends AppCompatActivity {
         }
     }
     //Gemini march 13th 2026, help generate qr for the event published and store it to device.
+    /*
+    * This event is called by generateQrCode which helps us to store the qrcode in the device.
+     */
     private void saveQrCodeToGallery(Bitmap bitmap, String eventTitle) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "QR_" + eventTitle.replaceAll("\\s+", "_") + ".png");
@@ -222,7 +235,9 @@ public class AddEvent extends AppCompatActivity {
             Toast.makeText(this, "Failed to save QR Code", Toast.LENGTH_SHORT).show();
         }
     }
-
+    /*
+    * This helper function shows the generated qr code once the event has been created.
+     */
     private void showQrCodeDialog(Bitmap qrBitmap) {
         // Create an ImageView dynamically
         ImageView imageView = new ImageView(this);

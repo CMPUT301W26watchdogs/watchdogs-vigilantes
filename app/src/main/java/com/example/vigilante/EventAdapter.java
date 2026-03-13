@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 //Gemini March 8th 2026, Help view a list of events from firebase
+/**
+* This class is the engine for event class it uses event class to show the user all the events and options
+ */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
@@ -164,12 +167,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             Glide.with(holder.itemView.getContext()).load(event.getPosterUrl()).placeholder(android.R.drawable.ic_menu_gallery).error(android.R.drawable.ic_delete).into(holder.posterImageView);
         }
     }
-
+    /**
+* This function returns the number of events
+ */
     @Override
     public int getItemCount() {
         return eventList.size();
     }
-
+    /**
+* This class is a RecyclerView which holds and views our events
+ */
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText;
         ImageView posterImageView;
@@ -190,6 +197,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
     }
 //Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
+    /**
+    * This is a helper function which shows the dialog box to update the url of our poster image
+     */
     private void showUpdateDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Update Poster URL");
@@ -209,7 +219,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
-
+    /**
+* This is the helper function which helps us update our url in firebase
+ */
     private void updateEventPosterUrl(Context context, Event event, String newURL, int position) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -224,7 +236,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
 
     }
-
+    /**
+* This function helps admin to delete events
+ */
     private void showDeleteDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -242,7 +256,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
-
+    /**
+* This function allows user to sign up to an event.
+ */
 
     private void showSignUpDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -276,7 +292,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
-
+    /**
+* This function allows user to cancel registration from an event.
+ */
     private void cancelSignUp(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();

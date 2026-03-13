@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-
+/**
+* This class is the page for the registration page , it take necessary user info to create account and auto signs in.
+ */
 public class RegisterPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
 

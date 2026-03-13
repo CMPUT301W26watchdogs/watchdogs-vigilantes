@@ -21,6 +21,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* This class is called to show all the events available in in firebase
+ */
 public class AllEventsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -69,7 +72,9 @@ public class AllEventsActivity extends AppCompatActivity {
         });
 
     }
-
+    /**
+* This class is used to fetch events for a user with user specific options
+ */
     private void fetchAllEvents() {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -89,7 +94,9 @@ public class AllEventsActivity extends AppCompatActivity {
 
         });
     }
-
+    /**
+     * This class is used to fetch events created by that organizer with organizer specific options
+     */
     private void fetchMyOrgEvents() {
         FirebaseUser organizerId = mAuth.getCurrentUser();
         //FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -108,7 +115,9 @@ public class AllEventsActivity extends AppCompatActivity {
         });
 
     }
-
+    /**
+     * This class is used to fetch events for a admin with admin specific options
+     */
     private void fetchAdminEvents() {
         //organizerId = mAuth.getCurrentUser().getUid();
         db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {

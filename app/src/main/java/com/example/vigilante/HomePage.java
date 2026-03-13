@@ -21,7 +21,10 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import com.google.firebase.auth.FirebaseAuth;
-
+/**
+* This class shows the home page to our user, it has the option to scan qr
+* goto events or profile page.
+ */
 public class HomePage extends AppCompatActivity {
 
     // storing the most recently created event ID so organizer screens can use it

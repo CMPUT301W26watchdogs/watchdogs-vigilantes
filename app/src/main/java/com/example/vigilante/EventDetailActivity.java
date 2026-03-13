@@ -20,7 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+* This class allows user to view event by scanning a qr code from their homescreen
+ */
 public class EventDetailActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -146,6 +148,9 @@ public class EventDetailActivity extends AppCompatActivity {
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
     //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
+    /**
+    * This function helps user to directly sign up from event details page
+     */
     private void performSignUp(String eventId, String userId) {
         db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
             if (userDoc.exists()) {
@@ -176,6 +181,9 @@ public class EventDetailActivity extends AppCompatActivity {
         });
     }
     //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
+    /**
+     * This function helps user to directly cancel sign up from event details page
+     */
     private void cancelSignUp(String eventId, String userId) {
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("userId", userId);

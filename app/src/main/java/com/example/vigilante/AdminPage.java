@@ -14,7 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
-
+/**
+* This class is used to view the AdminPage when admin logs in which is different than other user's homepage
+ */
 public class AdminPage extends AppCompatActivity {
 
     @Override

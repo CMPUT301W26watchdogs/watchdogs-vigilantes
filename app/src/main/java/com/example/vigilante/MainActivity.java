@@ -19,6 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * This is the class which allows us to log in our app once logged it, it remember the device
+ */
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;

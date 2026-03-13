@@ -18,6 +18,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* This class helps organizer see differents kinds of attendee list for the event they created.
+ */
 public class viewAttendee extends AppCompatActivity {
 
     private RecyclerView recyclerView;
