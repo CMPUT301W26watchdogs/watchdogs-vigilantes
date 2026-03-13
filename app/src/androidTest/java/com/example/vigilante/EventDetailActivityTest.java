@@ -1,4 +1,5 @@
-// tests for event detail screen — US 01.06.01 view event details, US 01.06.02 sign up from event details
+// tests for event detail screen — US 01.06.01 view event details, US 01.06.02 sign up from event details,
+// US 01.05.04 entrant sees total waiting list count
 
 package com.example.vigilante;
 
@@ -116,6 +117,15 @@ public class EventDetailActivityTest {
         try (ActivityScenario<EventDetailActivity> scenario =
                      ActivityScenario.launch(intentWithEventId("test-event-id"))) {
             onView(withId(R.id.registerButton)).check(matches(withText("Sign Up")));
+        }
+    }
+
+    @Test
+    public void waitingListCount_isDisplayed() {
+        // verifying the waiting list count view is present — US 01.05.04
+        try (ActivityScenario<EventDetailActivity> scenario =
+                     ActivityScenario.launch(intentWithEventId("test-event-id"))) {
+            onView(withId(R.id.waitingListCount)).check(matches(isDisplayed()));
         }
     }
 }

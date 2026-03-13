@@ -164,6 +164,17 @@
             tools:text="Open until Dec 15, 2025" />
 
         <TextView
+            android:id="@+id/waitingListCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventRegistration"
+            tools:text="12 entrants on the waiting list" />
+
+        <TextView
             android:id="@+id/signUpStatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -172,7 +183,7 @@
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/eventRegistration" />
+            app:layout_constraintTop_toBottomOf="@id/waitingListCount" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/registerButton"

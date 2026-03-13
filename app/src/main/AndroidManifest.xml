@@ -35,6 +35,12 @@
         <activity android:name=".MyEventsAdmin"/>
         <activity android:name=".AllProfiles" />
         <activity android:name=".AllOrganizers"/>
+        <activity android:name=".EventDetailActivity"/>
+        <activity android:name=".EventCreatedActivity"/>
+        <activity android:name=".LotteryInfoActivity"/>
+        <activity android:name=".WaitingListActivity"/>
+        <activity android:name=".EntrantMapActivity"/>
+        <activity android:name=".SelectedEntrantsActivity"/>
     </application>
 
 </manifest>

@@ -45,6 +45,7 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView capacity = findViewById(R.id.eventCapacity);
         TextView price = findViewById(R.id.eventPrice);
         TextView registration = findViewById(R.id.eventRegistration);
+        TextView waitingListCount = findViewById(R.id.waitingListCount);
         TextView signUpStatus = findViewById(R.id.signUpStatus);
         Button registerButton = findViewById(R.id.registerButton);
 
@@ -86,11 +87,19 @@ public class EventDetailActivity extends AppCompatActivity {
                         description.setText(e.getMessage());
                     });
 
+            // counting total entrants on the waiting list so the entrant knows how many people are competing — US 01.05.04
+            db.collection("events").document(eventId)
+                    .collection("attendees").get()
+                    .addOnSuccessListener(snap ->
+                            waitingListCount.setText(snap.size() + " entrants on the waiting list"))
+                    .addOnFailureListener(e ->
+                            waitingListCount.setText("Could not load waiting list count"));
+
             // checking if the current user is already signed up for this event
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
-                        .collection("waitingList").document(currentUser.getUid())
+                        .collection("attendees").document(currentUser.getUid())
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
@@ -126,17 +135,17 @@ public class EventDetailActivity extends AppCompatActivity {
             Map<String, Object> entrantData = new HashMap<>();
             entrantData.put("name", currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Unknown");
             entrantData.put("email", currentUser.getEmail() != null ? currentUser.getEmail() : "");
-            entrantData.put("status", "Waiting");
+            entrantData.put("status", "pending");
 
-            // writing to events/{eventId}/waitingList/{userId}
+            // writing to events/{eventId}/attendees/{userId}
             FirebaseFirestore.getInstance()
                     .collection("events").document(eventId)
-                    .collection("waitingList").document(currentUser.getUid())
+                    .collection("attendees").document(currentUser.getUid())
                     .set(entrantData)
                     .addOnSuccessListener(unused -> {
                         Toast.makeText(this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
                         // updating the button and status after successful sign-up
-                        signUpStatus.setText("Your status: Waiting");
+                        signUpStatus.setText("Your status: pending");
                         registerButton.setText("Already Signed Up");
                         registerButton.setEnabled(false);
                     })

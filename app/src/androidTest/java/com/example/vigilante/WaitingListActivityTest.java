@@ -1,4 +1,5 @@
-// tests for the waiting list screen — US 02.02.01 organizer views list of entrants
+// tests for the waiting list screen — US 02.02.01 organizer views list of entrants,
+// US 02.06.04 organizer can cancel entrants, US 02.06.01 navigate to selected entrants
 
 package com.example.vigilante;
 
@@ -74,6 +75,23 @@ public class WaitingListActivityTest {
         try (ActivityScenario<WaitingListActivity> scenario =
                      ActivityScenario.launch(intentWithEventId("event_a"))) {
             onView(withId(R.id.backButton)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
+    public void viewSelectedButton_isDisplayed() {
+        // verifying the "View Selected Entrants" button is visible — US 02.06.01
+        try (ActivityScenario<WaitingListActivity> scenario =
+                     ActivityScenario.launch(intentWithEventId("event_a"))) {
+            onView(withId(R.id.viewSelectedButton)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
+    public void viewSelectedButton_hasCorrectText() {
+        try (ActivityScenario<WaitingListActivity> scenario =
+                     ActivityScenario.launch(intentWithEventId("event_a"))) {
+            onView(withId(R.id.viewSelectedButton)).check(matches(withText("View Selected Entrants")));
         }
     }
 }

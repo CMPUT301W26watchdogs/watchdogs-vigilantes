@@ -61,7 +61,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
-                        .collection("waitingList").document(currentUser.getUid())
+                        .collection("attendees").document(currentUser.getUid())
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists() && doc.getString("status") != null) {
