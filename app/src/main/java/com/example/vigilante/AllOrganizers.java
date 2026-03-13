@@ -1,3 +1,5 @@
+// lists all organizer-flagged users from Firestore for admin browsing — US 03.07.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

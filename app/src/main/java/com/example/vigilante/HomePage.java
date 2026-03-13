@@ -1,3 +1,5 @@
+// main hub after login — QR code scanner to join events, quick access to events list and profile — US 01.06.01
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -75,6 +77,14 @@ public class HomePage extends AppCompatActivity {
             }
         });
 
+
+        // quick access cards — tapping the events/profile cards also navigates
+        findViewById(R.id.eventsCard).setOnClickListener(v -> {
+            startActivity(new Intent(this, AllEventsActivity.class));
+        });
+        findViewById(R.id.profileCard).setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfilePage.class));
+        });
 
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();

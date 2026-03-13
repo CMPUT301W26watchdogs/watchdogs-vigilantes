@@ -1,3 +1,5 @@
+// organizer view of their own events — filters by organizerId and shows edit and attendee management buttons
+
 package com.example.vigilante;
 
 import android.content.Intent;

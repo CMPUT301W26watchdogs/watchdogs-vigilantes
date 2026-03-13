@@ -1,3 +1,5 @@
+// organizer event creation form — collects title, description, dates, poster url, geolocation and max entrants then writes to Firestore — US 02.01.01, US 02.01.04, US 02.02.03, US 02.03.01
+
 package com.example.vigilante;
 
 import android.app.DatePickerDialog;

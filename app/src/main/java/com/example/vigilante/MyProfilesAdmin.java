@@ -1,3 +1,5 @@
+// placeholder for admin profile management — currently unused stub
+
 package com.example.vigilante;
 
 import android.os.Bundle;

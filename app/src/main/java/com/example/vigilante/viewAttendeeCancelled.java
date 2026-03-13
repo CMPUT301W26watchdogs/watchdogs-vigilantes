@@ -1,3 +1,5 @@
+// lists cancelled attendees for an event filtered by status in Firestore — US 02.06.02
+
 package com.example.vigilante;
 
 import android.os.Bundle;

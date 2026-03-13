@@ -1,3 +1,5 @@
+// lists selected (chosen) attendees for an event filtered by status in Firestore — US 02.06.01
+
 package com.example.vigilante;
 
 import android.os.Bundle;

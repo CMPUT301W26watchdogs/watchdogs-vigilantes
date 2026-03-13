@@ -1,3 +1,5 @@
+// account registration form — creates a Firebase Auth user and stores the profile in Firestore users collection — US 01.02.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

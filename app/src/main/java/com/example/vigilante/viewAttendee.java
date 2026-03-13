@@ -1,3 +1,5 @@
+// lists all attendees for an event from the Firestore attendees subcollection — US 02.02.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

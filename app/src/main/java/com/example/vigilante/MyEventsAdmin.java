@@ -1,3 +1,5 @@
+// admin view of all events in the system — uses EventAdapter with admin delete permissions — US 03.04.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

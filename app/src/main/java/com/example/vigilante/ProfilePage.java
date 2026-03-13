@@ -1,3 +1,5 @@
+// displays and allows editing of the current user profile — name, email, phone with Firestore update and account deletion — US 01.02.01, US 01.02.02, US 01.02.04
+
 package com.example.vigilante;
 
 import android.content.Intent;

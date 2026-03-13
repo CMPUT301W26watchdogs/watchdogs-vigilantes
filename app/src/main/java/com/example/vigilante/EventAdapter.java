@@ -1,3 +1,5 @@
+// RecyclerView adapter for event cards — handles sign-up, cancel, edit poster and delete actions depending on user role
+
 package com.example.vigilante;
 
 import android.content.Context;

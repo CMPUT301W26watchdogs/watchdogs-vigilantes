@@ -1,3 +1,5 @@
+// login screen — authenticates via Firebase Auth then routes to HomePage or AdminPage based on credentials
+
 package com.example.vigilante;
 
 import android.content.Intent;

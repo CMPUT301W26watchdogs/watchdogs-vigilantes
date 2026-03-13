@@ -1,3 +1,5 @@
+// displays all events from Firestore in a RecyclerView for entrants to browse and sign up — US 01.01.03
+
 package com.example.vigilante;
 
 import android.content.Intent;
