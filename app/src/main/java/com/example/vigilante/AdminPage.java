@@ -1,3 +1,5 @@
+// admin dashboard — navigation hub with buttons to browse events, profiles, organizers and sign out — US 03.04.01, US 03.05.01, US 03.07.01
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -12,7 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
-
+/**
+* This class is used to view the AdminPage when admin logs in which is different than other user's homepage
+ */
 public class AdminPage extends AppCompatActivity {
 
     @Override
@@ -42,10 +46,11 @@ public class AdminPage extends AppCompatActivity {
 
         browseevents_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
+                Intent intent = new Intent(AdminPage.this, AllEventsActivity.class);
+                intent.putExtra("type", "admin");
+                //Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
                 startActivity(intent);
-                finish();
+               // finish();
             }
         });
 
@@ -53,6 +58,7 @@ public class AdminPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
+                intent.putExtra("type", "all");
                 startActivity(intent);
                 finish();
             }
@@ -61,7 +67,8 @@ public class AdminPage extends AppCompatActivity {
         browseorganizers_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Intent intent = new Intent(AdminPage.this, AllOrganizers.class);
+                Intent intent = new Intent(AdminPage.this, AllProfiles.class);
+                intent.putExtra("type", "org");
                 startActivity(intent);
                 finish();
             }

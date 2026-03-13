@@ -1,3 +1,5 @@
+// displays and allows editing of the current user profile — name, email, phone with Firestore update and account deletion — US 01.02.01, US 01.02.02, US 01.02.04
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -21,6 +23,10 @@ import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+/**
+* This class is for the profile page it shows the user information , sign out button , and if user is organizer add and my events.
+ */
 
 public class ProfilePage extends AppCompatActivity {
 
@@ -98,8 +104,11 @@ public class ProfilePage extends AppCompatActivity {
         });
 
         myEventsBtn.setOnClickListener(view -> {
-            startActivity(new Intent(ProfilePage.this, MyEventsOrg.class));
-            finish();
+            Intent intent = new Intent(ProfilePage.this, AllEventsActivity.class);
+            //startActivity(new Intent(ProfilePage.this, MyEventsOrg.class));
+            intent.putExtra("type", "myactivityorg");
+            startActivity(intent);
+            //finish();
         });
 //Gemini March 6th 2026 , how do i update information in Firebase Database
     nameTv.setOnClickListener(v -> showUpdateDialog("Name", nameTv.getText().toString()));
@@ -132,6 +141,9 @@ public class ProfilePage extends AppCompatActivity {
         deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 //Gemini March 6th 2026 , how do i update information in Firebase Database
+    /**
+    * This helper function allows us to update user information.
+     */
     private void showUpdateDialog(String fieldName, String currentValue){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update" + fieldName);
@@ -151,7 +163,9 @@ public class ProfilePage extends AppCompatActivity {
         builder.setNegativeButton("Cancel", (dialog, which)-> dialog.cancel());
         builder.show();
     }
-
+    /**
+    * This helper function updates the email info in firebase as we use firebase AUTH which has some security measures.
+     */
     private void processUpdate(String key, String newValue) {
         String userId = mAuth.getCurrentUser().getUid();
         if (key.equals("email")) {
@@ -169,7 +183,9 @@ public class ProfilePage extends AppCompatActivity {
             updateFirestoreField(userId, key , newValue);
         }
     }
-
+    /**
+*This helper function helps us update the user info in firebase
+ */
     private void updateFirestoreField(String uid, String key, String value){
         db.collection("users").document(uid).update(key,value).addOnSuccessListener(aVoid -> {
             Toast.makeText(this, key + "updated!", Toast.LENGTH_SHORT).show();
@@ -179,6 +195,9 @@ public class ProfilePage extends AppCompatActivity {
         });
     }
     //Gemini March 7th 2026 , how do i delete data from firebase
+    /**
+    * This helper func tion asks user to confirm the account deletion
+     */
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(("Delete Account"));
@@ -192,7 +211,9 @@ public class ProfilePage extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
+    /**
+*This helper function process the account deletion in firebase
+ */
     private void deleteUserAccount() {
         FirebaseUser user = mAuth.getCurrentUser();
 

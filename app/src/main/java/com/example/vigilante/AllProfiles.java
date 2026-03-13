@@ -1,3 +1,5 @@
+// lists all non-organizer user profiles from Firestore for admin browsing — US 03.05.01
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -16,7 +18,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+* This class is used to pull all the profiles registered in firebase
+ */
 public class AllProfiles extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -41,8 +45,12 @@ public class AllProfiles extends AppCompatActivity {
         //eventAdapter = new EventAdapter(eventList);
         profileAdapter = new ProfileAdapter(profileList);
         recyclerView.setAdapter(profileAdapter);
-
-        fetchAllProfiles();
+        String type = getIntent().getStringExtra("type");
+        if(type.equals("all")) {
+            fetchAllProfiles();
+        } else if (type.equals("org")){
+            fetchOrgProfiles();
+        }
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -53,7 +61,9 @@ public class AllProfiles extends AppCompatActivity {
         });
 
     }
-
+/*
+* This function is used in adminpage to pull all profiles
+ */
     private void fetchAllProfiles() {
         db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             profileList.clear();
@@ -65,7 +75,27 @@ public class AllProfiles extends AppCompatActivity {
                 if (isOrg != null && !isOrg) {
                     profileList.add(profile);
                 }
+            }
+            profileAdapter.notifyDataSetChanged();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
+        });
+    }
+    /*
+     * This function is used in adminpage to pull all profiles that are organizers
+     */
+    private void fetchOrgProfiles() {
+        db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            profileList.clear();
+
+            for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
+                Profile profile = document.toObject(Profile.class);
+                profile.setId(document.getId());
+                Boolean isOrg = document.getBoolean("isOrganizer");
+                if (isOrg != null && isOrg) {
+                    profileList.add(profile);
+                }
             }
             profileAdapter.notifyDataSetChanged();
         }).addOnFailureListener(e -> {
@@ -74,3 +104,4 @@ public class AllProfiles extends AppCompatActivity {
         });
     }
 }
+

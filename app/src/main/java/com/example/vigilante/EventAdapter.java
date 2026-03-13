@@ -1,3 +1,5 @@
+// RecyclerView adapter for event cards — handles sign-up, cancel, edit poster and delete actions depending on user role
+
 package com.example.vigilante;
 
 import android.content.Context;
@@ -33,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 //Gemini March 8th 2026, Help view a list of events from firebase
+/**
+* This class is the engine for event class it uses event class to show the user all the events and options
+ */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
@@ -126,20 +131,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.viewAttendee.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), viewAttendee.class); // Address
                 intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                intent.putExtra("type", "waiting");
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
 
             holder.viewAttendeeCancelled.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
+                Intent intent = new Intent(v.getContext(), viewAttendee.class); // Address
+               // Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
                 intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                intent.putExtra("type", "cancelled");
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
 
             holder.viewAttendeeSelected.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
-                intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                Intent intent = new Intent(v.getContext(), viewAttendee.class);
+               // Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
+                intent.putExtra("EVENT_ID", event.getId());
+                intent.putExtra("type", "selected");
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
@@ -148,18 +158,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         }else {
             holder.editUrl.setVisibility(View.GONE);
+            holder.viewAttendee.setVisibility(View.GONE);
+            holder.viewAttendeeCancelled.setVisibility(View.GONE);
+            holder.viewAttendeeSelected.setVisibility(View.GONE);
         }
 
         if (event.getPosterUrl() != null) {
             Glide.with(holder.itemView.getContext()).load(event.getPosterUrl()).placeholder(android.R.drawable.ic_menu_gallery).error(android.R.drawable.ic_delete).into(holder.posterImageView);
         }
     }
-
+    /**
+* This function returns the number of events
+ */
     @Override
     public int getItemCount() {
         return eventList.size();
     }
-
+    /**
+* This class is a RecyclerView which holds and views our events
+ */
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText;
         ImageView posterImageView;
@@ -180,6 +197,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
     }
 //Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
+    /**
+    * This is a helper function which shows the dialog box to update the url of our poster image
+     */
     private void showUpdateDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Update Poster URL");
@@ -199,13 +219,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
-
+    /**
+* This is the helper function which helps us update our url in firebase
+ */
     private void updateEventPosterUrl(Context context, Event event, String newURL, int position) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("events").document(event.getId()).update("posterUrl", newURL).addOnSuccessListener(aVoid -> {
             Toast.makeText(context, "Poster Updated!" ,Toast.LENGTH_SHORT).show();
-            //event.setPosterUrl(newURL);
+            event.setPosterUrl(newURL);
 
             notifyItemChanged(position);
         }).addOnFailureListener(e -> {
@@ -214,7 +236,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
 
     }
-
+    /**
+* This function helps admin to delete events
+ */
     private void showDeleteDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -223,6 +247,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("events").document(event.getId()).delete().addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Event Deleted Successfully!", Toast.LENGTH_SHORT).show();
+                notifyItemChanged(position);
             }).addOnFailureListener( e -> {
                 Toast.makeText(context, "Error while deleting the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
@@ -231,7 +256,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
-
+    /**
+* This function allows user to sign up to an event.
+ */
 
     private void showSignUpDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -255,6 +282,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                     db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(context, "Signed Up Successfully!", Toast.LENGTH_SHORT).show();
+                        notifyItemChanged(position);
                     }).addOnFailureListener(e -> {
                         Toast.makeText(context, "Error while signing up to the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
@@ -264,7 +292,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
-
+    /**
+* This function allows user to cancel registration from an event.
+ */
     private void cancelSignUp(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -279,6 +309,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Cancelled Successfully!", Toast.LENGTH_SHORT).show();
+                notifyItemChanged(position);
             }).addOnFailureListener( e -> {
                 Toast.makeText(context, "Error while cancelling the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });

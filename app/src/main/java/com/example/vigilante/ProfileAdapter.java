@@ -1,4 +1,8 @@
+// RecyclerView adapter for profile cards — shows name and a delete button for admin to remove profiles — US 03.02.01
+
 package com.example.vigilante;
+
+import static androidx.core.app.ActivityCompat.recreate;
 
 import android.content.Context;
 import android.text.InputType;
@@ -21,7 +25,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
+/**
+*This class is the engine function for the profiles, it grabs the profiles from firebase and views it to the user
+ */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> {
 
     private List<Profile> profileList;
@@ -52,13 +58,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
 
 
-
+    /**
+* This function returns the number for profiles in firebase
+ */
     @Override
     public int getItemCount() {
 
         return profileList.size();
     }
-
+    /**
+* This function holds the profiles in the recylerview and shows it to the user.
+ */
     public static class ProfileViewHolder extends RecyclerView.ViewHolder {
         TextView nameText, emailText;
         ImageView posterImageView;
@@ -72,7 +82,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         }
     }
 
-
+    /**
+* This helper function allows the admin to delete user profiles.
+ */
     private void showDeleteDialog(Context context, Profile profile, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -81,6 +93,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("users").document(profile.getId()).delete().addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Profile Deleted Successfully!", Toast.LENGTH_SHORT).show();
+               notifyItemChanged(position);
             }).addOnFailureListener( e -> {
                 Toast.makeText(context, "Error while deleting the profile " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
