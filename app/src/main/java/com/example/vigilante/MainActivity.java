@@ -29,10 +29,16 @@ public class MainActivity extends AppCompatActivity {
 
         if(currentUser != null) {
             Log.d("AUTH", "User is already logged in: " + currentUser.getEmail());
-
-            Intent intent = new Intent(MainActivity.this, HomePage.class);
-            startActivity(intent);
-            finish();
+            if(currentUser.getEmail().equals("admin@admin.com")) {
+                Intent intent = new Intent(MainActivity.this, AdminPage.class);
+                startActivity(intent);
+                finish();
+            }
+            else {
+                Intent intent = new Intent(MainActivity.this, HomePage.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
@@ -68,10 +74,18 @@ public class MainActivity extends AppCompatActivity {
                 mAuth.signInWithEmailAndPassword(textEmail, textPassword).addOnCompleteListener(MainActivity.this, task ->{
                     if(task.isSuccessful()){
                         Log.d("AUTH", "signInWithEmail:success");
+                        if("admin@admin.com".equals(textEmail)){
 
-                        Intent intent = new Intent(MainActivity.this, HomePage.class);
-                        startActivity(intent);
-                        finish();
+                            Intent intent = new Intent(MainActivity.this, AdminPage.class);
+                            startActivity(intent);
+                            finish();
+
+                        }
+                        else {
+                            Intent intent = new Intent(MainActivity.this, HomePage.class);
+                            startActivity(intent);
+                            finish();
+                        }
                     } else {
                         Log.w("AUTH", "signInWithEmail:failure", task.getException());
                         Toast.makeText(MainActivity.this, "Authentication failed. Try again", Toast.LENGTH_LONG).show();

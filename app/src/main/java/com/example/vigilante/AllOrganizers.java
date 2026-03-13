@@ -4,84 +4,72 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class MyEventsOrg extends AppCompatActivity {
+public class AllOrganizers extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private EventAdapter eventAdapter;
+    private ProfileAdapter organizerAdapter;
 
-    private List<Event> eventList;
+    private List<Profile> organizerList;
 
     private FirebaseFirestore db;
-
-    private FirebaseAuth mAuth;
-
-    private ImageView imageTv;
-
-    private  String organizerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.allevents);
-
+        setContentView(R.layout.allrprofiles);
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
 
-        recyclerView = findViewById(R.id.all_events_recycler_view);
+        recyclerView = findViewById(R.id.all_profile_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        eventList = new ArrayList<>();
-        //eventAdapter = new EventAdapter(eventList);
-        eventAdapter = new EventAdapter(eventList, true, false, false);
-        recyclerView.setAdapter(eventAdapter);
 
-        fetchMyEvents();
+        organizerList = new ArrayList<>();
+        //eventAdapter = new EventAdapter(eventList);
+        organizerAdapter = new ProfileAdapter(organizerList);
+        recyclerView.setAdapter(organizerAdapter);
+
+        fetchAllProfiles();
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MyEventsOrg.this, ProfilePage.class);
+                Intent intent = new Intent(AllOrganizers.this, AdminPage.class);
                 startActivity(intent);
                 finish();
             }
         });
 
-
-
     }
 
-    private void fetchMyEvents() {
-        organizerId = mAuth.getCurrentUser().getUid();
-        db.collection("events").whereEqualTo("organizerId", organizerId).get().addOnSuccessListener(queryDocumentSnapshots -> {
-            eventList.clear();
+    private void fetchAllProfiles() {
+        db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            organizerList.clear();
 
             for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
-                Event event = document.toObject(Event.class);
-                event.setId(document.getId());
-                eventList.add(event);
-
+                Profile profile = document.toObject(Profile.class);
+                profile.setId(document.getId());
+                Boolean isOrg = document.getBoolean("isOrganizer");
+                if (isOrg != null && isOrg) {
+                    organizerList.add(profile);
+                }
             }
-            eventAdapter.notifyDataSetChanged();
+            organizerAdapter.notifyDataSetChanged();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
         });
     }
-
 }
