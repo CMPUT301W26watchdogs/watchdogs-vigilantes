@@ -72,8 +72,9 @@ public class HomePage extends AppCompatActivity {
         events_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(HomePage.this, AllEventsActivity.class);
+                intent.putExtra("type", "all");
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
 

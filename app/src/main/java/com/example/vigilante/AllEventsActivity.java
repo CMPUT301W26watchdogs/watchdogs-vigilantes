@@ -38,21 +38,32 @@ public class AllEventsActivity extends AppCompatActivity {
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-    //Gemini March 8th 2026 , help add event list from firebase
+        //Gemini March 8th 2026 , help add event list from firebase
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
         //eventAdapter = new EventAdapter(eventList);
-        eventAdapter = new EventAdapter(eventList, false, false, true);
-        recyclerView.setAdapter(eventAdapter);
 
-        fetchAllEvents();
+        String type = getIntent().getStringExtra("type");
+        if (type.equals("all")) {
+            eventAdapter = new EventAdapter(eventList, false, false, true);
+            recyclerView.setAdapter(eventAdapter);
+            fetchAllEvents();
+        } else if (type.equals("myactivityorg")) {
+            eventAdapter = new EventAdapter(eventList, true, false, false);
+            recyclerView.setAdapter(eventAdapter);
+            fetchMyOrgEvents();
+        } else if (type.equals("admin")) {
+            eventAdapter = new EventAdapter(eventList, false, true, false);
+            recyclerView.setAdapter(eventAdapter);
+            fetchAdminEvents();
+        }
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(AllEventsActivity.this, HomePage.class);
-                startActivity(intent);
+                //Intent intent = new Intent(AllEventsActivity.this, HomePage.class);
+                //startActivity(intent);
                 finish();
             }
         });
@@ -66,7 +77,7 @@ public class AllEventsActivity extends AppCompatActivity {
         db.collection("events").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
 
-            for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
                 event.setcurrentUser(currentUser.getUid());
@@ -78,4 +89,41 @@ public class AllEventsActivity extends AppCompatActivity {
 
         });
     }
+
+    private void fetchMyOrgEvents() {
+        FirebaseUser organizerId = mAuth.getCurrentUser();
+        //FirebaseUser currentUser = mAuth.getCurrentUser();
+        db.collection("events").whereEqualTo("organizerId", organizerId.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            eventList.clear();
+
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                Event event = document.toObject(Event.class);
+                event.setId(document.getId());
+                eventList.add(event);
+
+            }
+            eventAdapter.notifyDataSetChanged();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+
+    }
+
+    private void fetchAdminEvents() {
+        //organizerId = mAuth.getCurrentUser().getUid();
+        db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            eventList.clear();
+
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                Event event = document.toObject(Event.class);
+                event.setId(document.getId());
+                eventList.add(event);
+
+            }
+            eventAdapter.notifyDataSetChanged();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
 }

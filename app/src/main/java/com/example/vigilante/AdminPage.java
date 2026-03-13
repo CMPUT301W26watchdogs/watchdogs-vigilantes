@@ -44,10 +44,11 @@ public class AdminPage extends AppCompatActivity {
 
         browseevents_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
+                Intent intent = new Intent(AdminPage.this, AllEventsActivity.class);
+                intent.putExtra("type", "admin");
+                //Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
                 startActivity(intent);
-                finish();
+               // finish();
             }
         });
 
@@ -55,6 +56,7 @@ public class AdminPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
+                intent.putExtra("type", "all");
                 startActivity(intent);
                 finish();
             }
@@ -63,7 +65,8 @@ public class AdminPage extends AppCompatActivity {
         browseorganizers_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Intent intent = new Intent(AdminPage.this, AllOrganizers.class);
+                Intent intent = new Intent(AdminPage.this, AllProfiles.class);
+                intent.putExtra("type", "org");
                 startActivity(intent);
                 finish();
             }

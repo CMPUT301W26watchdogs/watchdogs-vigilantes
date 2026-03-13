@@ -43,8 +43,12 @@ public class AllProfiles extends AppCompatActivity {
         //eventAdapter = new EventAdapter(eventList);
         profileAdapter = new ProfileAdapter(profileList);
         recyclerView.setAdapter(profileAdapter);
-
-        fetchAllProfiles();
+        String type = getIntent().getStringExtra("type");
+        if(type.equals("all")) {
+            fetchAllProfiles();
+        } else if (type.equals("org")){
+            fetchOrgProfiles();
+        }
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -67,7 +71,25 @@ public class AllProfiles extends AppCompatActivity {
                 if (isOrg != null && !isOrg) {
                     profileList.add(profile);
                 }
+            }
+            profileAdapter.notifyDataSetChanged();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
+        });
+    }
+
+    private void fetchOrgProfiles() {
+        db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            profileList.clear();
+
+            for(QueryDocumentSnapshot document :queryDocumentSnapshots) {
+                Profile profile = document.toObject(Profile.class);
+                profile.setId(document.getId());
+                Boolean isOrg = document.getBoolean("isOrganizer");
+                if (isOrg != null && isOrg) {
+                    profileList.add(profile);
+                }
             }
             profileAdapter.notifyDataSetChanged();
         }).addOnFailureListener(e -> {
@@ -76,3 +98,4 @@ public class AllProfiles extends AppCompatActivity {
         });
     }
 }
+

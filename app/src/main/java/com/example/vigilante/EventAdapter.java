@@ -128,20 +128,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.viewAttendee.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), viewAttendee.class); // Address
                 intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                intent.putExtra("type", "waiting");
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
 
             holder.viewAttendeeCancelled.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
+                Intent intent = new Intent(v.getContext(), viewAttendee.class); // Address
+               // Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
                 intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                intent.putExtra("type", "cancelled");
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
 
             holder.viewAttendeeSelected.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
-                intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                Intent intent = new Intent(v.getContext(), viewAttendee.class);
+               // Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
+                intent.putExtra("EVENT_ID", event.getId());
+                intent.putExtra("type", "selected");
                 v.getContext().startActivity(intent); // Send it!
                 //finish();
             });
