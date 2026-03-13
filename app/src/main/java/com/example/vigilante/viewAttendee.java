@@ -1,3 +1,5 @@
+// lists all attendees for an event from the Firestore attendees subcollection — US 02.02.01
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -16,6 +18,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* This class helps organizer see differents kinds of attendee list for the event they created.
+ */
 public class viewAttendee extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -36,16 +41,43 @@ public class viewAttendee extends AppCompatActivity {
         attendeeAdapter = new ProfileAdapter(attendeeList);
         recyclerView.setAdapter(attendeeAdapter);
         String eventId = getIntent().getStringExtra("EVENT_ID");
+        String type = getIntent().getStringExtra("type");
 
-        db.collection("events").document(eventId).collection("attendees").get().addOnSuccessListener(queryDocumentSnapshots -> {
-            attendeeList.clear();
-            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                Profile attendee = document.toObject(Profile.class);
-                attendeeList.add(attendee);
+        if(type.equals("waiting")) {
+            db.collection("events").document(eventId).collection("attendees").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                attendeeList.clear();
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    Profile attendee = document.toObject(Profile.class);
+                    attendeeList.add(attendee);
 
-            }
-            attendeeAdapter.notifyDataSetChanged();
-        });
+                }
+                attendeeAdapter.notifyDataSetChanged();
+            });
+        } else if (type.equals("cancelled")){
+            db.collection("events").document(eventId).collection("attendees").whereEqualTo("status", "cancelled").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                attendeeList.clear();
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    Profile attendee = document.toObject(Profile.class);
+                    attendeeList.add(attendee);
+
+                }
+                attendeeAdapter.notifyDataSetChanged();
+            });
+
+        } else if (type.equals("selected")){
+
+            db.collection("events").document(eventId).collection("attendees").whereEqualTo("status", "selected").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                attendeeList.clear();
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    Profile attendee = document.toObject(Profile.class);
+                    attendeeList.add(attendee);
+
+                }
+                attendeeAdapter.notifyDataSetChanged();
+            });
+
+
+        }
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -53,4 +85,5 @@ public class viewAttendee extends AppCompatActivity {
             }
         });
     }
+
 }

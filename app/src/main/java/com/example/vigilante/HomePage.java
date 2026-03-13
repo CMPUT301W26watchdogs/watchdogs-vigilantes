@@ -1,3 +1,5 @@
+// main hub after login — QR code scanner to join events, quick access to events list and profile — US 01.06.01
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -19,7 +21,10 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import com.google.firebase.auth.FirebaseAuth;
-
+/**
+* This class shows the home page to our user, it has the option to scan qr
+* goto events or profile page.
+ */
 public class HomePage extends AppCompatActivity {
 
     // storing the most recently created event ID so organizer screens can use it
@@ -70,17 +75,26 @@ public class HomePage extends AppCompatActivity {
         events_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(HomePage.this, AllEventsActivity.class);
+                intent.putExtra("type", "all");
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
 
+
+        // quick access cards — tapping the events/profile cards also navigates
+        findViewById(R.id.eventsCard).setOnClickListener(v -> {
+            startActivity(new Intent(this, AllEventsActivity.class));
+        });
+        findViewById(R.id.profileCard).setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfilePage.class));
+        });
 
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();
             options.setDesiredBarcodeFormats(ScanOptions.QR_CODE); // only accepting QR codes, not barcodes
             options.setPrompt("Scan an event QR code"); // text shown on the scanner overlay
-            options.setBeepEnabled(false); // no sound on successful scan
+            options.setBeepEnabled(true);
             options.setOrientationLocked(true); // keep scanner in portrait
             scanLauncher.launch(options); // open the camera scanner
         });

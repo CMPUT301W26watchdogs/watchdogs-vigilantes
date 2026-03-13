@@ -1,3 +1,5 @@
+// account registration form — creates a Firebase Auth user and stores the profile in Firestore users collection — US 01.02.01
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -23,7 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-
+/**
+* This class is the page for the registration page , it take necessary user info to create account and auto signs in.
+ */
 public class RegisterPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
 

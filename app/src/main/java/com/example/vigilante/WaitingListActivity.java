@@ -1,3 +1,5 @@
+// organizer view of all entrants on an event waiting list with cancel functionality — US 02.02.01, US 02.06.04
+
 package com.example.vigilante;
 
 import android.os.Bundle;
