@@ -52,8 +52,39 @@
             android:layout_height="wrap_content"
             android:id="@+id/editUrl"
             android:text="EDIT"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintTop_toBottomOf="@id/event_description"
-            app:layout_constraintStart_toStartOf="@id/event_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/viewAttendee" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewAttendee"
+            android:text="Waiting"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintTop_toTopOf="@id/editUrl"
+            app:layout_constraintStart_toEndOf="@id/editUrl"
+            app:layout_constraintEnd_toStartOf="@id/viewAttendeeCancelled" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewAttendeeCancelled"
+            android:text="Cancelled"
+            android:layout_marginStart="4dp"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintTop_toTopOf="@id/viewAttendee"
+            app:layout_constraintStart_toEndOf="@id/viewAttendee"
+            app:layout_constraintEnd_toStartOf="@id/viewAttendeeSelected" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewAttendeeSelected"
+            android:layout_marginStart="4dp"
+            android:text="Selected"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintTop_toTopOf="@id/viewAttendee"
+            app:layout_constraintStart_toEndOf="@id/viewAttendeeCancelled"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <Button

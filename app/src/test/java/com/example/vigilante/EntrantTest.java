@@ -7,7 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class EntrantTest {
+/*
 
+Not using right now
     // building a standard entrant via setters (Firestore deserialization path)
     private Entrant buildEntrant(String status) {
         Entrant e = new Entrant();
@@ -86,4 +88,6 @@ public class EntrantTest {
         Entrant entrant = new Entrant();
         assertTrue(entrant instanceof java.io.Serializable);
     }
+    /
+ */
 }

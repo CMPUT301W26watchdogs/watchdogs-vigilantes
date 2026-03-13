@@ -118,7 +118,7 @@ public class AddEvent extends AppCompatActivity {
         boolean geolocationCheckChecked = geolocationCheck.isChecked();
 
         String maxText = maxEntrantsField.getText().toString().trim();
-        int max = Integer.parseInt(maxText);
+
         if(title.isEmpty() || description.isEmpty() || maxText.isEmpty()){
             Toast.makeText(AddEvent.this, "Please fill out all required fields",Toast.LENGTH_SHORT).show();
             return;
@@ -127,7 +127,7 @@ public class AddEvent extends AppCompatActivity {
         if(imageUrl.isEmpty()) {
             imageUrl = "https://yourdefaultimage.com/placeholder.jpg";
         }
-
+        int max = Integer.parseInt(maxText);
         // both dates must be selected before saving
         if (selectedStartDate.isEmpty() || selectedEndDate.isEmpty()) {
             Toast.makeText(this, "Please select both dates", Toast.LENGTH_SHORT).show();

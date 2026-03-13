@@ -14,7 +14,7 @@ public class ProfileTest {
         p.setId("user-uid-abc");
         p.setName("Bob Smith");
         p.setEmail("bob@example.com");
-        p.setOrganizer(isOrganizer);
+        p.setIsOrganizer(isOrganizer);
         return p;
     }
 
@@ -29,22 +29,22 @@ public class ProfileTest {
     public void regularUser_isNotOrganizer() {
         // verifying that a regular entrant profile correctly reflects isOrganizer = false
         Profile profile = buildProfile(false);
-        assertFalse(profile.isOrganizer());
+        assertFalse(profile.getIsOrganizer());
     }
 
     @Test
     public void organizer_isOrganizer() {
         // verifying that an organizer profile correctly reflects isOrganizer = true
         Profile profile = buildProfile(true);
-        assertTrue(profile.isOrganizer());
+        assertTrue(profile.getIsOrganizer());
     }
 
     @Test
     public void organizerFlag_canBeChanged() {
         // verifying that the organizer flag can be updated (e.g. admin grants organizer role)
         Profile profile = buildProfile(false);
-        profile.setOrganizer(true);
-        assertTrue(profile.isOrganizer());
+        profile.setIsOrganizer(true);
+        assertTrue(profile.getIsOrganizer());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ProfileTest {
         assertEquals("user-uid-abc", profile.getId());
         assertEquals("Bob Smith", profile.getName());
         assertEquals("bob@example.com", profile.getEmail());
-        assertTrue(profile.isOrganizer());
+        assertTrue(profile.getIsOrganizer());
     }
 
     @Test
