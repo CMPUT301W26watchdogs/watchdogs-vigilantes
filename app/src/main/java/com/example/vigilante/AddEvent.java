@@ -190,10 +190,12 @@ public class AddEvent extends AppCompatActivity {
         });
 
     }
-    //Gemini march 13th 2026, help generate qr for the event published.
     /*
-    * This helper function is called after saveEventToFirestore is completed and it generates a qr code , saves it the
-    * organizers devices and shows it to organizer as well.
+     * QR code generation using ZXing MultiFormatWriter to encode event ID into a QR bitmap.
+     * Sources:
+     * https://github.com/journeyapps/zxing-android-embedded
+     * https://zxing.github.io/zxing/apidocs/com/google/zxing/MultiFormatWriter.html
+     * https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/MainActivity.java
      */
     private Bitmap generateQrCode(String content) {
         try {
@@ -212,9 +214,11 @@ public class AddEvent extends AppCompatActivity {
             return null;
         }
     }
-    //Gemini march 13th 2026, help generate qr for the event published and store it to device.
     /*
-    * This event is called by generateQrCode which helps us to store the qrcode in the device.
+     * Saving QR bitmap to device gallery using Android MediaStore API.
+     * Sources:
+     * https://developer.android.com/reference/android/provider/MediaStore
+     * https://developer.android.com/training/data-storage/shared/media
      */
     private void saveQrCodeToGallery(Bitmap bitmap, String eventTitle) {
         ContentValues values = new ContentValues();
