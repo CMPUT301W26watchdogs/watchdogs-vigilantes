@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 public class LotteryDrawTest {
 
     private List<Entrant> buildPendingEntrants(int count) {
+        // creating a list of pending entrants with sequential IDs for testing
         List<Entrant> pending = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Entrant e = new Entrant();
@@ -28,6 +29,7 @@ public class LotteryDrawTest {
     }
 
     private List<Entrant> performDraw(List<Entrant> pending, int numToDraw) {
+        // performing the lottery draw — randomly selects entrants from the pool (seeded for reproducibility)
         int actualDraw = Math.min(numToDraw, pending.size());
         Random random = new Random(42);
         List<Entrant> pool = new ArrayList<>(pending);
@@ -46,6 +48,7 @@ public class LotteryDrawTest {
     public void draw_selectsCorrectNumber() {
         List<Entrant> pending = buildPendingEntrants(10);
         List<Entrant> selected = performDraw(pending, 3);
+        // verifying draw selects the exact number requested — US 02.05.01
         assertEquals(3, selected.size());
     }
 
@@ -53,6 +56,7 @@ public class LotteryDrawTest {
     public void draw_requestMoreThanAvailable_selectsAll() {
         List<Entrant> pending = buildPendingEntrants(5);
         List<Entrant> selected = performDraw(pending, 10);
+        // verifying draw selects all available when more requested than exist — US 02.05.01
         assertEquals(5, selected.size());
     }
 
@@ -60,6 +64,7 @@ public class LotteryDrawTest {
     public void draw_zeroRequested_selectsNone() {
         List<Entrant> pending = buildPendingEntrants(10);
         List<Entrant> selected = performDraw(pending, 0);
+        // verifying draw selects none when zero requested — US 02.05.01
         assertEquals(0, selected.size());
     }
 
@@ -67,6 +72,7 @@ public class LotteryDrawTest {
     public void draw_fromEmptyList_selectsNone() {
         List<Entrant> pending = buildPendingEntrants(0);
         List<Entrant> selected = performDraw(pending, 5);
+        // verifying draw from empty list returns nothing — US 02.05.01
         assertEquals(0, selected.size());
     }
 
@@ -74,6 +80,7 @@ public class LotteryDrawTest {
     public void draw_selectedEntrantsHaveSelectedStatus() {
         List<Entrant> pending = buildPendingEntrants(10);
         List<Entrant> selected = performDraw(pending, 4);
+        // verifying all drawn entrants have their status set to "selected" — US 02.05.01
         for (Entrant e : selected) {
             assertEquals("selected", e.getStatus());
         }
@@ -83,6 +90,7 @@ public class LotteryDrawTest {
     public void draw_noDuplicates() {
         List<Entrant> pending = buildPendingEntrants(20);
         List<Entrant> selected = performDraw(pending, 10);
+        // verifying no duplicate entrants in the draw result — US 02.05.01
         Set<String> ids = new HashSet<>();
         for (Entrant e : selected) {
             assertTrue("Duplicate entrant: " + e.getId(), ids.add(e.getId()));
@@ -93,6 +101,7 @@ public class LotteryDrawTest {
     public void draw_singleEntrant_selectsOne() {
         List<Entrant> pending = buildPendingEntrants(1);
         List<Entrant> selected = performDraw(pending, 1);
+        // verifying draw works with a single entrant in the pool — US 02.05.01
         assertEquals(1, selected.size());
         assertEquals("entrant-0", selected.get(0).getId());
     }
@@ -102,6 +111,7 @@ public class LotteryDrawTest {
         List<Entrant> pending = buildPendingEntrants(5);
         List<Entrant> firstDraw = performDraw(pending, 2);
 
+        // simulating a replacement draw after decline — selecting from remaining pool — US 02.05.01
         List<Entrant> remaining = new ArrayList<>();
         Set<String> selectedIds = new HashSet<>();
         for (Entrant e : firstDraw) {
@@ -124,6 +134,7 @@ public class LotteryDrawTest {
         List<Entrant> firstDraw = performDraw(pending, 3);
         assertEquals(3, firstDraw.size());
 
+        // verifying replacement draw with empty remaining pool returns nothing — US 02.05.01
         List<Entrant> remaining = new ArrayList<>();
         List<Entrant> replacement = performDraw(remaining, 1);
         assertEquals(0, replacement.size());

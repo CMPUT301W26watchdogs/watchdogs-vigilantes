@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+* This class helps organizer see different kinds of attendee list for the event they created.
+ */
 public class viewAttendee extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -105,6 +108,7 @@ public class viewAttendee extends AppCompatActivity {
         back_button.setOnClickListener(v -> finish());
     }
 
+    // lottery draw dialog — lets organizer specify how many entrants to select — US 02.05.01
     private void showDrawLotteryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Draw Lottery");
@@ -125,6 +129,7 @@ public class viewAttendee extends AppCompatActivity {
         builder.show();
     }
 
+    // performs the lottery draw — randomly selects entrants from pending list — US 02.05.01
     private void performLotteryDraw(int numToDraw) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -159,6 +164,7 @@ public class viewAttendee extends AppCompatActivity {
                 });
     }
 
+    // sends notifications to all selected entrants, respecting opt-out preference — US 02.05.01
     private void sendNotificationToSelected() {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
             String eventTitle = eventDoc.getString("title");
@@ -215,6 +221,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
+    // cancels all pending/selected entrants for this event — US 02.06.04
     private void cancelPendingEntrants() {
         String targetStatus = "selected".equals(type) ? "selected" : "pending";
 

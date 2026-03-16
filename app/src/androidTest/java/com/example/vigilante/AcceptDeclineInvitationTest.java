@@ -38,6 +38,7 @@ public class AcceptDeclineInvitationTest {
 
     @Before
     public void setUp() throws Exception {
+        // signing in with test account and creating test event in Firestore
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
@@ -45,6 +46,7 @@ public class AcceptDeclineInvitationTest {
         db = FirebaseFirestore.getInstance();
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        // creating a test event document in Firestore
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("title", "Test Accept Decline Event");
         eventData.put("description", "Test event for accept/decline");
@@ -55,6 +57,7 @@ public class AcceptDeclineInvitationTest {
     }
 
     private ActivityScenario<EventDetailActivity> launchEventDetail() {
+        // launching EventDetailActivity with the test event ID
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), EventDetailActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         return ActivityScenario.launch(intent);
@@ -62,6 +65,7 @@ public class AcceptDeclineInvitationTest {
 
     @Test
     public void selectedUser_seesAcceptAndDeclineButtons() throws Exception {
+        // creating a "selected" attendee and verifying accept/decline buttons appear — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -80,6 +84,7 @@ public class AcceptDeclineInvitationTest {
 
     @Test
     public void pendingUser_seesSignUpButtonOnly() throws Exception {
+        // creating a "pending" attendee and verifying only the Sign Up button shows — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -99,6 +104,7 @@ public class AcceptDeclineInvitationTest {
 
     @Test
     public void acceptedUser_seesEnrolledState() throws Exception {
+        // creating an "accepted" attendee and verifying enrolled state — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -117,6 +123,7 @@ public class AcceptDeclineInvitationTest {
 
     @Test
     public void declinedUser_canReSignUp() throws Exception {
+        // creating a "declined" attendee and verifying re-signup option — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -134,6 +141,7 @@ public class AcceptDeclineInvitationTest {
 
     @After
     public void tearDown() throws Exception {
+        // cleaning up test event and attendee data from Firestore
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document(userId).delete();
         db.collection("events").document(TEST_EVENT_ID).delete();

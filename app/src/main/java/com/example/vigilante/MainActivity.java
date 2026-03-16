@@ -19,6 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * This is the class which allows us to log in our app once logged it, it remember the device
+ */
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String textEmail = editTextEmail.getText().toString().trim();
                 String textPassword = editTextPassword.getText().toString().trim();
+                //Gemini, Feb 28th 2026 , how to use firebase to autheticate my application and be identified by my device
                 if(textEmail.isEmpty() || textPassword.isEmpty()) {
                     Toast.makeText(MainActivity.this, "Please enter email and password.", Toast.LENGTH_SHORT).show();
                     return;

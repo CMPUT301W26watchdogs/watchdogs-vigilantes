@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+* This class allows user to view event by scanning a qr code from their homescreen
+ */
 public class EventDetailActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -57,8 +60,10 @@ public class EventDetailActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        // getting the event ID string that was passed from MainActivity after scanning the QR code
         eventId = getIntent().getStringExtra("event_id");
 
+        // getting references to all the text views that display event details
         TextView title = findViewById(R.id.eventTitle);
         TextView description = findViewById(R.id.eventDescription);
         TextView date = findViewById(R.id.eventDate);
@@ -78,10 +83,12 @@ public class EventDetailActivity extends AppCompatActivity {
         if (eventId != null) {
             db = FirebaseFirestore.getInstance();
 
+            // querying Firestore for the event document using the scanned event ID
             db.collection("events").document(eventId)
                     .get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
+                            // populating the text views with data from Firestore
                             title.setText(doc.getString("title") != null ? doc.getString("title") : "Untitled Event");
                             description.setText(doc.getString("description") != null ? doc.getString("description") : "");
                             date.setText(doc.getString("date") != null ? doc.getString("date") : "TBD");
@@ -120,6 +127,7 @@ public class EventDetailActivity extends AppCompatActivity {
                                         .into(posterImage);
                             }
                         } else {
+                            // document doesn't exist in Firestore
                             title.setText("Event Not Found");
                             description.setText("No event found for this QR code in the database.");
                         }
@@ -131,10 +139,12 @@ public class EventDetailActivity extends AppCompatActivity {
 
             loadWaitlistCount(waitlistCount);
 
+            // checking if the current user is already signed up for this event
+            //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
-                        .collection("attendees").document(currentUser.getUid())
+                        .collection("attendees").document(currentUser.getUid()) // MATCHES ADAPTER
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
@@ -188,17 +198,20 @@ public class EventDetailActivity extends AppCompatActivity {
             description.setText("No event ID was provided.");
         }
 
+        // opening lottery info screen, passing the same event ID so it can show the right data
         findViewById(R.id.lotteryInfoButton).setOnClickListener(v -> {
             Intent intent = new Intent(this, LotteryInfoActivity.class);
             intent.putExtra("event_id", eventId);
             startActivity(intent);
         });
 
+        // closing this screen and return to the previous one
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
 
         setupBottomNav();
     }
 
+    // handles the accept invitation flow — sets status to accepted — US 01.05.01
     private void acceptInvitation(String eventId, String userId) {
         db.collection("events").document(eventId)
                 .collection("attendees").document(userId)
@@ -211,6 +224,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    // handles the decline invitation flow — sets status to declined and triggers replacement draw — US 01.05.01
     private void declineInvitation(String eventId, String userId) {
         db.collection("events").document(eventId)
                 .collection("attendees").document(userId)
@@ -224,6 +238,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    // randomly selects a replacement entrant from pending waitlist after a decline — US 01.05.01
     private void drawReplacementFromWaitlist(String eventId) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -298,6 +313,10 @@ public class EventDetailActivity extends AppCompatActivity {
         });
     }
 
+    //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
+    /**
+    * This function helps user to directly sign up from event details page
+     */
     private void performSignUp(String eventId, String userId) {
         if (geolocationRequired) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -329,10 +348,10 @@ public class EventDetailActivity extends AppCompatActivity {
                 attendeeData.put("name", name != null ? name : "Unknown");
                 attendeeData.put("email", email != null ? email : "");
                 attendeeData.put("userId", userId);
-                attendeeData.put("status", "pending");
+                attendeeData.put("status", "pending"); // MATCHES ADAPTER
                 attendeeData.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
-                if (latitude != null && longitude != null) {
+                if (latitude != null && longitude != null) { // geolocation data if available
                     attendeeData.put("latitude", latitude);
                     attendeeData.put("longitude", longitude);
                 }
@@ -342,7 +361,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         .set(attendeeData)
                         .addOnSuccessListener(unused -> {
                             Toast.makeText(this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
-                            recreate();
+                            recreate(); // Recreate activity to refresh the UI state easily
                         })
                         .addOnFailureListener(e ->
                                 Toast.makeText(this, "Failed to sign up: " + e.getMessage(), Toast.LENGTH_SHORT).show());
@@ -367,10 +386,14 @@ public class EventDetailActivity extends AppCompatActivity {
         }
     }
 
+    //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
+    /**
+     * This function helps user to directly cancel sign up from event details page
+     */
     private void cancelSignUp(String eventId, String userId) {
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("userId", userId);
-        attendeeData.put("status", "cancelled");
+        attendeeData.put("status", "cancelled"); // MATCHES ADAPTER
         attendeeData.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
         db.collection("events").document(eventId)

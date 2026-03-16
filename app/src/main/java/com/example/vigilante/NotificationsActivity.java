@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class displays the user's notifications from Firestore — lottery results and event updates.
+ */
 public class NotificationsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -38,6 +41,7 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
+        // setting up RecyclerView with adapter and empty list for notifications
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.notificationsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -49,6 +53,7 @@ public class NotificationsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // querying Firestore for all notifications belonging to the current user, ordered by most recent — US 01.04.03
     private void loadNotifications() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
@@ -59,6 +64,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(snapshots -> {
                     notificationList.clear();
+                    // building notification entries from Firestore documents
                     for (QueryDocumentSnapshot doc : snapshots) {
                         Map<String, String> entry = new HashMap<>();
                         entry.put("id", doc.getId());
@@ -73,6 +79,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 });
     }
 
+    // bottom navigation bar — switching between Events, Home, Alerts and Profile screens
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         bottomNav.setSelectedItemId(R.id.nav_alerts);
@@ -99,6 +106,9 @@ public class NotificationsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Inner adapter class for displaying individual notification cards in the RecyclerView.
+     */
     static class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotifViewHolder> {
 
         private List<Map<String, String>> list;
@@ -116,13 +126,16 @@ public class NotificationsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(NotifViewHolder holder, int position) {
             Map<String, String> entry = list.get(position);
+            // populating the notification card with title and message
             holder.titleText.setText(entry.get("title"));
             holder.messageText.setText(entry.get("message"));
 
+            // unread notifications get a different background color to stand out
             boolean isRead = "true".equals(entry.get("read"));
             holder.card.setCardBackgroundColor(holder.itemView.getContext().getColor(
                     isRead ? R.color.card_background : R.color.surface_gray));
 
+            // clicking a notification marks it as read and opens the event detail screen — US 01.04.03
             holder.itemView.setOnClickListener(v -> {
                 String notifId = entry.get("id");
                 if (notifId != null) {
@@ -141,11 +154,17 @@ public class NotificationsActivity extends AppCompatActivity {
             });
         }
 
+        /**
+         * This function returns the number of notifications in the list.
+         */
         @Override
         public int getItemCount() {
             return list.size();
         }
 
+        /**
+         * ViewHolder for notification card — holds title, message and card views.
+         */
         static class NotifViewHolder extends RecyclerView.ViewHolder {
             TextView titleText, messageText;
             MaterialCardView card;

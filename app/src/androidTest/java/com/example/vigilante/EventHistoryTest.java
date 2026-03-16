@@ -23,6 +23,7 @@ public class EventHistoryTest {
 
     @Before
     public void setUp() throws Exception {
+        // signing in with test account before each test
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1500);
@@ -31,6 +32,7 @@ public class EventHistoryTest {
     @Test
     public void historyScreen_displaysHeader() {
         try (ActivityScenario<EventHistoryActivity> scenario = ActivityScenario.launch(EventHistoryActivity.class)) {
+            // verifying the history screen header is displayed — US 01.02.03
             onView(withText("Event History")).check(matches(isDisplayed()));
         }
     }
@@ -38,6 +40,7 @@ public class EventHistoryTest {
     @Test
     public void historyScreen_displaysSubtitle() {
         try (ActivityScenario<EventHistoryActivity> scenario = ActivityScenario.launch(EventHistoryActivity.class)) {
+            // verifying the subtitle text is shown — US 01.02.03
             onView(withText("Events you've registered for")).check(matches(isDisplayed()));
         }
     }
@@ -45,6 +48,7 @@ public class EventHistoryTest {
     @Test
     public void historyScreen_recyclerViewDisplayed() {
         try (ActivityScenario<EventHistoryActivity> scenario = ActivityScenario.launch(EventHistoryActivity.class)) {
+            // verifying the RecyclerView is present on screen — US 01.02.03
             onView(withId(R.id.historyRecyclerView)).check(matches(isDisplayed()));
         }
     }
@@ -52,6 +56,7 @@ public class EventHistoryTest {
     @Test
     public void historyScreen_loadsEventsFromFirestore() {
         try (ActivityScenario<EventHistoryActivity> scenario = ActivityScenario.launch(EventHistoryActivity.class)) {
+            // waiting for Firestore to load event history data — US 01.02.03
             Thread.sleep(3000);
             onView(withId(R.id.historyRecyclerView)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
@@ -60,6 +65,7 @@ public class EventHistoryTest {
     @Test
     public void historyScreen_bottomNavDisplayed() {
         try (ActivityScenario<EventHistoryActivity> scenario = ActivityScenario.launch(EventHistoryActivity.class)) {
+            // verifying the bottom navigation bar is displayed — US 01.02.03
             onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
         }
     }
@@ -67,6 +73,7 @@ public class EventHistoryTest {
     @Test
     public void historyScreen_accessFromProfile() {
         try (ActivityScenario<ProfilePage> scenario = ActivityScenario.launch(ProfilePage.class)) {
+            // verifying the event history button is accessible from the profile page — US 01.02.03
             Thread.sleep(2000);
             onView(withId(R.id.event_history_button)).check(matches(isDisplayed()));
             onView(withId(R.id.event_history_button)).check(matches(withText("Event History")));

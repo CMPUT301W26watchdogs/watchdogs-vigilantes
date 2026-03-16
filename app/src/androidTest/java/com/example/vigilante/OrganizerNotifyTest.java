@@ -38,18 +38,21 @@ public class OrganizerNotifyTest {
 
     @Before
     public void setUp() throws Exception {
+        // signing in with test account and creating test event with selected attendees
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
 
         db = FirebaseFirestore.getInstance();
 
+        // creating a test event owned by the current user
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("title", "Notify Test Event");
         eventData.put("description", "Testing organizer notification");
         eventData.put("organizerId", FirebaseAuth.getInstance().getCurrentUser().getUid());
         Tasks.await(db.collection("events").document(TEST_EVENT_ID).set(eventData));
 
+        // adding two selected attendees to the test event
         Map<String, Object> attendee1 = new HashMap<>();
         attendee1.put("name", "User One");
         attendee1.put("email", "user1@test.com");
@@ -66,6 +69,7 @@ public class OrganizerNotifyTest {
         Tasks.await(db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("test-uid-2").set(attendee2));
 
+        // creating test user documents with notification preferences
         Map<String, Object> user1 = new HashMap<>();
         user1.put("name", "User One");
         user1.put("notificationsEnabled", true);
@@ -78,6 +82,7 @@ public class OrganizerNotifyTest {
     }
 
     private ActivityScenario<viewAttendee> launchSelectedView() {
+        // launching viewAttendee in "selected" mode
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
         intent.putExtra("type", "selected");
@@ -85,6 +90,7 @@ public class OrganizerNotifyTest {
     }
 
     private ActivityScenario<viewAttendee> launchWaitingView() {
+        // launching viewAttendee in "waiting" mode
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
         intent.putExtra("type", "waiting");
@@ -95,6 +101,7 @@ public class OrganizerNotifyTest {
     public void selectedView_showsNotifyButton() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
+            // verifying the "Notify Selected Entrants" button is visible — US 02.05.01
             onView(withId(R.id.notify_selected_button)).check(matches(isDisplayed()));
             onView(withId(R.id.notify_selected_button)).check(matches(withText("Notify Selected Entrants")));
         } catch (InterruptedException e) {}
@@ -104,6 +111,7 @@ public class OrganizerNotifyTest {
     public void waitingView_hidesNotifyButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // verifying the notify button is hidden in waiting view — US 02.05.01
             onView(withId(R.id.notify_selected_button)).check(matches(withEffectiveVisibility(Visibility.GONE)));
         } catch (InterruptedException e) {}
     }
@@ -112,6 +120,7 @@ public class OrganizerNotifyTest {
     public void waitingView_showsDrawLotteryButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // verifying the "Draw Lottery" button is visible in waiting view — US 02.05.01
             onView(withId(R.id.draw_lottery_button)).check(matches(isDisplayed()));
             onView(withId(R.id.draw_lottery_button)).check(matches(withText("Draw Lottery")));
         } catch (InterruptedException e) {}
@@ -121,6 +130,7 @@ public class OrganizerNotifyTest {
     public void selectedView_hidesDrawLotteryButton() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
+            // verifying the draw lottery button is hidden in selected view — US 02.05.01
             onView(withId(R.id.draw_lottery_button)).check(matches(withEffectiveVisibility(Visibility.GONE)));
         } catch (InterruptedException e) {}
     }
@@ -129,6 +139,7 @@ public class OrganizerNotifyTest {
     public void notifyButton_sendsNotificationsToFirestore() throws Exception {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
+            // clicking notify and verifying Firestore notifications were created — US 02.05.01
             onView(withId(R.id.notify_selected_button)).perform(click());
             Thread.sleep(3000);
 
@@ -151,6 +162,7 @@ public class OrganizerNotifyTest {
     public void selectedView_showsSelectedEntrantsInList() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
+            // verifying the selected entrants list is displayed — US 02.05.01
             onView(withId(R.id.attendees_recycler_view)).check(matches(isDisplayed()));
             onView(withId(R.id.title_waiting_list)).check(matches(withText("Selected Entrants")));
         } catch (InterruptedException e) {}
@@ -158,6 +170,7 @@ public class OrganizerNotifyTest {
 
     @After
     public void tearDown() throws Exception {
+        // cleaning up test event, attendee and notification data from Firestore
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("test-uid-1").delete();
         db.collection("events").document(TEST_EVENT_ID)

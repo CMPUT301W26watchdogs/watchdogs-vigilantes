@@ -26,6 +26,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+/**
+* This class is for the profile page it shows the user information, sign out button, and if user is organizer add and my events.
+ */
 public class ProfilePage extends AppCompatActivity {
 
     private TextView nameTv, emailTv, phoneTv, avatarInitialTv;
@@ -51,6 +54,7 @@ public class ProfilePage extends AppCompatActivity {
         Button myEventsBtn = findViewById(R.id.my_event_button);
         Button eventHistoryBtn = findViewById(R.id.event_history_button);
 
+        //Gemini March 6th 2026 ,how do i retrieve data from firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         nameTv = findViewById(R.id.name_text);
@@ -129,6 +133,7 @@ public class ProfilePage extends AppCompatActivity {
             startActivity(intent);
         });
 
+        //Gemini March 6th 2026 , how do i update information in Firebase Database
         nameTv.setOnClickListener(v -> showUpdateDialog("Name", nameTv.getText().toString()));
         phoneTv.setOnClickListener(v -> showUpdateDialog("Phone", phoneTv.getText().toString()));
 
@@ -160,6 +165,7 @@ public class ProfilePage extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // loads event participation stats from Firestore — counts events joined, selected, and waiting — US 01.02.03
     private void loadProfileStats(String userId) {
         final int[] totalEvents = {0};
         final int[] selectedCount = {0};
@@ -222,6 +228,10 @@ public class ProfilePage extends AppCompatActivity {
         });
     }
 
+    //Gemini March 6th 2026 , how do i update information in Firebase Database
+    /**
+    * This helper function allows us to update user information.
+     */
     private void showUpdateDialog(String fieldName, String currentValue) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update " + fieldName);
@@ -241,6 +251,9 @@ public class ProfilePage extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+    * This helper function updates the email info in firebase as we use firebase AUTH which has some security measures.
+     */
     private void processUpdate(String key, String newValue) {
         String userId = mAuth.getCurrentUser().getUid();
         if (key.equals("email")) {
@@ -258,6 +271,9 @@ public class ProfilePage extends AppCompatActivity {
         }
     }
 
+    /**
+*This helper function helps us update the user info in firebase
+ */
     private void updateFirestoreField(String uid, String key, String value) {
         db.collection("users").document(uid).update(key, value).addOnSuccessListener(aVoid -> {
             Toast.makeText(this, key + " updated!", Toast.LENGTH_SHORT).show();
@@ -272,6 +288,10 @@ public class ProfilePage extends AppCompatActivity {
         });
     }
 
+    //Gemini March 7th 2026 , how do i delete data from firebase
+    /**
+    * This helper function asks user to confirm the account deletion
+     */
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete Account");
@@ -286,6 +306,9 @@ public class ProfilePage extends AppCompatActivity {
         alertDialog.show();
     }
 
+    /**
+*This helper function process the account deletion in firebase
+ */
     private void deleteUserAccount() {
         FirebaseUser user = mAuth.getCurrentUser();
 

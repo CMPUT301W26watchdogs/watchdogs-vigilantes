@@ -37,17 +37,20 @@ public class CancelEntrantsTest {
 
     @Before
     public void setUp() throws Exception {
+        // signing in with test account and creating test event with pending attendees
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
 
         db = FirebaseFirestore.getInstance();
 
+        // creating a test event owned by the current user
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("title", "Cancel Test Event");
         eventData.put("organizerId", FirebaseAuth.getInstance().getCurrentUser().getUid());
         Tasks.await(db.collection("events").document(TEST_EVENT_ID).set(eventData));
 
+        // adding two pending attendees to the test event
         Map<String, Object> attendee1 = new HashMap<>();
         attendee1.put("name", "Pending User");
         attendee1.put("email", "pending@test.com");
@@ -66,6 +69,7 @@ public class CancelEntrantsTest {
     }
 
     private ActivityScenario<viewAttendee> launchWaitingView() {
+        // launching viewAttendee in "waiting" mode for the test event
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
         intent.putExtra("type", "waiting");
@@ -76,6 +80,7 @@ public class CancelEntrantsTest {
     public void waitingView_showsCancelAllButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // verifying the cancel all button is displayed — US 02.06.04
             onView(withId(R.id.cancel_all_button)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
@@ -84,6 +89,7 @@ public class CancelEntrantsTest {
     public void waitingView_showsMapButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // verifying the map button is displayed on the waiting list — US 02.06.04
             onView(withId(R.id.map_button)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
@@ -92,6 +98,7 @@ public class CancelEntrantsTest {
     public void waitingView_displaysWaitingListTitle() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // verifying the waiting list title is shown — US 02.06.04
             onView(withId(R.id.title_waiting_list)).check(matches(withText("Waiting List")));
         } catch (InterruptedException e) {}
     }
@@ -100,6 +107,7 @@ public class CancelEntrantsTest {
     public void waitingView_showsEntrantsInRecyclerView() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // verifying the entrants list is displayed — US 02.06.04
             onView(withId(R.id.attendees_recycler_view)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
@@ -108,11 +116,13 @@ public class CancelEntrantsTest {
     public void cancelAll_updatesFirestoreStatusToCancelled() throws Exception {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
+            // clicking cancel all, confirming, and verifying Firestore status changed to "cancelled" — US 02.06.04
             onView(withId(R.id.cancel_all_button)).perform(click());
             Thread.sleep(1000);
             onView(withText("Confirm")).perform(click());
             Thread.sleep(3000);
 
+            // checking Firestore to verify both attendees now have "cancelled" status
             DocumentSnapshot doc1 = Tasks.await(db.collection("events").document(TEST_EVENT_ID)
                     .collection("attendees").document("cancel-test-uid-1").get());
             assertEquals("cancelled", doc1.getString("status"));
@@ -125,6 +135,7 @@ public class CancelEntrantsTest {
 
     @After
     public void tearDown() throws Exception {
+        // cleaning up test event and attendee data from Firestore
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("cancel-test-uid-1").delete();
         db.collection("events").document(TEST_EVENT_ID)

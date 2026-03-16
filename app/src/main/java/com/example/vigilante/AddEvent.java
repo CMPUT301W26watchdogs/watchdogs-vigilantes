@@ -39,6 +39,9 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import java.io.OutputStream;
 
+/**
+ * This class helps an organizer to add new events
+ */
 public class AddEvent extends AppCompatActivity {
 
     private EditText titleInput, descriptionInput, posterUrlInput, maxEntrantsField, categoryInput;
@@ -68,19 +71,24 @@ public class AddEvent extends AppCompatActivity {
         titleInput = findViewById(R.id.event_title_input);
         descriptionInput = findViewById(R.id.event_description);
         posterUrlInput = findViewById(R.id.et_poster_url);
+        // text views that display the selected dates below each button
         TextView startDateDisplay = findViewById(R.id.startDateDisplay);
         TextView endDateDisplay = findViewById(R.id.endDateDisplay);
         geolocationCheck = findViewById(R.id.geolocation_checkbox);
-        maxEntrantsField = findViewById(R.id.fieldMaxEntrants);
+        maxEntrantsField = findViewById(R.id.fieldMaxEntrants); // the number input itself
         categoryInput = findViewById(R.id.event_category);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        /* DatePickerDialog used to let the organizer select registration open/close dates
+         * https://developer.android.com/reference/android/app/DatePickerDialog */
         findViewById(R.id.pickStartDateButton).setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
             new DatePickerDialog(this, (view, year, month, day) -> {
+                // month is 0-indexed so added 1 for display
                 selectedStartDate = day + "/" + (month + 1) + "/" + year;
+                // show the chosen date on screen
                 startDateDisplay.setText(selectedStartDate);
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
         });
@@ -134,6 +142,10 @@ public class AddEvent extends AppCompatActivity {
         });
     }
 
+    //Gemini March 7th 2026, how do i add my event to firebase database
+    /*
+     * This helper functions allows us to save the event information in firebase
+     */
     private void saveEventToFirestore() {
         String title = titleInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
@@ -153,6 +165,7 @@ public class AddEvent extends AppCompatActivity {
         }
         int max = Integer.parseInt(maxText);
 
+        // both dates must be selected before saving
         if (selectedStartDate.isEmpty() || selectedEndDate.isEmpty()) {
             Toast.makeText(this, "Please select both dates", Toast.LENGTH_SHORT).show();
             return;
@@ -177,12 +190,16 @@ public class AddEvent extends AppCompatActivity {
         }
 
         db.collection("events").add(eventMap).addOnSuccessListener(documentReference -> {
+            // 1. Get the newly generated Event ID
             String newEventId = documentReference.getId();
 
+            // 2. Generate the QR Code with this ID
             Bitmap qrBitmap = generateQrCode(newEventId);
 
             if (qrBitmap != null) {
+                // 3. Save to device gallery
                 saveQrCodeToGallery(qrBitmap, title);
+                // 4. Show the QR code to the organizer in a popup
                 showQrCodeDialog(qrBitmap);
             } else {
                 Toast.makeText(getApplicationContext(), "Event Created, but QR failed", Toast.LENGTH_SHORT).show();
@@ -195,6 +212,11 @@ public class AddEvent extends AppCompatActivity {
         });
     }
 
+    //Gemini march 13th 2026, help generate qr for the event published.
+    /*
+     * This helper function is called after saveEventToFirestore is completed and it generates a qr code, saves it the
+     * organizers devices and shows it to organizer as well.
+     */
     private Bitmap generateQrCode(String content) {
         try {
             BitMatrix matrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 400, 400);
@@ -213,6 +235,10 @@ public class AddEvent extends AppCompatActivity {
         }
     }
 
+    //Gemini march 13th 2026, help generate qr for the event published and store it to device.
+    /*
+     * This event is called by generateQrCode which helps us to store the qrcode in the device.
+     */
     private void saveQrCodeToGallery(Bitmap bitmap, String eventTitle) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "QR_" + eventTitle.replaceAll("\\s+", "_") + ".png");
@@ -233,6 +259,9 @@ public class AddEvent extends AppCompatActivity {
         }
     }
 
+    /*
+     * This helper function shows the generated qr code once the event has been created.
+     */
     private void showQrCodeDialog(Bitmap qrBitmap) {
         ImageView imageView = new ImageView(this);
         imageView.setImageBitmap(qrBitmap);

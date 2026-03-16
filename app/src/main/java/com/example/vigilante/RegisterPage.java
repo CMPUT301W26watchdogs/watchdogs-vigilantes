@@ -24,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+* This class is the page for the registration page, it take necessary user info to create account and auto signs in.
+ */
 public class RegisterPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private boolean isOrganizer = false;
@@ -85,6 +88,7 @@ public class RegisterPage extends AppCompatActivity {
                     return;
                 }
 
+                //Gemini March 6th 2026, Help me write a firebase registration for my registration page
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();

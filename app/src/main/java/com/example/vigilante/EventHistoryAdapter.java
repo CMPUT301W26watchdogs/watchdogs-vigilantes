@@ -15,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is the adapter for showing event history cards in a RecyclerView with color-coded status badges.
+ */
 public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapter.HistoryViewHolder> {
 
     private List<Map<String, String>> historyList;
@@ -33,9 +36,11 @@ public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapte
     @Override
     public void onBindViewHolder(@NotNull HistoryViewHolder holder, int position) {
         Map<String, String> entry = historyList.get(position);
+        // populating the card with event title and date
         holder.titleText.setText(entry.get("title"));
         holder.dateText.setText(entry.get("date"));
 
+        // applying color-coded badge based on the entrant's status in the event — US 01.02.03
         String status = entry.get("status");
         if (status != null) {
             holder.statusText.setText(status.substring(0, 1).toUpperCase() + status.substring(1));
@@ -64,6 +69,7 @@ public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapte
             }
         }
 
+        // clicking a history card opens the event detail screen
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
             intent.putExtra("event_id", entry.get("eventId"));
@@ -71,11 +77,17 @@ public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapte
         });
     }
 
+    /**
+     * This function returns the number of history entries in the list.
+     */
     @Override
     public int getItemCount() {
         return historyList.size();
     }
 
+    /**
+     * This class is a ViewHolder that holds the event title, date and status badge views.
+     */
     public static class HistoryViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, dateText, statusText;
 

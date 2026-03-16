@@ -33,8 +33,10 @@ public class WaitingListActivity extends AppCompatActivity {
             return insets;
         });
 
+        // getting the event ID passed from MainActivity (used to label which event's list is shown)
         String eventId = getIntent().getStringExtra("event_id");
 
+        // showing the event ID as a label at the top of the screen
         TextView eventLabel = findViewById(R.id.waitingListEventLabel);
         eventLabel.setText("Event: " + (eventId != null ? eventId : "Unknown"));
 
@@ -42,16 +44,19 @@ public class WaitingListActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.waitingListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // the list that the adapter will display — starts empty, filled by Firestore query
         List<Entrant> entrants = new ArrayList<>();
         EntrantAdapter adapter = new EntrantAdapter(entrants);
         recyclerView.setAdapter(adapter);
 
         if (eventId != null) {
+            // querying Firestore for entrants in this event's waitingList subcollection
             FirebaseFirestore.getInstance()
                     .collection("events").document(eventId).collection("waitingList")
                     .get()
                     .addOnSuccessListener(snapshots -> {
                         for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            // build Entrant from Firestore doc fields
                             String id = doc.getId();
                             String name = doc.getString("name") != null ? doc.getString("name") : "Unknown";
                             String email = doc.getString("email") != null ? doc.getString("email") : "";
@@ -59,9 +64,11 @@ public class WaitingListActivity extends AppCompatActivity {
                             String status = doc.getString("status") != null ? doc.getString("status") : "Waiting";
                             entrants.add(new Entrant(id, name, email, phone, status));
                         }
+                        // update the count and refresh the list
                         countText.setText(entrants.size() + " entrants on waiting list");
                         adapter.notifyDataSetChanged();
 
+                        // if no entrants found in Firestore, fall back to placeholder data
                         if (entrants.isEmpty()) {
                             entrants.addAll(getPlaceholderEntrants());
                             countText.setText(entrants.size() + " entrants on waiting list (placeholder)");
@@ -69,20 +76,24 @@ public class WaitingListActivity extends AppCompatActivity {
                         }
                     })
                     .addOnFailureListener(e -> {
+                        // fall back to placeholder data if Firestore query fails
                         Toast.makeText(this, "Could not load waiting list", Toast.LENGTH_SHORT).show();
                         entrants.addAll(getPlaceholderEntrants());
                         countText.setText(entrants.size() + " entrants on waiting list (unknown)");
                         adapter.notifyDataSetChanged();
                     });
         } else {
+            // no event ID — show placeholder data
             entrants.addAll(getPlaceholderEntrants());
             countText.setText(entrants.size() + " entrants on waiting list (unknown)");
             adapter.notifyDataSetChanged();
         }
 
+        // back button — closing this screen
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 
+    // returning 5 hardcoded entrants as fallback when Firestore data is not available, only for independent testing
     private List<Entrant> getPlaceholderEntrants() {
         List<Entrant> list = new ArrayList<>();
         list.add(new Entrant("1", "Alice Johnson", "alice@email.com", "780-111-2222", "Waiting"));

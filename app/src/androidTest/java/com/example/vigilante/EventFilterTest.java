@@ -27,12 +27,14 @@ public class EventFilterTest {
 
     @Before
     public void setUp() throws Exception {
+        // signing in with test account before each test
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1500);
     }
 
     private ActivityScenario<AllEventsActivity> launchAllEvents() {
+        // launching AllEventsActivity with "all" type to show all events
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AllEventsActivity.class);
         intent.putExtra("type", "all");
         return ActivityScenario.launch(intent);
@@ -42,6 +44,7 @@ public class EventFilterTest {
     public void chipAll_isSelectedByDefault() {
         try (ActivityScenario<AllEventsActivity> scenario = launchAllEvents()) {
             Thread.sleep(2000);
+            // verifying the "All" chip is displayed by default — US 01.01.04
             onView(withId(R.id.chipAll)).check(matches(isDisplayed()));
             onView(withId(R.id.chipAll)).check(matches(withText("All")));
         } catch (InterruptedException e) {}
@@ -51,6 +54,7 @@ public class EventFilterTest {
     public void clickSportsChip_filtersToSportsCategory() {
         try (ActivityScenario<AllEventsActivity> scenario = launchAllEvents()) {
             Thread.sleep(2000);
+            // clicking the Sports chip and verifying the event list filters — US 01.01.04
             onView(withId(R.id.chipSports)).perform(click());
             Thread.sleep(1000);
             onView(withId(R.id.all_events_recycler_view)).check(matches(isDisplayed()));
@@ -62,6 +66,7 @@ public class EventFilterTest {
     public void clickArtsChip_filtersToArtsCategory() {
         try (ActivityScenario<AllEventsActivity> scenario = launchAllEvents()) {
             Thread.sleep(2000);
+            // clicking the Arts chip and verifying the list re-filters — US 01.01.04
             onView(withId(R.id.chipArts)).perform(click());
             Thread.sleep(1000);
             onView(withId(R.id.all_events_recycler_view)).check(matches(isDisplayed()));
@@ -72,6 +77,7 @@ public class EventFilterTest {
     public void clickMusicChip_thenClickAll_showsAllEventsAgain() {
         try (ActivityScenario<AllEventsActivity> scenario = launchAllEvents()) {
             Thread.sleep(2000);
+            // clicking Music then All to verify filter resets — US 01.01.04
             onView(withId(R.id.chipMusic)).perform(click());
             Thread.sleep(500);
             onView(withId(R.id.chipAll)).perform(click());
@@ -83,6 +89,7 @@ public class EventFilterTest {
     @Test
     public void categoryChips_allDisplayed() {
         try (ActivityScenario<AllEventsActivity> scenario = launchAllEvents()) {
+            // verifying all category chips are visible on screen — US 01.01.04
             onView(withId(R.id.chipAll)).check(matches(isDisplayed()));
             onView(withId(R.id.chipSports)).check(matches(isDisplayed()));
             onView(withId(R.id.chipArts)).check(matches(isDisplayed()));

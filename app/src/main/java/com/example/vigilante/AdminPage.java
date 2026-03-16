@@ -15,6 +15,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * This class is used to view the AdminPage when admin logs in which is different than other user's homepage
+ */
 public class AdminPage extends AppCompatActivity {
 
     @Override
@@ -47,6 +50,7 @@ public class AdminPage extends AppCompatActivity {
 
         browseevents_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
                 Intent intent = new Intent(AdminPage.this, AllEventsActivity.class);
                 intent.putExtra("type", "admin");
                 startActivity(intent);

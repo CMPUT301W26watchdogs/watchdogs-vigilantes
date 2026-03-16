@@ -23,6 +23,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is called to show all the events available in firebase with category filtering
+ */
 public class AllEventsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -45,6 +48,7 @@ public class AllEventsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        //Gemini March 8th 2026 , help add event list from firebase
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -82,6 +86,7 @@ public class AllEventsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // category chip filter listeners for filtering events by type — US 01.01.04
     private void setupChipListeners() {
         View.OnClickListener chipListener = v -> {
             int id = v.getId();
@@ -114,6 +119,7 @@ public class AllEventsActivity extends AppCompatActivity {
         chipMusic.setTextColor(getColor(activeFilter.equals("Music") ? R.color.white : R.color.text_primary));
     }
 
+    // applies the selected category filter to the full event list
     private void applyFilter() {
         eventList.clear();
         if (activeFilter.equals("All")) {
@@ -153,6 +159,9 @@ public class AllEventsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This function fetches events for a user with user specific options
+     */
     private void fetchAllEvents() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -172,6 +181,9 @@ public class AllEventsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This function fetches events created by that organizer with organizer specific options
+     */
     private void fetchMyOrgEvents() {
         FirebaseUser organizerId = mAuth.getCurrentUser();
         db.collection("events").whereEqualTo("organizerId", organizerId.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -189,6 +201,9 @@ public class AllEventsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This function fetches events for admin with admin specific options
+     */
     private void fetchAdminEvents() {
         db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();

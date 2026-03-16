@@ -17,9 +17,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
+// RecyclerView adapter — binds a list of Entrant objects to the waiting list RecyclerView
 public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHolder> {
 
-    private final List<Entrant> entrants;
+    private final List<Entrant> entrants; // the data set this adapter displays
     private final String eventId;
 
     public EntrantAdapter(List<Entrant> entrants) {
@@ -32,20 +33,23 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         this.eventId = eventId;
     }
 
+    // called by RecyclerView when it needs a new row view — inflates the item layout and wraps it in a ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_entrant, parent, false);
+                .inflate(R.layout.item_entrant, parent, false); // inflate the single-row layout
         return new ViewHolder(view);
     }
 
+    // called by RecyclerView to fill a row with data at the given position
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // get the entrant for this row
         Entrant entrant = entrants.get(position);
         holder.nameText.setText(entrant.getName());
         holder.emailText.setText(entrant.getEmail());
-        holder.statusText.setText(entrant.getStatus());
+        holder.statusText.setText(entrant.getStatus()); // e.g. "Waiting", "Selected"
 
         if (eventId != null && !"cancelled".equals(entrant.getStatus())) {
             holder.cancelButton.setVisibility(View.VISIBLE);
@@ -76,11 +80,13 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         }
     }
 
+    // tells RecyclerView how many rows to draw
     @Override
     public int getItemCount() {
         return entrants.size();
     }
 
+    // ViewHolder caches the text view references for each row so findViewById isn't called repeatedly
     static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView nameText;
         final TextView emailText;

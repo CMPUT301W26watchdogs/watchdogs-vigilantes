@@ -29,8 +29,10 @@ public class LotteryInfoActivity extends AppCompatActivity {
             return insets;
         });
 
+        // getting the event ID passed from EventDetailActivity via the "Lottery Info" button
         String eventId = getIntent().getStringExtra("event_id");
 
+        // getting references to the text views that display lottery details
         TextView lotteryEventName = findViewById(R.id.lotteryEventName);
         TextView lotteryStatus = findViewById(R.id.lotteryStatus);
         TextView lotteryDrawDate = findViewById(R.id.lotteryDrawDate);
@@ -41,6 +43,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
         if (eventId != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            // loading event name and capacity from the event document
             db.collection("events").document(eventId).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
@@ -91,6 +94,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> lotteryWaitlistCount.setText("0"));
 
+            // checking the current user's status in the attendees subcollection
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
@@ -109,6 +113,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
                 lotteryStatus.setText("Not logged in");
             }
         } else {
+            // no event ID provided
             lotteryEventName.setText("Unknown Event");
             lotteryStatus.setText("N/A");
             lotteryDrawDate.setText("N/A");
@@ -117,6 +122,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
             lotteryCriteria.setText("");
         }
 
+        // back button for closing this screen and returning to EventDetailActivity
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 }

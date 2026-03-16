@@ -34,12 +34,14 @@ public class WaitlistCountTest {
 
     @Before
     public void setUp() throws Exception {
+        // signing in with test account and creating test event with mixed-status attendees
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
 
         db = FirebaseFirestore.getInstance();
 
+        // creating a test event with a waiting list limit of 20
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("title", "Waitlist Count Test");
         eventData.put("description", "Testing waitlist count display");
@@ -48,6 +50,7 @@ public class WaitlistCountTest {
         eventData.put("registrationEnd", "Mar 1");
         Tasks.await(db.collection("events").document(TEST_EVENT_ID).set(eventData));
 
+        // adding 3 pending attendees to the test event
         for (int i = 0; i < 3; i++) {
             Map<String, Object> attendee = new HashMap<>();
             attendee.put("name", "Pending User " + i);
@@ -58,6 +61,7 @@ public class WaitlistCountTest {
                     .collection("attendees").document("waitlist-uid-" + i).set(attendee));
         }
 
+        // adding a cancelled attendee to verify it's excluded from count
         Map<String, Object> cancelledAttendee = new HashMap<>();
         cancelledAttendee.put("name", "Cancelled User");
         cancelledAttendee.put("email", "cancelled@test.com");
@@ -73,6 +77,7 @@ public class WaitlistCountTest {
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<EventDetailActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
+            // verifying the waitlist count shows 3 (excludes cancelled) — US 01.05.04
             onView(withId(R.id.waitlistCount)).check(matches(withText("3")));
         } catch (InterruptedException e) {}
     }
@@ -83,6 +88,7 @@ public class WaitlistCountTest {
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<EventDetailActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
+            // verifying the event capacity is displayed correctly — US 01.05.04
             onView(withId(R.id.eventCapacity)).check(matches(withText("20")));
         } catch (InterruptedException e) {}
     }
@@ -93,6 +99,7 @@ public class WaitlistCountTest {
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<EventDetailActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
+            // verifying the event title matches the test data — US 01.05.04
             onView(withId(R.id.eventTitle)).check(matches(withText("Waitlist Count Test")));
         } catch (InterruptedException e) {}
     }
@@ -103,12 +110,14 @@ public class WaitlistCountTest {
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<EventDetailActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
+            // verifying cancelled entrants are excluded from the waitlist count — US 01.05.04
             onView(withId(R.id.waitlistCount)).check(matches(withText("3")));
         } catch (InterruptedException e) {}
     }
 
     @After
     public void tearDown() throws Exception {
+        // cleaning up test attendee and event data from Firestore
         for (int i = 0; i < 3; i++) {
             db.collection("events").document(TEST_EVENT_ID)
                     .collection("attendees").document("waitlist-uid-" + i).delete();
