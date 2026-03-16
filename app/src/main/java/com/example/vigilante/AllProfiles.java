@@ -1,5 +1,3 @@
-// lists all non-organizer user profiles from Firestore for admin browsing — US 03.05.01
-
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -18,9 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-/**
-* This class is used to pull all the profiles registered in firebase
- */
+
 public class AllProfiles extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -40,9 +36,7 @@ public class AllProfiles extends AppCompatActivity {
         recyclerView = findViewById(R.id.all_profile_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
         profileList = new ArrayList<>();
-        //eventAdapter = new EventAdapter(eventList);
         profileAdapter = new ProfileAdapter(profileList);
         recyclerView.setAdapter(profileAdapter);
         String type = getIntent().getStringExtra("type");
@@ -61,9 +55,7 @@ public class AllProfiles extends AppCompatActivity {
         });
 
     }
-/*
-* This function is used in adminpage to pull all profiles
- */
+
     private void fetchAllProfiles() {
         db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             profileList.clear();
@@ -82,9 +74,7 @@ public class AllProfiles extends AppCompatActivity {
 
         });
     }
-    /*
-     * This function is used in adminpage to pull all profiles that are organizers
-     */
+
     private void fetchOrgProfiles() {
         db.collection("users").orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             profileList.clear();
@@ -104,4 +94,3 @@ public class AllProfiles extends AppCompatActivity {
         });
     }
 }
-

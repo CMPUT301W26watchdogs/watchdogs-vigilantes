@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.zxing.core)
     implementation(libs.zxing.embedded)
     implementation(libs.play.services.maps)
+    implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
@@ -55,9 +56,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     testImplementation("org.mockito:mockito-core:5.3.1")
-// Allows mocking of static methods like FirebaseAuth.getInstance()
     testImplementation("org.mockito:mockito-inline:5.2.0")
     implementation("com.google.android.material:material:1.9.0")
-    //implementation(files("/Users/suryanshankur/Library/Android/sdk/platforms/android-36/android.jar"))
 
 }
