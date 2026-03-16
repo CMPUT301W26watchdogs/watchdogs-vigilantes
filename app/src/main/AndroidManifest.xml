@@ -42,6 +42,8 @@
         <activity android:name=".LotteryInfoActivity"/>
         <activity android:name=".EventCreatedActivity"/>
         <activity android:name=".WaitingListActivity"/>
+        <activity android:name=".EventHistoryActivity"/>
+        <activity android:name=".NotificationsActivity"/>
 
     </application>
 

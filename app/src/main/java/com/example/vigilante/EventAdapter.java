@@ -87,10 +87,24 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                     cancelSignUp(v.getContext(), event, position);
                                 });
                             } else if ("selected".equals(status)) {
-                                holder.signUpEvent.setText("You're Selected");
-                                holder.signUpEvent.setEnabled(false);
+                                holder.signUpEvent.setText("View Invitation");
+                                holder.signUpEvent.setEnabled(true);
                                 holder.statusBadge.setText("SELECTED");
                                 holder.statusBadge.setBackgroundResource(R.drawable.bg_status_selected);
+                                holder.signUpEvent.setOnClickListener(v -> {
+                                    Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+                                    intent.putExtra("event_id", event.getId());
+                                    v.getContext().startActivity(intent);
+                                });
+                            } else if ("accepted".equals(status)) {
+                                holder.signUpEvent.setText("Enrolled");
+                                holder.signUpEvent.setEnabled(false);
+                                holder.statusBadge.setText("ENROLLED");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_badge);
+                            } else if ("declined".equals(status)) {
+                                holder.signUpEvent.setText("Sign Up");
+                                holder.statusBadge.setText("DECLINED");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_closed);
                             }
                         }
                     });

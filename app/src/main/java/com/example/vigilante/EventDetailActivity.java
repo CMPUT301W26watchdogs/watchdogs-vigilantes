@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,8 +27,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class EventDetailActivity extends AppCompatActivity {
 
@@ -62,6 +66,8 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView registration = findViewById(R.id.eventRegistration);
         TextView signUpStatus = findViewById(R.id.signUpStatus);
         Button registerButton = findViewById(R.id.registerButton);
+        Button acceptButton = findViewById(R.id.acceptButton);
+        Button declineButton = findViewById(R.id.declineButton);
         ImageView posterImage = findViewById(R.id.eventPoster);
         TextView regStartDate = findViewById(R.id.regStartDate);
         TextView regEndDate = findViewById(R.id.regEndDate);
@@ -135,18 +141,37 @@ public class EventDetailActivity extends AppCompatActivity {
                                 if ("pending".equals(status)) {
                                     signUpStatus.setText("Your status: Pending");
                                     registerButton.setText("Cancel SignUp");
+                                    registerButton.setVisibility(View.VISIBLE);
+                                    acceptButton.setVisibility(View.GONE);
+                                    declineButton.setVisibility(View.GONE);
                                     registerButton.setOnClickListener(v -> cancelSignUp(eventId, currentUser.getUid()));
                                 } else if ("selected".equals(status)) {
-                                    signUpStatus.setText("Your status: Selected");
-                                    registerButton.setText("You're Selected!");
+                                    signUpStatus.setText("You've been selected! Accept or decline your invitation.");
+                                    registerButton.setVisibility(View.GONE);
+                                    acceptButton.setVisibility(View.VISIBLE);
+                                    declineButton.setVisibility(View.VISIBLE);
+                                    acceptButton.setOnClickListener(v -> acceptInvitation(eventId, currentUser.getUid()));
+                                    declineButton.setOnClickListener(v -> declineInvitation(eventId, currentUser.getUid()));
+                                } else if ("accepted".equals(status)) {
+                                    signUpStatus.setText("Your status: Accepted — You're in!");
+                                    registerButton.setText("Enrolled");
                                     registerButton.setEnabled(false);
-                                } else if ("cancelled".equals(status)) {
-                                    signUpStatus.setText("You cancelled your sign-up.");
+                                    registerButton.setVisibility(View.VISIBLE);
+                                    acceptButton.setVisibility(View.GONE);
+                                    declineButton.setVisibility(View.GONE);
+                                } else if ("cancelled".equals(status) || "declined".equals(status)) {
+                                    signUpStatus.setText("You are no longer on the waitlist.");
                                     registerButton.setText("Sign Up");
+                                    registerButton.setVisibility(View.VISIBLE);
+                                    acceptButton.setVisibility(View.GONE);
+                                    declineButton.setVisibility(View.GONE);
                                     registerButton.setOnClickListener(v -> performSignUp(eventId, currentUser.getUid()));
                                 }
                             } else {
                                 signUpStatus.setText("You have not signed up for this event");
+                                registerButton.setVisibility(View.VISIBLE);
+                                acceptButton.setVisibility(View.GONE);
+                                declineButton.setVisibility(View.GONE);
                                 registerButton.setOnClickListener(v -> performSignUp(eventId, currentUser.getUid()));
                             }
                         })
@@ -170,6 +195,63 @@ public class EventDetailActivity extends AppCompatActivity {
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
 
         setupBottomNav();
+    }
+
+    private void acceptInvitation(String eventId, String userId) {
+        db.collection("events").document(eventId)
+                .collection("attendees").document(userId)
+                .update("status", "accepted")
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(this, "You've accepted the invitation!", Toast.LENGTH_SHORT).show();
+                    recreate();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void declineInvitation(String eventId, String userId) {
+        db.collection("events").document(eventId)
+                .collection("attendees").document(userId)
+                .update("status", "declined")
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(this, "Invitation declined.", Toast.LENGTH_SHORT).show();
+                    drawReplacementFromWaitlist(eventId);
+                    recreate();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void drawReplacementFromWaitlist(String eventId) {
+        db.collection("events").document(eventId)
+                .collection("attendees")
+                .whereEqualTo("status", "pending")
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    List<QueryDocumentSnapshot> pending = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        pending.add(doc);
+                    }
+                    if (!pending.isEmpty()) {
+                        int randomIndex = new Random().nextInt(pending.size());
+                        QueryDocumentSnapshot chosen = pending.get(randomIndex);
+                        chosen.getReference().update("status", "selected");
+
+                        String chosenUserId = chosen.getString("userId");
+                        if (chosenUserId != null) {
+                            Map<String, Object> notification = new HashMap<>();
+                            notification.put("userId", chosenUserId);
+                            notification.put("eventId", eventId);
+                            notification.put("title", "You've been selected!");
+                            notification.put("message", "A spot opened up and you were drawn from the waitlist. Open the event to accept or decline.");
+                            notification.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
+                            notification.put("read", false);
+                            db.collection("notifications").add(notification);
+                        }
+
+                        Toast.makeText(this, "A replacement has been drawn from the waitlist.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void loadWaitlistCount(TextView waitlistCount) {
@@ -199,6 +281,10 @@ public class EventDetailActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_home) {
                 startActivity(new Intent(this, HomePage.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_alerts) {
+                startActivity(new Intent(this, NotificationsActivity.class));
                 finish();
                 return true;
             } else if (id == R.id.nav_profile) {

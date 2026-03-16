@@ -18,13 +18,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class ProfilePage extends AppCompatActivity {
 
     private TextView nameTv, emailTv, phoneTv, avatarInitialTv;
+    private TextView statEventsCount, statSelectedCount, statWaitingCount;
+    private SwitchMaterial notificationToggle;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -43,6 +47,7 @@ public class ProfilePage extends AppCompatActivity {
         Button signout_button = (Button) findViewById(R.id.signout_account_button);
         Button addEventBtn = findViewById(R.id.add_event_button);
         Button myEventsBtn = findViewById(R.id.my_event_button);
+        Button eventHistoryBtn = findViewById(R.id.event_history_button);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -50,6 +55,10 @@ public class ProfilePage extends AppCompatActivity {
         emailTv = findViewById(R.id.email_text);
         phoneTv = findViewById(R.id.phonenumber_text);
         avatarInitialTv = findViewById(R.id.avatarInitial);
+        statEventsCount = findViewById(R.id.statEventsCount);
+        statSelectedCount = findViewById(R.id.statSelectedCount);
+        statWaitingCount = findViewById(R.id.statWaitingCount);
+        notificationToggle = findViewById(R.id.notificationToggle);
 
         if (mAuth.getCurrentUser() != null) {
             String userId = mAuth.getCurrentUser().getUid();
@@ -82,11 +91,31 @@ public class ProfilePage extends AppCompatActivity {
                     } else {
                         phoneTv.setText("Not Provided");
                     }
+
+                    Boolean notificationsEnabled = documentSnapshot.getBoolean("notificationsEnabled");
+                    notificationToggle.setChecked(!Boolean.FALSE.equals(notificationsEnabled));
                 }
             }).addOnFailureListener(e -> {
                 Toast.makeText(this, "Error loading profile", Toast.LENGTH_SHORT).show();
             });
+
+            loadProfileStats(userId);
         }
+
+        notificationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (mAuth.getCurrentUser() != null) {
+                db.collection("users").document(mAuth.getCurrentUser().getUid())
+                        .update("notificationsEnabled", isChecked)
+                        .addOnSuccessListener(aVoid -> {
+                            String msg = isChecked ? "Notifications enabled" : "Notifications disabled";
+                            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                        });
+            }
+        });
+
+        eventHistoryBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, EventHistoryActivity.class));
+        });
 
         addEventBtn.setOnClickListener(view -> {
             startActivity(new Intent(ProfilePage.this, AddEvent.class));
@@ -129,6 +158,42 @@ public class ProfilePage extends AppCompatActivity {
         setupBottomNav();
     }
 
+    private void loadProfileStats(String userId) {
+        final int[] totalEvents = {0};
+        final int[] selectedCount = {0};
+        final int[] waitingCount = {0};
+
+        db.collection("events").get().addOnSuccessListener(eventSnapshots -> {
+            int totalEventsToCheck = eventSnapshots.size();
+            if (totalEventsToCheck == 0) return;
+
+            final int[] checked = {0};
+
+            for (QueryDocumentSnapshot eventDoc : eventSnapshots) {
+                db.collection("events").document(eventDoc.getId())
+                        .collection("attendees").document(userId)
+                        .get()
+                        .addOnSuccessListener(attendeeDoc -> {
+                            if (attendeeDoc.exists()) {
+                                totalEvents[0]++;
+                                String status = attendeeDoc.getString("status");
+                                if ("selected".equals(status) || "accepted".equals(status)) {
+                                    selectedCount[0]++;
+                                } else if ("pending".equals(status)) {
+                                    waitingCount[0]++;
+                                }
+                            }
+                            checked[0]++;
+                            if (checked[0] >= totalEventsToCheck) {
+                                statEventsCount.setText(String.valueOf(totalEvents[0]));
+                                statSelectedCount.setText(String.valueOf(selectedCount[0]));
+                                statWaitingCount.setText(String.valueOf(waitingCount[0]));
+                            }
+                        });
+            }
+        });
+    }
+
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         bottomNav.setSelectedItemId(R.id.nav_profile);
@@ -142,6 +207,10 @@ public class ProfilePage extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_home) {
                 startActivity(new Intent(this, HomePage.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_alerts) {
+                startActivity(new Intent(this, NotificationsActivity.class));
                 finish();
                 return true;
             } else if (id == R.id.nav_profile) {

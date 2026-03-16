@@ -130,7 +130,7 @@ also enhanced the full UI to match `Project301_facelift.pdf` mockup.
 
 ---
 
-## all files changed
+## all files changed (re-opened stories + UI)
 
 **java (20 files):** all files in `com.example.vigilante` — comments removed + UI/logic updates where needed
 **layouts:** `homepage.xml`, `allevents.xml`, `activity_event_detail.xml`, `profile_page.xml`, `activity_add_event.xml`, `adminpage.xml`, `register_page.xml`, `item_event.xml`, `item_entrant.xml`, `attendee_list.xml`, `activity_lottery_info.xml`, `item_profile.xml`
@@ -138,3 +138,144 @@ also enhanced the full UI to match `Project301_facelift.pdf` mockup.
 **drawables:** 10 new drawable XMLs
 **menu:** `bottom_nav_menu.xml`
 **config:** `AndroidManifest.xml`, `build.gradle.kts`
+
+---
+---
+
+# mar 15 (part 2) — 5 new user stories
+
+## overview
+
+five new user stories implemented on branch `UI_Revamp+Code_Documentation`:
+1. US 01.01.04 — entrant filter events by interests/availability
+2. US 01.02.03 — entrant event history
+3. US 01.04.03 — entrant opt out of notifications
+4. US 01.05.01 — replacement draw when selected user declines
+5. US 02.05.01 — organizer notify chosen entrants
+
+---
+
+## US 01.01.04 — filter events by interests and availability
+
+### what was missing
+- category filter chips (All/Sports/Arts/Music) existed in `allevents.xml` but were purely visual — no click handlers or filtering logic
+- `Event.java` had no `category` field
+- `AddEvent.java` had a category input field (`event_category`) but never saved it to Firestore
+
+### what was done
+- added `category` field to `Event.java` with getter/setter
+- `AddEvent.java` now reads `event_category` input and saves it to Firestore as `category`
+- `AllEventsActivity.java` — full rewrite of filtering logic:
+  - maintains `allEventsList` (unfiltered) and `eventList` (filtered for display)
+  - `setupChipListeners()` wires click handlers on all 4 chips
+  - `updateChipStyles()` toggles `bg_chip_selected`/`bg_chip_unselected` per active filter
+  - `applyFilter()` filters `allEventsList` by category (case-insensitive match)
+  - filter applies across all fetch modes (all, org, admin)
+
+### files changed
+- `Event.java` — added `category` field
+- `AddEvent.java` — saves category to Firestore
+- `AllEventsActivity.java` — chip filtering logic
+
+---
+
+## US 01.02.03 — event history (registered events, selected or not)
+
+### what was missing
+- no way for entrants to see a history of events they registered for and their selection status
+
+### what was done
+- created `EventHistoryActivity.java` — queries all events, then for each event checks if the current user has an attendee document; collects matching events with their status (pending/selected/accepted/declined/cancelled)
+- created `EventHistoryAdapter.java` — RecyclerView adapter that displays event title, date, and a color-coded status badge; tapping a row opens `EventDetailActivity`
+- status badge colors: selected=blue, accepted=green, pending=orange, declined/cancelled=gray
+- added "Event History" button to `profile_page.xml` between phone section and organizer buttons
+- button wired in `ProfilePage.java`
+- profile stats row (Events/Selected/Waiting) now populated from Firestore via `loadProfileStats()`
+
+### files changed
+- `EventHistoryActivity.java` — new file
+- `EventHistoryAdapter.java` — new file
+- `activity_event_history.xml` — new layout with back arrow, subtitle, RecyclerView, bottom nav
+- `item_event_history.xml` — new card layout for history items
+- `ProfilePage.java` — event history button, profile stats query, notification toggle
+- `profile_page.xml` — event history button, notification toggle section
+- `AndroidManifest.xml` — registered `EventHistoryActivity`
+
+---
+
+## US 01.04.03 — opt out of receiving notifications
+
+### what was missing
+- no way for entrants to disable notifications from organizers/admins
+
+### what was done
+- added `SwitchMaterial` toggle to `profile_page.xml` in a NOTIFICATIONS section
+- `ProfilePage.java` reads `notificationsEnabled` boolean from Firestore user doc and sets toggle state
+- toggle change listener updates Firestore `notificationsEnabled` field
+- when organizer sends notifications (US 02.05.01), `viewAttendee.java` checks each user's `notificationsEnabled` flag — skips users who opted out
+- `drawReplacementFromWaitlist()` in `EventDetailActivity.java` also creates notifications — respecting the flag would require an additional check at the notification display level (handled by the NotificationsActivity query)
+
+### files changed
+- `profile_page.xml` — notification toggle section
+- `ProfilePage.java` — toggle read/write logic
+- `viewAttendee.java` — checks `notificationsEnabled` before sending
+
+---
+
+## US 01.05.01 — replacement draw when selected user declines
+
+### what was missing
+- when a selected user was shown as "selected" in `EventDetailActivity`, the only options were a disabled button — no way to accept or decline
+- no mechanism to automatically draw a replacement from the waitlist
+
+### what was done
+- `EventDetailActivity.java`:
+  - when status is `"selected"`, shows Accept and Decline buttons (hides Sign Up button)
+  - `acceptInvitation()` updates status to `"accepted"`
+  - `declineInvitation()` updates status to `"declined"` then calls `drawReplacementFromWaitlist()`
+  - `drawReplacementFromWaitlist()` queries all `"pending"` attendees, randomly picks one, sets them to `"selected"`, and creates a notification in Firestore
+  - also handles `"accepted"` and `"declined"` display states
+- `activity_event_detail.xml` — added Accept/Decline button row (green/red MaterialButtons) in a horizontal LinearLayout, both `visibility="gone"` by default
+- `EventAdapter.java` — updated to handle `"accepted"`, `"declined"` statuses with appropriate badge colors and button text
+
+### files changed
+- `EventDetailActivity.java` — accept/decline/redraw logic
+- `activity_event_detail.xml` — accept/decline buttons
+- `EventAdapter.java` — additional status handling
+
+---
+
+## US 02.05.01 — organizer send notification to chosen entrants
+
+### what was missing
+- no way for organizer to notify selected entrants that they've been chosen
+
+### what was done
+- `viewAttendee.java`:
+  - added "Draw Lottery" button visible on waiting list view — opens dialog for organizer to enter number of entrants to select, then `performLotteryDraw()` randomly selects N pending entrants and sets them to `"selected"`
+  - added "Notify Selected Entrants" button visible on selected entrants view
+  - `sendNotificationToSelected()` iterates over all `"selected"` attendees, checks each user's `notificationsEnabled` preference, and creates a notification document in Firestore `notifications` collection with userId, eventId, title, message, timestamp, read=false
+- created `NotificationsActivity.java` — displays all notifications for current user from Firestore `notifications` collection, ordered by timestamp descending; tapping a notification marks it as read and opens the event
+- wired "Alerts" tab in bottom navigation across all activities to open `NotificationsActivity`
+- "My Alerts" card on HomePage now navigates to `NotificationsActivity`
+- `attendee_list.xml` — added Draw Lottery button (blue) and Notify Selected button (green)
+
+### files changed
+- `viewAttendee.java` — lottery draw + notification sending
+- `attendee_list.xml` — draw lottery and notify buttons
+- `NotificationsActivity.java` — new file with embedded NotificationAdapter
+- `activity_notifications.xml` — new layout matching VIGILANTE header style
+- `item_notification.xml` — new card layout for notification items
+- `HomePage.java` — alerts card navigates to NotificationsActivity
+- all activities with bottom nav — added `nav_alerts` handler
+- `AndroidManifest.xml` — registered `NotificationsActivity`
+
+---
+
+## all files changed (5 new stories)
+
+**new java files:** `EventHistoryActivity.java`, `EventHistoryAdapter.java`, `NotificationsActivity.java`
+**modified java:** `Event.java`, `AddEvent.java`, `AllEventsActivity.java`, `EventDetailActivity.java`, `EventAdapter.java`, `ProfilePage.java`, `viewAttendee.java`, `HomePage.java`
+**new layouts:** `activity_event_history.xml`, `item_event_history.xml`, `activity_notifications.xml`, `item_notification.xml`
+**modified layouts:** `activity_event_detail.xml`, `profile_page.xml`, `attendee_list.xml`
+**config:** `AndroidManifest.xml`

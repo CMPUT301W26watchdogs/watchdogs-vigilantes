@@ -55,7 +55,7 @@ public class HomePage extends AppCompatActivity {
         });
 
         findViewById(R.id.profileCard).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfilePage.class));
+            startActivity(new Intent(this, NotificationsActivity.class));
         });
 
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
@@ -82,6 +82,9 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             } else if (id == R.id.nav_home) {
+                return true;
+            } else if (id == R.id.nav_alerts) {
+                startActivity(new Intent(this, NotificationsActivity.class));
                 return true;
             } else if (id == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfilePage.class));

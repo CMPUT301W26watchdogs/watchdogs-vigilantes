@@ -53,9 +53,31 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/draw_lottery_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Draw Lottery"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_selected"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/notify_selected_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Notify Selected Entrants"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_open"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_all_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginTop="8dp"
             android:text="Cancel All Pending"
             android:textSize="14sp"
             android:backgroundTint="@color/vigilante_red"

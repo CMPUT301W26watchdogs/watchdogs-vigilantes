@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,9 +27,13 @@ public class AllEventsActivity extends AppCompatActivity {
     private EventAdapter eventAdapter;
 
     private List<Event> eventList;
+    private List<Event> allEventsList;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+
+    private String activeFilter = "All";
+    private TextView chipAll, chipSports, chipArts, chipMusic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,14 @@ public class AllEventsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
+        allEventsList = new ArrayList<>();
+
+        chipAll = findViewById(R.id.chipAll);
+        chipSports = findViewById(R.id.chipSports);
+        chipArts = findViewById(R.id.chipArts);
+        chipMusic = findViewById(R.id.chipMusic);
+
+        setupChipListeners();
 
         String type = getIntent().getStringExtra("type");
         if (type.equals("all")) {
@@ -67,6 +80,53 @@ public class AllEventsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    private void setupChipListeners() {
+        View.OnClickListener chipListener = v -> {
+            int id = v.getId();
+            if (id == R.id.chipAll) activeFilter = "All";
+            else if (id == R.id.chipSports) activeFilter = "Sports";
+            else if (id == R.id.chipArts) activeFilter = "Arts";
+            else if (id == R.id.chipMusic) activeFilter = "Music";
+
+            updateChipStyles();
+            applyFilter();
+        };
+
+        chipAll.setOnClickListener(chipListener);
+        chipSports.setOnClickListener(chipListener);
+        chipArts.setOnClickListener(chipListener);
+        chipMusic.setOnClickListener(chipListener);
+    }
+
+    private void updateChipStyles() {
+        chipAll.setBackgroundResource(activeFilter.equals("All") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipAll.setTextColor(getColor(activeFilter.equals("All") ? R.color.white : R.color.text_primary));
+
+        chipSports.setBackgroundResource(activeFilter.equals("Sports") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipSports.setTextColor(getColor(activeFilter.equals("Sports") ? R.color.white : R.color.text_primary));
+
+        chipArts.setBackgroundResource(activeFilter.equals("Arts") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipArts.setTextColor(getColor(activeFilter.equals("Arts") ? R.color.white : R.color.text_primary));
+
+        chipMusic.setBackgroundResource(activeFilter.equals("Music") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipMusic.setTextColor(getColor(activeFilter.equals("Music") ? R.color.white : R.color.text_primary));
+    }
+
+    private void applyFilter() {
+        eventList.clear();
+        if (activeFilter.equals("All")) {
+            eventList.addAll(allEventsList);
+        } else {
+            for (Event event : allEventsList) {
+                String cat = event.getCategory();
+                if (cat != null && cat.equalsIgnoreCase(activeFilter)) {
+                    eventList.add(event);
+                }
+            }
+        }
+        eventAdapter.notifyDataSetChanged();
+    }
+
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         bottomNav.setSelectedItemId(R.id.nav_events);
@@ -76,6 +136,10 @@ public class AllEventsActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_home) {
                 startActivity(new Intent(this, HomePage.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_alerts) {
+                startActivity(new Intent(this, NotificationsActivity.class));
                 finish();
                 return true;
             } else if (id == R.id.nav_profile) {
@@ -92,14 +156,15 @@ public class AllEventsActivity extends AppCompatActivity {
 
         db.collection("events").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
+            allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
                 event.setcurrentUser(currentUser.getUid());
-                eventList.add(event);
+                allEventsList.add(event);
             }
-            eventAdapter.notifyDataSetChanged();
+            applyFilter();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
@@ -109,13 +174,14 @@ public class AllEventsActivity extends AppCompatActivity {
         FirebaseUser organizerId = mAuth.getCurrentUser();
         db.collection("events").whereEqualTo("organizerId", organizerId.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
+            allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
-                eventList.add(event);
+                allEventsList.add(event);
             }
-            eventAdapter.notifyDataSetChanged();
+            applyFilter();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
@@ -124,13 +190,14 @@ public class AllEventsActivity extends AppCompatActivity {
     private void fetchAdminEvents() {
         db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
+            allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
-                eventList.add(event);
+                allEventsList.add(event);
             }
-            eventAdapter.notifyDataSetChanged();
+            applyFilter();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });

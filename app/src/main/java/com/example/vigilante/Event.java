@@ -16,6 +16,7 @@ public class Event implements Serializable {
     private String registrationStart;
     private String registrationEnd;
     private String organizerId;
+    private String category;
 
     public Event() {}
 
@@ -84,6 +85,10 @@ public class Event implements Serializable {
     public void setRegistrationEnd(String registrationEnd) { this.registrationEnd = registrationEnd; }
 
     public void setOrganizerId(String organizerId) { this.organizerId = organizerId; }
+
+    public String getCategory() { return category; }
+
+    public void setCategory(String category) { this.category = category; }
 
     public  void   setcurrentUser(String currentUser) {
         this.currentUser = currentUser;

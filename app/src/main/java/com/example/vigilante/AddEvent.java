@@ -39,7 +39,7 @@ import java.io.OutputStream;
 
 public class AddEvent extends AppCompatActivity {
 
-    private EditText titleInput, descriptionInput, posterUrlInput, maxEntrantsField;
+    private EditText titleInput, descriptionInput, posterUrlInput, maxEntrantsField, categoryInput;
 
     private String selectedStartDate = "";
     private String selectedEndDate = "";
@@ -70,6 +70,7 @@ public class AddEvent extends AppCompatActivity {
         TextView endDateDisplay = findViewById(R.id.endDateDisplay);
         geolocationCheck = findViewById(R.id.geolocation_checkbox);
         maxEntrantsField = findViewById(R.id.fieldMaxEntrants);
+        categoryInput = findViewById(R.id.event_category);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -118,6 +119,10 @@ public class AddEvent extends AppCompatActivity {
                 startActivity(new Intent(this, HomePage.class));
                 finish();
                 return true;
+            } else if (id == R.id.nav_alerts) {
+                startActivity(new Intent(this, NotificationsActivity.class));
+                finish();
+                return true;
             } else if (id == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfilePage.class));
                 finish();
@@ -163,6 +168,11 @@ public class AddEvent extends AppCompatActivity {
         eventMap.put("registrationEnd", selectedEndDate);
         eventMap.put("geolocationRequired", geolocationCheckChecked);
         eventMap.put("waitingListLimit", max);
+
+        String category = categoryInput.getText().toString().trim();
+        if (!category.isEmpty()) {
+            eventMap.put("category", category);
+        }
 
         db.collection("events").add(eventMap).addOnSuccessListener(documentReference -> {
             String newEventId = documentReference.getId();
