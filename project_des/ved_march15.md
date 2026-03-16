@@ -279,3 +279,120 @@ five new user stories implemented on branch `UI_Revamp+Code_Documentation`:
 **new layouts:** `activity_event_history.xml`, `item_event_history.xml`, `activity_notifications.xml`, `item_notification.xml`
 **modified layouts:** `activity_event_detail.xml`, `profile_page.xml`, `attendee_list.xml`
 **config:** `AndroidManifest.xml`
+
+---
+---
+
+# mar 15 (part 3) — 5 more user stories + tests
+
+## overview
+
+five additional user stories implemented on branch `UI_Revamp+Code_Documentation`, plus unit tests and espresso tests for all five:
+1. US 02.05.03 — organizer draw replacement from waiting pool
+2. US 02.06.03 — organizer see final enrolled entrants list
+3. US 02.06.05 — organizer export enrolled list as CSV
+4. US 02.07.01 — organizer send notification to waiting list entrants
+5. US 02.07.02 — organizer send notification to selected entrants
+
+---
+
+## US 02.05.03 — draw replacement from waiting pool
+
+### what was done
+- added "Draw Replacement" button to `attendee_list.xml` (blue, visible only in selected view)
+- `viewAttendee.java` → `drawReplacementFromWaitlist()` queries pending attendees, randomly selects one, updates status to "selected", and sends a notification to the chosen replacement
+- notification includes event title fallback ("an event" if null)
+
+### files changed
+- `viewAttendee.java` — `drawReplacementFromWaitlist()` method
+- `attendee_list.xml` — `draw_replacement_button`
+
+---
+
+## US 02.06.03 — see final list of enrolled entrants
+
+### what was done
+- added "Enrolled" button to organizer event cards in `item_event.xml` (orgButtonRow2)
+- `EventAdapter.java` — wired `viewAttendeeEnrolled` button to launch `viewAttendee` with type "enrolled"
+- `viewAttendee.java` — new "enrolled" type branch in `onCreate()` sets title "Enrolled Entrants", loads attendees with status "accepted", shows export CSV button
+
+### files changed
+- `item_event.xml` — `viewAttendeeEnrolled` button
+- `EventAdapter.java` — enrolled button click handler
+- `viewAttendee.java` — enrolled type handling
+
+---
+
+## US 02.06.05 — export enrolled entrants list as CSV
+
+### what was done
+- added "Export CSV" button to `attendee_list.xml` (orange, visible only in enrolled view)
+- `viewAttendee.java` → `exportEnrolledCsv()` builds CSV string, writes to cache dir, shares via `FileProvider` intent
+- `escapeCsvField()` and `buildCsvContent()` are static helper methods (testable without Android context)
+- added `FileProvider` declaration to `AndroidManifest.xml`
+- created `res/xml/file_paths.xml` for FileProvider paths config
+
+### files changed
+- `viewAttendee.java` — `exportEnrolledCsv()`, `escapeCsvField()`, `buildCsvContent()`
+- `attendee_list.xml` — `export_csv_button`
+- `AndroidManifest.xml` — FileProvider
+- `res/xml/file_paths.xml` — new file
+
+---
+
+## US 02.07.01 — send notification to all waiting list entrants
+
+### what was done
+- added "Notify Waiting" button to `attendee_list.xml` (green, visible only in waiting view)
+- `viewAttendee.java` → `showNotifyWaitingDialog()` opens AlertDialog with EditText for custom message
+- `sendNotificationToWaiting()` iterates all pending attendees, checks each user's `notificationsEnabled` preference (opt-out respected), creates notification docs in Firestore
+
+### files changed
+- `viewAttendee.java` — `showNotifyWaitingDialog()`, `sendNotificationToWaiting()`
+- `attendee_list.xml` — `notify_waiting_button`
+
+---
+
+## US 02.07.02 — send notification to all selected entrants
+
+### what was done
+- `viewAttendee.java` → `sendNotificationToSelected()` iterates all selected attendees, checks opt-out preference, sends "You've been selected!" notification with event title and accept/decline instructions
+- "Notify Selected" button already existed in `attendee_list.xml`, now wired to this method
+
+### files changed
+- `viewAttendee.java` — `sendNotificationToSelected()`
+
+---
+
+## tests written
+
+### unit tests (5 test files, 38 test methods)
+
+| Test file | US | Tests |
+|---|---|---|
+| `ReplacementDrawTest.java` | 02.05.03 | selectsOneFromPool, emptyPool_returnsNull, notInAlreadySelectedSet, singleEntrantPool, multipleDraws_depletesPool, changesStatusToSelected |
+| `EnrolledListTest.java` | 02.06.03 | filterAccepted_returnsOnlyEnrolled, correctNames, excludesPending, excludesCancelledAndDeclined, emptyList_returnsEmpty, noAccepted_returnsEmpty, allAccepted_returnsAll |
+| `CsvExportTest.java` | 02.06.05 | escapeCsvField (simple, comma, quote, newline, null, empty), buildCsvContent (header, data, lineCount, nullName, specialChar, emptyList) |
+| `WaitingListNotificationTest.java` | 02.07.01 | containsAllFields, nullEventTitle_fallback, customMessagePreserved, defaultUnread, optOutCheck_false, optInCheck_true, nullDefaultsToEnabled |
+| `SelectedNotificationTest.java` | 02.07.02 | hasCorrectTitle, messageIncludesEventTitle, nullTitle_fallback, messageIncludesAcceptDecline, defaultUnread, containsIds, multipleUsersIndependent |
+
+### espresso tests (5 test files, 16 test methods)
+
+| Test file | US | Tests |
+|---|---|---|
+| `ReplacementDrawEspressoTest.java` | 02.05.03 | showsDrawReplacementButton, hidesDrawReplacementButton (waiting view), drawReplacement_selectsPendingEntrant (Firestore verify) |
+| `EnrolledListEspressoTest.java` | 02.06.03 | showsCorrectTitle, showsExportCsvButton, showsRecyclerView, hidesDrawReplacementButton |
+| `CsvExportEspressoTest.java` | 02.06.05 | exportButtonHasCorrectText, exportButtonVisible, selectedView_exportButtonHidden |
+| `NotifyWaitingEspressoTest.java` | 02.07.01 | showsNotifyButton, hidesNotifyWaitingButton (selected view), createsNotificationInFirestore (dialog + send + Firestore verify) |
+| `NotifySelectedEspressoTest.java` | 02.07.02 | showsNotifySelectedButton, hidesNotifySelectedButton (waiting view), createsNotificationInFirestore (Firestore verify) |
+
+---
+
+## all files changed (part 3)
+
+**modified java:** `viewAttendee.java`, `EventAdapter.java`
+**modified layouts:** `attendee_list.xml`, `item_event.xml`
+**modified config:** `AndroidManifest.xml`
+**new files:** `res/xml/file_paths.xml`
+**new unit tests:** `ReplacementDrawTest.java`, `EnrolledListTest.java`, `CsvExportTest.java`, `WaitingListNotificationTest.java`, `SelectedNotificationTest.java`
+**new espresso tests:** `ReplacementDrawEspressoTest.java`, `EnrolledListEspressoTest.java`, `CsvExportEspressoTest.java`, `NotifyWaitingEspressoTest.java`, `NotifySelectedEspressoTest.java`

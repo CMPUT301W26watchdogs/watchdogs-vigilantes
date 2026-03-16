@@ -63,6 +63,17 @@
             app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/draw_replacement_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Draw Replacement"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_selected"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/notify_selected_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -70,6 +81,28 @@
             android:text="Notify Selected Entrants"
             android:textSize="14sp"
             android:backgroundTint="@color/status_open"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/notify_waiting_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Notify Waiting List"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_open"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/export_csv_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Export CSV"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_waiting"
             android:visibility="gone"
             app:cornerRadius="10dp" />
 

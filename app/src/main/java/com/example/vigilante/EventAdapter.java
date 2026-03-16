@@ -157,6 +157,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 intent.putExtra("type", "selected");
                 v.getContext().startActivity(intent);
             });
+
+            // enrolled button — shows the final list of entrants who accepted — US 02.06.03
+            holder.viewAttendeeEnrolled.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), viewAttendee.class);
+                intent.putExtra("EVENT_ID", event.getId());
+                intent.putExtra("type", "enrolled");
+                v.getContext().startActivity(intent);
+            });
         } else {
             holder.orgButtonRow1.setVisibility(View.GONE);
             holder.orgButtonRow2.setVisibility(View.GONE);
@@ -218,7 +226,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText, statusBadge, eventLocationInfo, waitingCount, spotsCount;
         ImageView posterImageView;
-        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected;
+        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected, viewAttendeeEnrolled;
         LinearLayout orgButtonRow1, orgButtonRow2;
 
         public EventViewHolder(@NotNull View itemView) {
@@ -236,6 +244,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             viewAttendee = itemView.findViewById(R.id.viewAttendee);
             viewAttendeeCancelled = itemView.findViewById(R.id.viewAttendeeCancelled);
             viewAttendeeSelected = itemView.findViewById(R.id.viewAttendeeSelected);
+            viewAttendeeEnrolled = itemView.findViewById(R.id.viewAttendeeEnrolled);
             orgButtonRow1 = itemView.findViewById(R.id.orgButtonRow1);
             orgButtonRow2 = itemView.findViewById(R.id.orgButtonRow2);
         }
