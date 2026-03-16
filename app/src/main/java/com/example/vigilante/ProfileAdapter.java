@@ -1,3 +1,5 @@
+// RecyclerView adapter for profile cards — shows name and a delete button for admin to remove profiles — US 03.02.01
+
 package com.example.vigilante;
 
 import static androidx.core.app.ActivityCompat.recreate;

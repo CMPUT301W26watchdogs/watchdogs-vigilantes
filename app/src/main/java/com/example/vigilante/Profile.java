@@ -1,3 +1,5 @@
+// data model for a user profile — holds name, email, organizer flag for Firestore deserialization — US 01.02.01
+
 package com.example.vigilante;
 
 public class Profile {

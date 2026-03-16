@@ -1,3 +1,5 @@
+// unit tests for lottery draw logic — correct count, no duplicates, replacement draw and edge cases — US 02.05.01
+
 package com.example.vigilante;
 
 import org.junit.Test;

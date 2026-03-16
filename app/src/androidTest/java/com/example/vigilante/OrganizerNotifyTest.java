@@ -1,3 +1,5 @@
+// espresso tests for organizer notification sending — verifies draw and notify buttons and Firestore notification creation — US 02.05.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

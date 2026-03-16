@@ -1,3 +1,5 @@
+//Success screen after creating Event showing the generated QR code for the event
+
 package com.example.vigilante;
 
 import android.content.Intent;

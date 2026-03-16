@@ -1,3 +1,5 @@
+// RecyclerView adapter for event history cards — displays event title, date and a color-coded status badge — US 01.02.03
+
 package com.example.vigilante;
 
 import android.content.Intent;

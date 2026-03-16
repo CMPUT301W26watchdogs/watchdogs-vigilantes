@@ -1,3 +1,5 @@
+// model class holding all event fields
+
 package com.example.vigilante;
 
 import java.io.Serializable;

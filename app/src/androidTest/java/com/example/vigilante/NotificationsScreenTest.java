@@ -1,3 +1,5 @@
+// espresso tests for notifications screen — verifies header, recycler view and Firestore data loading — US 01.04.03
+
 package com.example.vigilante;
 
 import androidx.test.core.app.ActivityScenario;

@@ -1,3 +1,5 @@
+// main hub after login — QR code scanner to join events, quick access to events list and profile — US 01.06.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

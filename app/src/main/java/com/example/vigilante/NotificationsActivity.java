@@ -1,3 +1,5 @@
+// displays user notifications from Firestore in a RecyclerView — lottery results and event updates — US 01.04.03
+
 package com.example.vigilante;
 
 import android.content.Intent;

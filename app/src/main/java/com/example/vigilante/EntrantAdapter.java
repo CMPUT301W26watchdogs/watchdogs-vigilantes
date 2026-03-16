@@ -1,3 +1,5 @@
+// RecyclerView adapter that binds Entrant objects to rows in the waiting list and selected entrants screens
+
 package com.example.vigilante;
 
 import android.view.LayoutInflater;

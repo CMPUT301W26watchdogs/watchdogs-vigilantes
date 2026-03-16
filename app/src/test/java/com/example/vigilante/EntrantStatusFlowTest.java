@@ -1,3 +1,5 @@
+// unit tests for entrant status transitions — accept, decline, cancel flows and geolocation data — US 01.05.01, US 02.06.04
+
 package com.example.vigilante;
 
 import org.junit.Test;

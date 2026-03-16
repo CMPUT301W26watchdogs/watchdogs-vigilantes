@@ -1,3 +1,5 @@
+// shows lottery details for an event — entrant status, draw date and total spots from Firestore — US 01.05.05
+
 package com.example.vigilante;
 
 import android.os.Bundle;

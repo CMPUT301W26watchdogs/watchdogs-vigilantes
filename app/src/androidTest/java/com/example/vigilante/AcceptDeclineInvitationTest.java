@@ -1,3 +1,5 @@
+// espresso tests for accept and decline invitation flow — verifies buttons appear and status updates — US 01.05.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

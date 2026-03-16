@@ -1,3 +1,5 @@
+// espresso tests for notification opt-out toggle — verifies preference persists to Firestore — US 01.04.03
+
 package com.example.vigilante;
 
 import androidx.test.core.app.ActivityScenario;

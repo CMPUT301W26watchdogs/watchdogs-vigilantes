@@ -1,3 +1,5 @@
+// espresso tests for cancel all entrants — verifies Firestore status updates to cancelled — US 02.06.04
+
 package com.example.vigilante;
 
 import android.content.Intent;

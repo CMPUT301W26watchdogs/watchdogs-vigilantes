@@ -1,3 +1,5 @@
+// shows the current user's event participation history with color-coded status badges — US 01.02.03
+
 package com.example.vigilante;
 
 import android.content.Intent;

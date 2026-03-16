@@ -1,3 +1,5 @@
+// lists all non-organizer user profiles from Firestore for admin browsing — US 03.05.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

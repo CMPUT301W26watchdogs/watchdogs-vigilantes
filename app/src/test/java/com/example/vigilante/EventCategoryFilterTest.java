@@ -1,3 +1,5 @@
+// unit tests for category-based event filtering logic — case insensitivity, null categories, empty lists — US 01.01.04
+
 package com.example.vigilante;
 
 import org.junit.Before;

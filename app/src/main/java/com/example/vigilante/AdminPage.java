@@ -1,3 +1,5 @@
+// admin dashboard — navigation hub with buttons to browse events, profiles, organizers and sign out — US 03.04.01, US 03.05.01, US 03.07.01
+
 package com.example.vigilante;
 
 import android.content.Intent;

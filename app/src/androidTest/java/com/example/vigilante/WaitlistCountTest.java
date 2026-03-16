@@ -1,3 +1,5 @@
+// espresso tests for waitlist count display — verifies correct count excludes cancelled entrants — US 01.05.04
+
 package com.example.vigilante;
 
 import android.content.Intent;

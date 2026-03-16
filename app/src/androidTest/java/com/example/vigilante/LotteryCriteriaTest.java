@@ -1,3 +1,5 @@
+// espresso tests for lottery criteria display — verifies criteria text, spot count and waitlist count — US 01.05.05
+
 package com.example.vigilante;
 
 import android.content.Intent;

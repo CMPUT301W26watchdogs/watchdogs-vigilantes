@@ -1,3 +1,5 @@
+// espresso tests for event history screen — verifies history loads and is accessible from profile — US 01.02.03
+
 package com.example.vigilante;
 
 import androidx.test.core.app.ActivityScenario;

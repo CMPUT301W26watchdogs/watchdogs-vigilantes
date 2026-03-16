@@ -1,3 +1,5 @@
+//  displays event detailed info page and handles entrant sign-up
+
 package com.example.vigilante;
 
 import android.Manifest;

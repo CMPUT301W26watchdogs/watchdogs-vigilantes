@@ -1,3 +1,5 @@
+// unit tests for notification data construction and opt-out flag logic — US 01.04.03, US 02.05.01
+
 package com.example.vigilante;
 
 import org.junit.Test;

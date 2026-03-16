@@ -1,3 +1,5 @@
+// espresso tests for category-based event filtering via chip UI — US 01.01.04
+
 package com.example.vigilante;
 
 import android.content.Intent;

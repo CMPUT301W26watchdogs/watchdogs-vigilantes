@@ -1,3 +1,5 @@
+// unit tests for event history status formatting — capitalization and history entry structure — US 01.02.03
+
 package com.example.vigilante;
 
 import org.junit.Test;

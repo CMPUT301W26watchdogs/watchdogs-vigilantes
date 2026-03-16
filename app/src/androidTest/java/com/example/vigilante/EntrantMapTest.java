@@ -1,3 +1,5 @@
+// espresso tests for entrant geolocation map — verifies map button and entrant location display — US 02.02.02
+
 package com.example.vigilante;
 
 import android.content.Intent;
