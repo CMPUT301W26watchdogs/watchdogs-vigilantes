@@ -55,12 +55,13 @@ public class EntrantMapActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        LatLng edmonton = new LatLng(53.5461, -113.4938); // default centre
+        // default centre
+        LatLng edmonton = new LatLng(53.5461, -113.4938);
 
         if (eventId != null) {
-            // querying Firestore for entrant locations from the event's waitingList subcollection
+            // querying Firestore for entrant locations from the event's attendees subcollection
             FirebaseFirestore.getInstance()
-                    .collection("events").document(eventId).collection("waitingList")
+                    .collection("events").document(eventId).collection("attendees")
                     .get()
                     .addOnSuccessListener(snapshots -> {
                         boolean hasMarkers = false;
@@ -74,30 +75,18 @@ public class EntrantMapActivity extends AppCompatActivity implements OnMapReadyC
                                 hasMarkers = true;
                             }
                         }
+                        // no entrants with location data then fallback would be to show placeholder markers
                         if (!hasMarkers) {
-                            // no entrants with location data then fallback would be to show placeholder markers
-                            addPlaceholderMarkers();
+                            Toast.makeText(this, "No location data available for entrants", Toast.LENGTH_SHORT).show();
                         }
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 12f));
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Could not load entrant locations", Toast.LENGTH_SHORT).show();
-                        addPlaceholderMarkers();
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 12f));
                     });
-        } else {
-            // no event ID then show placeholder markers
-            addPlaceholderMarkers();
+        } else { // no event ID then show placeholder markers
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 12f));
         }
-    }
-
-    // fallback placeholder markers for when Firestore data is not available
-    private void addPlaceholderMarkers() {
-        map.addMarker(new MarkerOptions().position(new LatLng(53.5461, -113.4938)).title("Alice Johnson"));
-        map.addMarker(new MarkerOptions().position(new LatLng(53.5501, -113.4800)).title("Bob Smith"));
-        map.addMarker(new MarkerOptions().position(new LatLng(53.5420, -113.5050)).title("Carol Davis"));
-        map.addMarker(new MarkerOptions().position(new LatLng(53.5530, -113.4700)).title("Dan Lee"));
-        map.addMarker(new MarkerOptions().position(new LatLng(53.5390, -113.5100)).title("Eva Brown"));
     }
 }

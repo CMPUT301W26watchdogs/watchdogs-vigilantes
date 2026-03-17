@@ -12,20 +12,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.bumptech.glide.Glide;
-import com.google.firebase.Firebase;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.bumptech.glide.Glide;
-import com.google.firebase.Firebase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,11 +38,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     private List<Event> eventList;
     private boolean isMyEventsPage;
-
     private boolean isMyEventsPageAdmin;
-
     private boolean isMyEventsPageUser;
-
 
     public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser) {
         this.eventList = eventList;
@@ -70,13 +63,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
-            intent.putExtra("event_id", event.getId()); // Pass the ID so the detail page knows what to load
+            intent.putExtra("event_id", event.getId());
             v.getContext().startActivity(intent);
         });
 
-        if(isMyEventsPageUser){
+        if (isMyEventsPageUser) {
             holder.signUpEvent.setVisibility(View.VISIBLE);
-
             // 1. IMPORTANT: Set a default state immediately so it's clickable while loading
             holder.signUpEvent.setEnabled(true);
             holder.signUpEvent.setText("Sign Up");
@@ -92,87 +84,135 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     .collection("attendees").document(currentUserId)
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
-                        if(documentSnapshot.exists()){
+                        if (documentSnapshot.exists()) {
                             String status = documentSnapshot.getString("status");
 
-                            if("pending".equals(status)) {
+                            if ("pending".equals(status)) {
                                 holder.signUpEvent.setText("Cancel SignUp");
+                                holder.statusBadge.setText("JOINED");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_waiting);
                                 holder.signUpEvent.setOnClickListener(v -> {
                                     cancelSignUp(v.getContext(), event, position);
                                 });
-
                             } else if ("selected".equals(status)) {
-                                holder.signUpEvent.setText("You're Selected");
+                                holder.signUpEvent.setText("View Invitation");
+                                holder.signUpEvent.setEnabled(true);
+                                holder.statusBadge.setText("SELECTED");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_selected);
+                                holder.signUpEvent.setOnClickListener(v -> {
+                                    Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+                                    intent.putExtra("event_id", event.getId());
+                                    v.getContext().startActivity(intent);
+                                });
+                            } else if ("accepted".equals(status)) {
+                                holder.signUpEvent.setText("Enrolled");
                                 holder.signUpEvent.setEnabled(false); // Only disable for winners!
+                                holder.statusBadge.setText("ENROLLED");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_badge);
+                            } else if ("declined".equals(status)) {
+                                holder.signUpEvent.setText("Sign Up");
+                                holder.statusBadge.setText("DECLINED");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_closed);
                             }
-
                         }
                     });
-        }
-        else {
+        } else {
             holder.signUpEvent.setVisibility(View.GONE);
         }
 
-        if(isMyEventsPageAdmin){
+        if (isMyEventsPageAdmin) {
             holder.deleteEvent.setVisibility(View.VISIBLE);
-
             holder.deleteEvent.setOnClickListener(v -> {
                 showDeleteDialog(v.getContext(), event, position);
             });
-        }
-        else {
+        } else {
             holder.deleteEvent.setVisibility(View.GONE);
         }
-        //Gemini March 8th 2026, view image poster in the list of events
+
         if (isMyEventsPage) {
-            holder.editUrl.setVisibility(View.VISIBLE);
-            holder.viewAttendee.setVisibility(View.VISIBLE);
-            holder.viewAttendeeCancelled.setVisibility(View.VISIBLE);
-            holder.viewAttendeeSelected.setVisibility(View.VISIBLE);
+            holder.orgButtonRow1.setVisibility(View.VISIBLE);
+            holder.orgButtonRow2.setVisibility(View.VISIBLE);
 
             holder.editUrl.setOnClickListener(v -> {
                 showUpdateDialog(v.getContext(), event, position);
             });
 
             holder.viewAttendee.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), viewAttendee.class); // Address
-                intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                Intent intent = new Intent(v.getContext(), viewAttendee.class);
+                intent.putExtra("EVENT_ID", event.getId());
                 intent.putExtra("type", "waiting");
-                v.getContext().startActivity(intent); // Send it!
-                //finish();
+                v.getContext().startActivity(intent);
             });
 
             holder.viewAttendeeCancelled.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), viewAttendee.class); // Address
-               // Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
-                intent.putExtra("EVENT_ID", event.getId()); // The letter inside
+                Intent intent = new Intent(v.getContext(), viewAttendee.class);
+                intent.putExtra("EVENT_ID", event.getId());
                 intent.putExtra("type", "cancelled");
-                v.getContext().startActivity(intent); // Send it!
-                //finish();
+                v.getContext().startActivity(intent);
             });
 
             holder.viewAttendeeSelected.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), viewAttendee.class);
-               // Intent intent = new Intent(v.getContext(), viewAttendeeCancelled.class); // Address
                 intent.putExtra("EVENT_ID", event.getId());
                 intent.putExtra("type", "selected");
-                v.getContext().startActivity(intent); // Send it!
-                //finish();
+                v.getContext().startActivity(intent);
             });
 
-
-
-        }else {
-            holder.editUrl.setVisibility(View.GONE);
-            holder.viewAttendee.setVisibility(View.GONE);
-            holder.viewAttendeeCancelled.setVisibility(View.GONE);
-            holder.viewAttendeeSelected.setVisibility(View.GONE);
+            // enrolled button — shows the final list of entrants who accepted — US 02.06.03
+            holder.viewAttendeeEnrolled.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), viewAttendee.class);
+                intent.putExtra("EVENT_ID", event.getId());
+                intent.putExtra("type", "enrolled");
+                v.getContext().startActivity(intent);
+            });
+        } else {
+            holder.orgButtonRow1.setVisibility(View.GONE);
+            holder.orgButtonRow2.setVisibility(View.GONE);
         }
 
+        //Gemini March 8th 2026, view image poster in the list of events
         if (event.getPosterUrl() != null) {
-            Glide.with(holder.itemView.getContext()).load(event.getPosterUrl()).placeholder(android.R.drawable.ic_menu_gallery).error(android.R.drawable.ic_delete).into(holder.posterImageView);
+            Glide.with(holder.itemView.getContext())
+                    .load(event.getPosterUrl())
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_delete)
+                    .into(holder.posterImageView);
+        }
+
+        FirebaseFirestore countDb = FirebaseFirestore.getInstance();
+        countDb.collection("events").document(event.getId())
+                .collection("attendees")
+                .whereEqualTo("status", "pending")
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    int count = snapshots.size();
+                    holder.waitingCount.setText(count + " Waiting");
+                    Long limit = null;
+                    if (event.getCapacity() != null) {
+                        try {
+                            limit = Long.parseLong(event.getCapacity());
+                        } catch (NumberFormatException ignored) {}
+                    }
+                    if (limit != null) {
+                        holder.spotsCount.setText(limit + " spots");
+                    }
+                });
+
+        String regStart = event.getRegistrationStart();
+        String location = event.getLocation();
+        StringBuilder infoBuilder = new StringBuilder();
+        if (regStart != null && !regStart.isEmpty()) {
+            infoBuilder.append(regStart);
+        }
+        if (location != null && !location.isEmpty()) {
+            if (infoBuilder.length() > 0) infoBuilder.append(" - ");
+            infoBuilder.append(location);
+        }
+        if (infoBuilder.length() > 0) {
+            holder.eventLocationInfo.setText(infoBuilder.toString());
         }
     }
+
     /**
 * This function returns the number of events
  */
@@ -184,25 +224,33 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 * This class is a RecyclerView which holds and views our events
  */
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView titleText, descriptionText;
+        TextView titleText, descriptionText, statusBadge, eventLocationInfo, waitingCount, spotsCount;
         ImageView posterImageView;
-
-        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected;
+        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected, viewAttendeeEnrolled;
+        LinearLayout orgButtonRow1, orgButtonRow2;
 
         public EventViewHolder(@NotNull View itemView) {
             super(itemView);
             titleText = itemView.findViewById(R.id.item_event_title);
             descriptionText = itemView.findViewById(R.id.event_description);
             posterImageView = itemView.findViewById(R.id.item_event_poster);
+            statusBadge = itemView.findViewById(R.id.statusBadge);
+            eventLocationInfo = itemView.findViewById(R.id.eventLocationInfo);
+            waitingCount = itemView.findViewById(R.id.waitingCount);
+            spotsCount = itemView.findViewById(R.id.spotsCount);
             editUrl = itemView.findViewById(R.id.editUrl);
             deleteEvent = itemView.findViewById(R.id.deleteEvent);
             signUpEvent = itemView.findViewById(R.id.signUp_button);
             viewAttendee = itemView.findViewById(R.id.viewAttendee);
             viewAttendeeCancelled = itemView.findViewById(R.id.viewAttendeeCancelled);
             viewAttendeeSelected = itemView.findViewById(R.id.viewAttendeeSelected);
+            viewAttendeeEnrolled = itemView.findViewById(R.id.viewAttendeeEnrolled);
+            orgButtonRow1 = itemView.findViewById(R.id.orgButtonRow1);
+            orgButtonRow2 = itemView.findViewById(R.id.orgButtonRow2);
         }
     }
-//Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
+
+    //Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
     /**
     * This is a helper function which shows the dialog box to update the url of our poster image
      */
@@ -219,12 +267,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             String newURL = input.getText().toString().trim();
             if (!newURL.isEmpty()) {
                 updateEventPosterUrl(context, event, newURL, position);
-
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
+
     /**
 * This is the helper function which helps us update our url in firebase
  */
@@ -232,44 +280,42 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("events").document(event.getId()).update("posterUrl", newURL).addOnSuccessListener(aVoid -> {
-            Toast.makeText(context, "Poster Updated!" ,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Poster Updated!", Toast.LENGTH_SHORT).show();
             event.setPosterUrl(newURL);
-
             notifyItemChanged(position);
         }).addOnFailureListener(e -> {
             Toast.makeText(context, "Update Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-
         });
-
     }
+
     /**
 * This function helps admin to delete events
  */
     private void showDeleteDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        builder.setTitle("Delete Event ?");
+        builder.setTitle("Delete Event?");
 
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("events").document(event.getId()).delete().addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Event Deleted Successfully!", Toast.LENGTH_SHORT).show();
                 notifyItemChanged(position);
-            }).addOnFailureListener( e -> {
+            }).addOnFailureListener(e -> {
                 Toast.makeText(context, "Error while deleting the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
-
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
+
     /**
 * This function allows user to sign up to an event.
  */
-
     private void showSignUpDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        builder.setTitle("Sign up for this event?");
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             db.collection("users").document(currentUserId).get().addOnSuccessListener(userDoc -> {
@@ -284,7 +330,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     attendeeData.put("userId", currentUserId);
                     attendeeData.put("status", "pending");
                     attendeeData.put("timestamp", FieldValue.serverTimestamp()); // Logs exact time
-                    builder.setTitle("Sign Event ?");
 
                     db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(context, "Signed Up Successfully!", Toast.LENGTH_SHORT).show();
@@ -298,6 +343,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
+
     /**
 * This function allows user to cancel registration from an event.
  */
@@ -307,16 +353,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("userId", event.getCurrentUser());
-        //attendeeData.put("name", currentUser.getName());
         attendeeData.put("status", "cancelled"); // Default status when they first join
         attendeeData.put("timestamp", FieldValue.serverTimestamp()); // Logs exact time
-        builder.setTitle("Cancel Event ?");
+        builder.setTitle("Cancel Event?");
 
         builder.setPositiveButton("Confirm", (dialog, which) -> {
             db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Cancelled Successfully!", Toast.LENGTH_SHORT).show();
                 notifyItemChanged(position);
-            }).addOnFailureListener( e -> {
+            }).addOnFailureListener(e -> {
                 Toast.makeText(context, "Error while cancelling the event " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         });

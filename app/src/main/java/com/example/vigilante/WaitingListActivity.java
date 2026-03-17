@@ -76,8 +76,8 @@ public class WaitingListActivity extends AppCompatActivity {
                         }
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Could not load waiting list", Toast.LENGTH_SHORT).show();
                         // fall back to placeholder data if Firestore query fails
+                        Toast.makeText(this, "Could not load waiting list", Toast.LENGTH_SHORT).show();
                         entrants.addAll(getPlaceholderEntrants());
                         countText.setText(entrants.size() + " entrants on waiting list (unknown)");
                         adapter.notifyDataSetChanged();

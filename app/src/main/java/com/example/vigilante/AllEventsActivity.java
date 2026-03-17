@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* This class is called to show all the events available in in firebase
+ * This class is called to show all the events available in firebase with category filtering
  */
 public class AllEventsActivity extends AppCompatActivity {
 
@@ -30,9 +31,13 @@ public class AllEventsActivity extends AppCompatActivity {
     private EventAdapter eventAdapter;
 
     private List<Event> eventList;
+    private List<Event> allEventsList;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+
+    private String activeFilter = "All";
+    private TextView chipAll, chipSports, chipArts, chipMusic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +46,20 @@ public class AllEventsActivity extends AppCompatActivity {
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
         //Gemini March 8th 2026 , help add event list from firebase
         recyclerView = findViewById(R.id.all_events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventList = new ArrayList<>();
-        //eventAdapter = new EventAdapter(eventList);
+        allEventsList = new ArrayList<>();
+
+        chipAll = findViewById(R.id.chipAll);
+        chipSports = findViewById(R.id.chipSports);
+        chipArts = findViewById(R.id.chipArts);
+        chipMusic = findViewById(R.id.chipMusic);
+
+        setupChipListeners();
 
         String type = getIntent().getStringExtra("type");
         if (type.equals("all")) {
@@ -65,74 +78,137 @@ public class AllEventsActivity extends AppCompatActivity {
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Intent intent = new Intent(AllEventsActivity.this, HomePage.class);
-                //startActivity(intent);
                 finish();
             }
         });
 
+        setupBottomNav();
     }
-    /**
-* This class is used to fetch events for a user with user specific options
- */
-    private void fetchAllEvents() {
 
+    // category chip filter listeners for filtering events by type — US 01.01.04
+    private void setupChipListeners() {
+        View.OnClickListener chipListener = v -> {
+            int id = v.getId();
+            if (id == R.id.chipAll) activeFilter = "All";
+            else if (id == R.id.chipSports) activeFilter = "Sports";
+            else if (id == R.id.chipArts) activeFilter = "Arts";
+            else if (id == R.id.chipMusic) activeFilter = "Music";
+
+            updateChipStyles();
+            applyFilter();
+        };
+
+        chipAll.setOnClickListener(chipListener);
+        chipSports.setOnClickListener(chipListener);
+        chipArts.setOnClickListener(chipListener);
+        chipMusic.setOnClickListener(chipListener);
+    }
+
+    private void updateChipStyles() {
+        chipAll.setBackgroundResource(activeFilter.equals("All") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipAll.setTextColor(getColor(activeFilter.equals("All") ? R.color.white : R.color.text_primary));
+
+        chipSports.setBackgroundResource(activeFilter.equals("Sports") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipSports.setTextColor(getColor(activeFilter.equals("Sports") ? R.color.white : R.color.text_primary));
+
+        chipArts.setBackgroundResource(activeFilter.equals("Arts") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipArts.setTextColor(getColor(activeFilter.equals("Arts") ? R.color.white : R.color.text_primary));
+
+        chipMusic.setBackgroundResource(activeFilter.equals("Music") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
+        chipMusic.setTextColor(getColor(activeFilter.equals("Music") ? R.color.white : R.color.text_primary));
+    }
+
+    // applies the selected category filter to the full event list
+    private void applyFilter() {
+        eventList.clear();
+        if (activeFilter.equals("All")) {
+            eventList.addAll(allEventsList);
+        } else {
+            for (Event event : allEventsList) {
+                String cat = event.getCategory();
+                if (cat != null && cat.equalsIgnoreCase(activeFilter)) {
+                    eventList.add(event);
+                }
+            }
+        }
+        eventAdapter.notifyDataSetChanged();
+    }
+
+    private void setupBottomNav() {
+        LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        navBar.setSelectedTab(0);
+        navBar.setOnTabSelectedListener(position -> {
+            if (position == 1) {
+                startActivity(new Intent(this, HomePage.class));
+                finish();
+            } else if (position == 2) {
+                startActivity(new Intent(this, NotificationsActivity.class));
+                finish();
+            } else if (position == 3) {
+                startActivity(new Intent(this, ProfilePage.class));
+                finish();
+            }
+        });
+    }
+
+    /**
+     * This function fetches events for a user with user specific options
+     */
+    private void fetchAllEvents() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         db.collection("events").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
+            allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
                 event.setcurrentUser(currentUser.getUid());
-                eventList.add(event);
+                allEventsList.add(event);
             }
-            eventAdapter.notifyDataSetChanged();
+            applyFilter();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-
         });
     }
+
     /**
-     * This class is used to fetch events created by that organizer with organizer specific options
+     * This function fetches events created by that organizer with organizer specific options
      */
     private void fetchMyOrgEvents() {
         FirebaseUser organizerId = mAuth.getCurrentUser();
-        //FirebaseUser currentUser = mAuth.getCurrentUser();
         db.collection("events").whereEqualTo("organizerId", organizerId.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
+            allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
-                eventList.add(event);
-
+                allEventsList.add(event);
             }
-            eventAdapter.notifyDataSetChanged();
+            applyFilter();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
-
     }
+
     /**
-     * This class is used to fetch events for a admin with admin specific options
+     * This function fetches events for admin with admin specific options
      */
     private void fetchAdminEvents() {
-        //organizerId = mAuth.getCurrentUser().getUid();
         db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
+            allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
-                eventList.add(event);
-
+                allEventsList.add(event);
             }
-            eventAdapter.notifyDataSetChanged();
+            applyFilter();
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error loading events:" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
 }
