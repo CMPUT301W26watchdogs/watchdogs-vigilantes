@@ -20,7 +20,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -116,29 +115,23 @@ public class AddEvent extends AppCompatActivity {
     }
 
     private void setupBottomNav() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_events) {
+        LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        navBar.setOnTabSelectedListener(position -> {
+            if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
                 startActivity(intent);
                 finish();
-                return true;
-            } else if (id == R.id.nav_home) {
+            } else if (position == 1) {
                 startActivity(new Intent(this, HomePage.class));
                 finish();
-                return true;
-            } else if (id == R.id.nav_alerts) {
+            } else if (position == 2) {
                 startActivity(new Intent(this, NotificationsActivity.class));
                 finish();
-                return true;
-            } else if (id == R.id.nav_profile) {
+            } else if (position == 3) {
                 startActivity(new Intent(this, ProfilePage.class));
                 finish();
-                return true;
             }
-            return false;
         });
     }
 

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -85,31 +84,24 @@ public class EventHistoryActivity extends AppCompatActivity {
         });
     }
 
-    // bottom navigation bar — switching between Events, Home, Alerts and Profile screens
     private void setupBottomNav() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_events) {
+        LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        navBar.setOnTabSelectedListener(position -> {
+            if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
                 startActivity(intent);
                 finish();
-                return true;
-            } else if (id == R.id.nav_home) {
+            } else if (position == 1) {
                 startActivity(new Intent(this, HomePage.class));
                 finish();
-                return true;
-            } else if (id == R.id.nav_alerts) {
+            } else if (position == 2) {
                 startActivity(new Intent(this, NotificationsActivity.class));
                 finish();
-                return true;
-            } else if (id == R.id.nav_profile) {
+            } else if (position == 3) {
                 startActivity(new Intent(this, ProfilePage.class));
                 finish();
-                return true;
             }
-            return false;
         });
     }
 }

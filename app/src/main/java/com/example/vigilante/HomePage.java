@@ -15,7 +15,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -86,26 +85,18 @@ public class HomePage extends AppCompatActivity {
     }
 
     private void setupBottomNav() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setSelectedItemId(R.id.nav_home);
-        bottomNav.setItemIconTintList(null);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_events) {
+        LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        navBar.setSelectedTab(1);
+        navBar.setOnTabSelectedListener(position -> {
+            if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
                 startActivity(intent);
-                return true;
-            } else if (id == R.id.nav_home) {
-                return true;
-            } else if (id == R.id.nav_alerts) {
+            } else if (position == 2) {
                 startActivity(new Intent(this, NotificationsActivity.class));
-                return true;
-            } else if (id == R.id.nav_profile) {
+            } else if (position == 3) {
                 startActivity(new Intent(this, ProfilePage.class));
-                return true;
             }
-            return false;
         });
     }
 }
