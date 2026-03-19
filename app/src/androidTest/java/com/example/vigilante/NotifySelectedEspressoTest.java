@@ -1,4 +1,4 @@
-// espresso tests for notify selected entrants button — verifies button visibility and Firestore notification creation — US 02.07.02
+// testing the notify selected entrants button including visibility and Firestore notification creation US 02.07.02
 
 package com.example.vigilante;
 
@@ -36,8 +36,8 @@ public class NotifySelectedEspressoTest {
     private static final String TEST_EVENT_ID = "test_event_notify_selected";
     private FirebaseFirestore db;
 
-    @Before
     // signing in and creating test event with a selected attendee
+    @Before
     public void setUp() throws Exception {
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
@@ -69,8 +69,8 @@ public class NotifySelectedEspressoTest {
         return ActivityScenario.launch(intent);
     }
 
+    // verifying the notify selected button is visible in selected view US 02.07.02
     @Test
-    // verifying the notify selected button is visible in selected view — US 02.07.02
     public void selectedView_showsNotifySelectedButton() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
@@ -78,8 +78,8 @@ public class NotifySelectedEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying notify selected button is hidden in waiting view US 02.07.02
     @Test
-    // verifying notify selected button is hidden in waiting view — US 02.07.02
     public void waitingView_hidesNotifySelectedButton() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
@@ -90,8 +90,8 @@ public class NotifySelectedEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying that clicking notify selected creates a notification in Firestore US 02.07.02
     @Test
-    // verifying clicking notify selected creates a notification in Firestore — US 02.07.02
     public void notifySelected_createsNotificationInFirestore() throws Exception {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
@@ -110,8 +110,8 @@ public class NotifySelectedEspressoTest {
         }
     }
 
-    @After
     // cleaning up test event, attendees, and notifications from Firestore
+    @After
     public void tearDown() throws Exception {
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("notify-sel-uid-1").delete();

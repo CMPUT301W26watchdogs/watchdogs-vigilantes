@@ -1,4 +1,4 @@
-// unit tests for waiting list notification data construction and opt-out logic — US 02.07.01
+// testing waiting list notification data construction and opt out logic US 02.07.01
 
 package com.example.vigilante;
 
@@ -22,8 +22,8 @@ public class WaitingListNotificationTest {
         return notification;
     }
 
+    // verifying waiting list notification contains all required fields US 02.07.01
     @Test
-    // verifying waiting list notification contains all required fields — US 02.07.01
     public void waitingNotification_containsAllFields() {
         Map<String, Object> notif = buildWaitingNotification("uid-1", "event-1", "Swimming Lessons", "Draw is coming up!");
         assertEquals("uid-1", notif.get("userId"));
@@ -33,46 +33,46 @@ public class WaitingListNotificationTest {
         assertEquals(false, notif.get("read"));
     }
 
+    // verifying notification title falls back to an event when event title is null US 02.07.01
     @Test
-    // verifying notification title falls back to "an event" when event title is null — US 02.07.01
     public void waitingNotification_nullEventTitle_fallback() {
         Map<String, Object> notif = buildWaitingNotification("uid-1", "event-1", null, "Update message");
         assertEquals("Update for an event", notif.get("title"));
     }
 
+    // verifying custom message is preserved in the notification US 02.07.01
     @Test
-    // verifying custom message is preserved in the notification — US 02.07.01
     public void waitingNotification_customMessagePreserved() {
         String customMsg = "The lottery draw has been rescheduled to next week.";
         Map<String, Object> notif = buildWaitingNotification("uid-1", "event-1", "Art Class", customMsg);
         assertEquals(customMsg, notif.get("message"));
     }
 
+    // verifying notification defaults to unread US 02.07.01
     @Test
-    // verifying notification defaults to unread — US 02.07.01
     public void waitingNotification_defaultUnread() {
         Map<String, Object> notif = buildWaitingNotification("uid-1", "event-1", "Event", "msg");
         assertFalse((Boolean) notif.get("read"));
     }
 
+    // verifying opt out check where false blocks sending US 02.07.01
     @Test
-    // verifying opt-out check — false blocks sending — US 02.07.01
     public void optOutCheck_falseBlocksSending() {
         Boolean notificationsEnabled = false;
         boolean shouldSend = !Boolean.FALSE.equals(notificationsEnabled);
         assertFalse(shouldSend);
     }
 
+    // verifying opt in check where true allows sending US 02.07.01
     @Test
-    // verifying opt-in check — true allows sending — US 02.07.01
     public void optInCheck_trueAllowsSending() {
         Boolean notificationsEnabled = true;
         boolean shouldSend = !Boolean.FALSE.equals(notificationsEnabled);
         assertTrue(shouldSend);
     }
 
+    // verifying null notification preference defaults to enabled US 02.07.01
     @Test
-    // verifying null notification preference defaults to enabled — US 02.07.01
     public void optOutCheck_nullDefaultsToEnabled() {
         Boolean notificationsEnabled = null;
         boolean shouldSend = !Boolean.FALSE.equals(notificationsEnabled);

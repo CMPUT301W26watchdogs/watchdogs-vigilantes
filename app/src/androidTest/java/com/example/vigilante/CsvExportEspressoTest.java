@@ -1,4 +1,4 @@
-// espresso tests for CSV export button in enrolled view — verifies button presence and click — US 02.06.05
+// testing the CSV export button in enrolled view and verifying button presence and visibility US 02.06.05
 
 package com.example.vigilante;
 
@@ -35,8 +35,8 @@ public class CsvExportEspressoTest {
     private static final String TEST_EVENT_ID = "test_event_csv_export";
     private FirebaseFirestore db;
 
-    @Before
     // signing in with test account and creating test event with an accepted attendee for CSV export
+    @Before
     public void setUp() throws Exception {
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
@@ -68,8 +68,8 @@ public class CsvExportEspressoTest {
         return ActivityScenario.launch(intent);
     }
 
+    // verifying the export CSV button shows correct text US 02.06.05
     @Test
-    // verifying the export CSV button shows correct text — US 02.06.05
     public void enrolledView_exportButtonHasCorrectText() {
         try (ActivityScenario<viewAttendee> scenario = launchEnrolledView()) {
             Thread.sleep(2000);
@@ -77,8 +77,8 @@ public class CsvExportEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // making sure the export CSV button is visible in enrolled view US 02.06.05
     @Test
-    // verifying the export CSV button is visible only in enrolled view — US 02.06.05
     public void enrolledView_exportButtonVisible() {
         try (ActivityScenario<viewAttendee> scenario = launchEnrolledView()) {
             Thread.sleep(2000);
@@ -86,8 +86,8 @@ public class CsvExportEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying the export CSV button is hidden in selected view US 02.06.05
     @Test
-    // verifying the export CSV button is hidden in selected view — US 02.06.05
     public void selectedView_exportButtonHidden() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
@@ -98,8 +98,8 @@ public class CsvExportEspressoTest {
         } catch (InterruptedException e) {}
     }
 
-    @After
     // cleaning up test data from Firestore
+    @After
     public void tearDown() throws Exception {
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("csv-uid-1").delete();

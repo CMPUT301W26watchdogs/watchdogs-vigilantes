@@ -1,4 +1,4 @@
-// displays all events from Firestore in a RecyclerView for entrants to browse and sign up — US 01.01.03
+// displaying all events from Firestore in a RecyclerView for entrants to browse and sign up US 01.01.03
 
 package com.example.vigilante;
 
@@ -85,7 +85,7 @@ public class AllEventsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
-    // category chip filter listeners for filtering events by type — US 01.01.04
+    // setting up category chip filter listeners for filtering events by type US 01.01.04
     private void setupChipListeners() {
         View.OnClickListener chipListener = v -> {
             int id = v.getId();

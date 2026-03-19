@@ -1,4 +1,4 @@
-// data model for a waiting list entrant — holds name, email, phone and lottery status for Firestore deserialization
+// data model for a waiting list entrant holding name, email, phone and lottery status for Firestore deserialization
 
 package com.example.vigilante;
 

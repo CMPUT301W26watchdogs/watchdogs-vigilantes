@@ -1,4 +1,4 @@
-// espresso tests for accept and decline invitation flow — verifies buttons appear and status updates — US 01.05.01
+// testing the accept and decline invitation flow for selected, pending, accepted, and declined entrants US 01.05.01
 
 package com.example.vigilante;
 
@@ -36,9 +36,9 @@ public class AcceptDeclineInvitationTest {
     private FirebaseFirestore db;
     private String userId;
 
+    // signing in with test account and creating test event in Firestore
     @Before
     public void setUp() throws Exception {
-        // signing in with test account and creating test event in Firestore
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
@@ -46,7 +46,7 @@ public class AcceptDeclineInvitationTest {
         db = FirebaseFirestore.getInstance();
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // creating a test event document in Firestore
+        // setting up a test event document in Firestore
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("title", "Test Accept Decline Event");
         eventData.put("description", "Test event for accept/decline");
@@ -63,9 +63,9 @@ public class AcceptDeclineInvitationTest {
         return ActivityScenario.launch(intent);
     }
 
+    // checking that a selected user sees the accept and decline buttons US 01.05.01
     @Test
     public void selectedUser_seesAcceptAndDeclineButtons() throws Exception {
-        // creating a "selected" attendee and verifying accept/decline buttons appear — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -82,9 +82,9 @@ public class AcceptDeclineInvitationTest {
         }
     }
 
+    // checking that a pending user only sees the Sign Up button US 01.05.01
     @Test
     public void pendingUser_seesSignUpButtonOnly() throws Exception {
-        // creating a "pending" attendee and verifying only the Sign Up button shows — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -102,9 +102,9 @@ public class AcceptDeclineInvitationTest {
         }
     }
 
+    // checking that an accepted user sees the enrolled state US 01.05.01
     @Test
     public void acceptedUser_seesEnrolledState() throws Exception {
-        // creating an "accepted" attendee and verifying enrolled state — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -121,9 +121,9 @@ public class AcceptDeclineInvitationTest {
         }
     }
 
+    // checking that a declined user can re sign up for the event US 01.05.01
     @Test
     public void declinedUser_canReSignUp() throws Exception {
-        // creating a "declined" attendee and verifying re-signup option — US 01.05.01
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
         attendeeData.put("email", "ash@test.com");
@@ -139,9 +139,9 @@ public class AcceptDeclineInvitationTest {
         }
     }
 
+    // cleaning up test event and attendee data from Firestore
     @After
     public void tearDown() throws Exception {
-        // cleaning up test event and attendee data from Firestore
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document(userId).delete();
         db.collection("events").document(TEST_EVENT_ID).delete();

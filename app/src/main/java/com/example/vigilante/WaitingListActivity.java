@@ -1,4 +1,4 @@
-// organizer view of all entrants on an event waiting list with cancel functionality — US 02.02.01, US 02.06.04
+// organizer view of all entrants on an event waiting list with cancel functionality US 02.02.01, US 02.06.04
 
 package com.example.vigilante;
 
@@ -44,7 +44,7 @@ public class WaitingListActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.waitingListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // the list that the adapter will display — starts empty, filled by Firestore query
+        // the list that the adapter will display, starts empty and filled by Firestore query
         List<Entrant> entrants = new ArrayList<>();
         EntrantAdapter adapter = new EntrantAdapter(entrants);
         recyclerView.setAdapter(adapter);
@@ -83,13 +83,13 @@ public class WaitingListActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
                     });
         } else {
-            // no event ID — show placeholder data
+            // no event ID so showing placeholder data
             entrants.addAll(getPlaceholderEntrants());
             countText.setText(entrants.size() + " entrants on waiting list (unknown)");
             adapter.notifyDataSetChanged();
         }
 
-        // back button — closing this screen
+        // back button closes this screen
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 

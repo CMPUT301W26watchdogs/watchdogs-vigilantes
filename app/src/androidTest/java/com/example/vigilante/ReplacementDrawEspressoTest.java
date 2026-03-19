@@ -1,4 +1,4 @@
-// espresso tests for replacement draw from waiting pool — verifies draw button and Firestore status update — US 02.05.03
+// testing replacement draw from waiting pool including draw button and Firestore status update US 02.05.03
 
 package com.example.vigilante;
 
@@ -36,8 +36,8 @@ public class ReplacementDrawEspressoTest {
     private static final String TEST_EVENT_ID = "test_event_replacement";
     private FirebaseFirestore db;
 
+    // signing in with test account and creating test event with selected and pending attendees
     @Before
-    // signing in with test account and creating test event with selected + pending attendees
     public void setUp() throws Exception {
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
@@ -78,8 +78,8 @@ public class ReplacementDrawEspressoTest {
         return ActivityScenario.launch(intent);
     }
 
+    // verifying the "Draw Replacement" button is visible in the selected view US 02.05.03
     @Test
-    // verifying the "Draw Replacement" button is visible in the selected view — US 02.05.03
     public void selectedView_showsDrawReplacementButton() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
@@ -88,8 +88,8 @@ public class ReplacementDrawEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying the draw replacement button is hidden in waiting view US 02.05.03
     @Test
-    // verifying the draw replacement button is hidden in waiting view — US 02.05.03
     public void waitingView_hidesDrawReplacementButton() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
@@ -100,8 +100,8 @@ public class ReplacementDrawEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying clicking draw replacement changes a pending entrant to selected in Firestore US 02.05.03
     @Test
-    // verifying clicking draw replacement changes a pending entrant to selected in Firestore — US 02.05.03
     public void drawReplacement_selectsPendingEntrant() throws Exception {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
@@ -117,8 +117,8 @@ public class ReplacementDrawEspressoTest {
         }
     }
 
-    @After
     // cleaning up test event and attendee data from Firestore
+    @After
     public void tearDown() throws Exception {
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("replacement-uid-pending").delete();

@@ -1,4 +1,4 @@
-// organizer event creation form — collects title, description, dates, poster url, geolocation and max entrants then writes to Firestore — US 02.01.01, US 02.01.04, US 02.02.03, US 02.03.01
+// organizer event creation form collecting title, description, dates, poster url, geolocation, category and max entrants then writing to Firestore US 02.01.01, US 02.01.04, US 02.02.03, US 02.03.01, US 01.01.04
 
 package com.example.vigilante;
 
@@ -177,6 +177,7 @@ public class AddEvent extends AppCompatActivity {
         eventMap.put("geolocationRequired", geolocationCheckChecked);
         eventMap.put("waitingListLimit", max);
 
+        // saving the event category so entrants can filter by type US 01.01.04
         String category = categoryInput.getText().toString().trim();
         if (!category.isEmpty()) {
             eventMap.put("category", category);

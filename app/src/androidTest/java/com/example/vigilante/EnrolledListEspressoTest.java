@@ -1,4 +1,4 @@
-// espresso tests for enrolled entrants list view — verifies title, list display, and export button — US 02.06.03
+// testing the enrolled entrants list view including title, list display, and export button US 02.06.03
 
 package com.example.vigilante;
 
@@ -35,8 +35,8 @@ public class EnrolledListEspressoTest {
     private static final String TEST_EVENT_ID = "test_event_enrolled";
     private FirebaseFirestore db;
 
-    @Before
     // signing in with test account and creating test event with accepted attendees
+    @Before
     public void setUp() throws Exception {
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
@@ -50,7 +50,7 @@ public class EnrolledListEspressoTest {
         eventData.put("organizerId", FirebaseAuth.getInstance().getCurrentUser().getUid());
         Tasks.await(db.collection("events").document(TEST_EVENT_ID).set(eventData));
 
-        // adding an accepted attendee — should appear in enrolled list
+        // adding an accepted attendee that should appear in enrolled list
         Map<String, Object> acceptedAttendee = new HashMap<>();
         acceptedAttendee.put("name", "Enrolled User");
         acceptedAttendee.put("email", "enrolled@test.com");
@@ -59,7 +59,7 @@ public class EnrolledListEspressoTest {
         Tasks.await(db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("enrolled-uid-1").set(acceptedAttendee));
 
-        // adding a pending attendee — should NOT appear in enrolled list
+        // adding a pending attendee that should NOT appear in enrolled list
         Map<String, Object> pendingAttendee = new HashMap<>();
         pendingAttendee.put("name", "Pending User");
         pendingAttendee.put("email", "pending@test.com");
@@ -77,8 +77,8 @@ public class EnrolledListEspressoTest {
         return ActivityScenario.launch(intent);
     }
 
+    // checking that the enrolled list view shows the correct title US 02.06.03
     @Test
-    // verifying the enrolled view displays the correct title — US 02.06.03
     public void enrolledView_showsCorrectTitle() {
         try (ActivityScenario<viewAttendee> scenario = launchEnrolledView()) {
             Thread.sleep(2000);
@@ -86,8 +86,8 @@ public class EnrolledListEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // making sure the export CSV button is visible in enrolled view US 02.06.03
     @Test
-    // verifying the export CSV button is visible in enrolled view — US 02.06.03 / US 02.06.05
     public void enrolledView_showsExportCsvButton() {
         try (ActivityScenario<viewAttendee> scenario = launchEnrolledView()) {
             Thread.sleep(2000);
@@ -95,8 +95,8 @@ public class EnrolledListEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying the recycler view is displayed for enrolled entrants US 02.06.03
     @Test
-    // verifying the recycler view is displayed for enrolled entrants — US 02.06.03
     public void enrolledView_showsRecyclerView() {
         try (ActivityScenario<viewAttendee> scenario = launchEnrolledView()) {
             Thread.sleep(2000);
@@ -104,8 +104,8 @@ public class EnrolledListEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying draw replacement button is hidden in enrolled view US 02.06.03
     @Test
-    // verifying draw replacement button is hidden in enrolled view — US 02.06.03
     public void enrolledView_hidesDrawReplacementButton() {
         try (ActivityScenario<viewAttendee> scenario = launchEnrolledView()) {
             Thread.sleep(2000);
@@ -113,8 +113,8 @@ public class EnrolledListEspressoTest {
         } catch (InterruptedException e) {}
     }
 
-    @After
     // cleaning up test event and attendee data from Firestore
+    @After
     public void tearDown() throws Exception {
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("enrolled-uid-1").delete();

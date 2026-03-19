@@ -1,4 +1,4 @@
-// RecyclerView adapter that binds Entrant objects to rows in the waiting list and selected entrants screens
+// RecyclerView adapter binding Entrant objects to rows in the waiting list and selected entrants screens US 02.06.04
 
 package com.example.vigilante;
 
@@ -17,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
-// RecyclerView adapter — binds a list of Entrant objects to the waiting list RecyclerView
+// RecyclerView adapter binding a list of Entrant objects to the waiting list RecyclerView US 02.06.04
 public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHolder> {
 
     private final List<Entrant> entrants; // the data set this adapter displays
@@ -33,7 +33,7 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         this.eventId = eventId;
     }
 
-    // called by RecyclerView when it needs a new row view — inflates the item layout and wraps it in a ViewHolder
+    // called by RecyclerView when it needs a new row view, inflating the item layout and wrapping it in a ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -1,4 +1,4 @@
-// RecyclerView adapter for event cards — handles sign-up, cancel, edit poster and delete actions depending on user role
+// RecyclerView adapter for event cards handling sign up, cancel, edit poster and delete actions depending on user role
 
 package com.example.vigilante;
 
@@ -158,7 +158,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 v.getContext().startActivity(intent);
             });
 
-            // enrolled button — shows the final list of entrants who accepted — US 02.06.03
+            // enrolled button showing the final list of entrants who accepted US 02.06.03
             holder.viewAttendeeEnrolled.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), viewAttendee.class);
                 intent.putExtra("EVENT_ID", event.getId());

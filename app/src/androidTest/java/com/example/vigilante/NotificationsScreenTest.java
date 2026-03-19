@@ -1,4 +1,4 @@
-// espresso tests for notifications screen — verifies header, recycler view and Firestore data loading — US 01.04.03
+// testing the notifications screen including header, recycler view and Firestore data loading US 02.05.01
 
 package com.example.vigilante;
 
@@ -30,9 +30,9 @@ public class NotificationsScreenTest {
     private FirebaseFirestore db;
     private String userId;
 
+    // signing in with test account and creating test notifications in Firestore
     @Before
     public void setUp() throws Exception {
-        // signing in with test account and creating test notifications in Firestore
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
@@ -61,51 +61,51 @@ public class NotificationsScreenTest {
         Tasks.await(db.collection("notifications").document("notif-test-2").set(notif2));
     }
 
+    // verifying the notifications header is displayed US 02.05.01
     @Test
     public void notificationsScreen_displaysHeader() {
         try (ActivityScenario<NotificationsActivity> scenario = ActivityScenario.launch(NotificationsActivity.class)) {
-            // verifying the notifications header is displayed — US 01.04.03
             onView(withText("My Notifications")).check(matches(isDisplayed()));
         }
     }
 
+    // verifying the subtitle text is shown US 02.05.01
     @Test
     public void notificationsScreen_displaysSubtitle() {
         try (ActivityScenario<NotificationsActivity> scenario = ActivityScenario.launch(NotificationsActivity.class)) {
-            // verifying the subtitle text is shown — US 01.04.03
             onView(withText("Lottery results and event updates")).check(matches(isDisplayed()));
         }
     }
 
+    // verifying the notifications RecyclerView is present US 02.05.01
     @Test
     public void notificationsScreen_showsRecyclerView() {
         try (ActivityScenario<NotificationsActivity> scenario = ActivityScenario.launch(NotificationsActivity.class)) {
             Thread.sleep(3000);
-            // verifying the notifications RecyclerView is present — US 01.04.03
             onView(withId(R.id.notificationsRecyclerView)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the bottom navigation bar is displayed US 02.05.01
     @Test
     public void notificationsScreen_showsBottomNav() {
         try (ActivityScenario<NotificationsActivity> scenario = ActivityScenario.launch(NotificationsActivity.class)) {
-            // verifying the bottom navigation bar is displayed — US 01.04.03
             onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
         }
     }
 
+    // waiting for Firestore to load notification data US 02.05.01
     @Test
     public void notificationsScreen_loadsNotificationsFromFirestore() {
         try (ActivityScenario<NotificationsActivity> scenario = ActivityScenario.launch(NotificationsActivity.class)) {
-            // waiting for Firestore to load notification data — US 01.04.03
             Thread.sleep(3000);
             onView(withId(R.id.notificationsRecyclerView)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
 
+    // cleaning up test notification data from Firestore
     @After
     public void tearDown() throws Exception {
-        // cleaning up test notification data from Firestore
         db.collection("notifications").document("notif-test-1").delete();
         db.collection("notifications").document("notif-test-2").delete();
     }

@@ -1,4 +1,4 @@
-// espresso tests for organizer notification sending — verifies draw and notify buttons and Firestore notification creation — US 02.05.01
+// testing organizer notification sending including draw and notify buttons and Firestore notification creation US 02.05.01
 
 package com.example.vigilante;
 
@@ -36,9 +36,9 @@ public class OrganizerNotifyTest {
     private static final String TEST_EVENT_ID = "test_event_notify";
     private FirebaseFirestore db;
 
+    // signing in with test account and creating test event with selected attendees
     @Before
     public void setUp() throws Exception {
-        // signing in with test account and creating test event with selected attendees
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
@@ -97,49 +97,49 @@ public class OrganizerNotifyTest {
         return ActivityScenario.launch(intent);
     }
 
+    // verifying the "Notify Selected Entrants" button is visible US 02.05.01
     @Test
     public void selectedView_showsNotifyButton() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
-            // verifying the "Notify Selected Entrants" button is visible — US 02.05.01
             onView(withId(R.id.notify_selected_button)).check(matches(isDisplayed()));
             onView(withId(R.id.notify_selected_button)).check(matches(withText("Notify Selected Entrants")));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the notify button is hidden in waiting view US 02.05.01
     @Test
     public void waitingView_hidesNotifyButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
-            // verifying the notify button is hidden in waiting view — US 02.05.01
             onView(withId(R.id.notify_selected_button)).check(matches(withEffectiveVisibility(Visibility.GONE)));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the "Draw Lottery" button is visible in waiting view US 02.05.01
     @Test
     public void waitingView_showsDrawLotteryButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
-            // verifying the "Draw Lottery" button is visible in waiting view — US 02.05.01
             onView(withId(R.id.draw_lottery_button)).check(matches(isDisplayed()));
             onView(withId(R.id.draw_lottery_button)).check(matches(withText("Draw Lottery")));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the draw lottery button is hidden in selected view US 02.05.01
     @Test
     public void selectedView_hidesDrawLotteryButton() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
-            // verifying the draw lottery button is hidden in selected view — US 02.05.01
             onView(withId(R.id.draw_lottery_button)).check(matches(withEffectiveVisibility(Visibility.GONE)));
         } catch (InterruptedException e) {}
     }
 
+    // clicking notify and verifying Firestore notifications were created US 02.05.01
     @Test
     public void notifyButton_sendsNotificationsToFirestore() throws Exception {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
-            // clicking notify and verifying Firestore notifications were created — US 02.05.01
             onView(withId(R.id.notify_selected_button)).perform(click());
             Thread.sleep(3000);
 
@@ -158,19 +158,19 @@ public class OrganizerNotifyTest {
         }
     }
 
+    // verifying the selected entrants list is displayed US 02.05.01
     @Test
     public void selectedView_showsSelectedEntrantsInList() {
         try (ActivityScenario<viewAttendee> scenario = launchSelectedView()) {
             Thread.sleep(2000);
-            // verifying the selected entrants list is displayed — US 02.05.01
             onView(withId(R.id.attendees_recycler_view)).check(matches(isDisplayed()));
             onView(withId(R.id.title_waiting_list)).check(matches(withText("Selected Entrants")));
         } catch (InterruptedException e) {}
     }
 
+    // cleaning up test event, attendee and notification data from Firestore
     @After
     public void tearDown() throws Exception {
-        // cleaning up test event, attendee and notification data from Firestore
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("test-uid-1").delete();
         db.collection("events").document(TEST_EVENT_ID)

@@ -1,4 +1,4 @@
-// displays and allows editing of the current user profile — name, email, phone with Firestore update and account deletion — US 01.02.01, US 01.02.02, US 01.02.04
+// displaying and allowing editing of the current user profile including name, email, phone with Firestore update and account deletion US 01.02.01, US 01.02.02, US 01.02.04
 
 package com.example.vigilante;
 
@@ -164,7 +164,7 @@ public class ProfilePage extends AppCompatActivity {
         setupBottomNav();
     }
 
-    // loads event participation stats from Firestore — counts events joined, selected, and waiting — US 01.02.03
+    // loading event participation stats from Firestore counting events joined, selected, and waiting US 01.02.03
     private void loadProfileStats(String userId) {
         final int[] totalEvents = {0};
         final int[] selectedCount = {0};

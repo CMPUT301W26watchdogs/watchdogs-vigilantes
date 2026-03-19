@@ -210,7 +210,7 @@ public class EventDetailActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
-    // handles the accept invitation flow — sets status to accepted — US 01.05.01
+    // handling the accept invitation flow by setting status to accepted US 01.05.01
     private void acceptInvitation(String eventId, String userId) {
         db.collection("events").document(eventId)
                 .collection("attendees").document(userId)
@@ -223,7 +223,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // handles the decline invitation flow — sets status to declined and triggers replacement draw — US 01.05.01
+    // handling the decline invitation flow by setting status to declined and triggering replacement draw US 01.05.01
     private void declineInvitation(String eventId, String userId) {
         db.collection("events").document(eventId)
                 .collection("attendees").document(userId)
@@ -237,7 +237,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // randomly selects a replacement entrant from pending waitlist after a decline — US 01.05.01
+    // randomly selecting a replacement entrant from pending waitlist after a decline US 01.05.01
     private void drawReplacementFromWaitlist(String eventId) {
         db.collection("events").document(eventId)
                 .collection("attendees")

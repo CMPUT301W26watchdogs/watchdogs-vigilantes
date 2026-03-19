@@ -1,4 +1,4 @@
-// account registration form — creates a Firebase Auth user and stores the profile in Firestore users collection — US 01.02.01
+// account registration form creating a Firebase Auth user and storing the profile in Firestore users collection US 01.02.01
 
 package com.example.vigilante;
 

@@ -1,4 +1,4 @@
-// espresso tests for notify waiting list button and dialog — US 02.07.01
+// testing the notify waiting list button and dialog for sending custom messages US 02.07.01
 
 package com.example.vigilante;
 
@@ -38,8 +38,8 @@ public class NotifyWaitingEspressoTest {
     private static final String TEST_EVENT_ID = "test_event_notify_waiting";
     private FirebaseFirestore db;
 
-    @Before
     // signing in and creating test event with a pending attendee
+    @Before
     public void setUp() throws Exception {
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
@@ -71,8 +71,8 @@ public class NotifyWaitingEspressoTest {
         return ActivityScenario.launch(intent);
     }
 
+    // verifying the notify waiting list button is visible in waiting view US 02.07.01
     @Test
-    // verifying the notify waiting list button is visible in waiting view — US 02.07.01
     public void waitingView_showsNotifyButton() {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
@@ -80,8 +80,8 @@ public class NotifyWaitingEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying notify waiting button is hidden in selected view US 02.07.01
     @Test
-    // verifying notify waiting button is hidden in selected view — US 02.07.01
     public void selectedView_hidesNotifyWaitingButton() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
         intent.putExtra("EVENT_ID", TEST_EVENT_ID);
@@ -92,8 +92,8 @@ public class NotifyWaitingEspressoTest {
         } catch (InterruptedException e) {}
     }
 
+    // verifying that clicking notify creates a notification doc in Firestore US 02.07.01
     @Test
-    // verifying clicking notify button opens dialog and sending creates a notification in Firestore — US 02.07.01
     public void notifyWaiting_createsNotificationInFirestore() throws Exception {
         try (ActivityScenario<viewAttendee> scenario = launchWaitingView()) {
             Thread.sleep(2000);
@@ -131,8 +131,8 @@ public class NotifyWaitingEspressoTest {
         };
     }
 
-    @After
     // cleaning up test event, attendees, and notifications from Firestore
+    @After
     public void tearDown() throws Exception {
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("notify-wait-uid-1").delete();

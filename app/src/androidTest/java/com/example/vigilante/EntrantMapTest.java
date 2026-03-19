@@ -1,4 +1,4 @@
-// espresso tests for entrant geolocation map — verifies map button and entrant location display — US 02.02.02
+// testing the entrant geolocation map including map button and entrant location display US 02.02.02
 
 package com.example.vigilante;
 
@@ -32,9 +32,9 @@ public class EntrantMapTest {
     private static final String TEST_EVENT_ID = "test_event_map";
     private FirebaseFirestore db;
 
+    // signing in with test account and creating test event with geolocated attendees
     @Before
     public void setUp() throws Exception {
-        // signing in with test account and creating test event with geolocated attendees
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
@@ -68,6 +68,7 @@ public class EntrantMapTest {
                 .collection("attendees").document("map-uid-2").set(attendee2));
     }
 
+    // verifying the map button opens the EntrantMapActivity US 02.02.02
     @Test
     public void waitingView_mapButtonOpensMapActivity() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
@@ -75,13 +76,13 @@ public class EntrantMapTest {
         intent.putExtra("type", "waiting");
         try (ActivityScenario<viewAttendee> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(2000);
-            // verifying the map button opens the EntrantMapActivity — US 02.02.02
             onView(withId(R.id.map_button)).check(matches(isDisplayed()));
             onView(withId(R.id.map_button)).perform(click());
             Thread.sleep(2000);
         } catch (InterruptedException e) {}
     }
 
+    // verifying entrants with and without locations are shown in the list US 02.02.02
     @Test
     public void waitingView_showsEntrantsWithLocations() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), viewAttendee.class);
@@ -89,14 +90,13 @@ public class EntrantMapTest {
         intent.putExtra("type", "waiting");
         try (ActivityScenario<viewAttendee> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(2000);
-            // verifying entrants with and without locations are shown in the list — US 02.02.02
             onView(withId(R.id.attendees_recycler_view)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
 
+    // cleaning up test event and attendee data from Firestore
     @After
     public void tearDown() throws Exception {
-        // cleaning up test event and attendee data from Firestore
         db.collection("events").document(TEST_EVENT_ID)
                 .collection("attendees").document("map-uid-1").delete();
         db.collection("events").document(TEST_EVENT_ID)

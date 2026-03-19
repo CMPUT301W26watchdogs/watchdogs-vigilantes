@@ -1,4 +1,4 @@
-// displays user notifications from Firestore in a RecyclerView — lottery results and event updates — US 01.04.03
+// displaying user notifications from Firestore in a RecyclerView for lottery results and event updates US 01.04.03
 
 package com.example.vigilante;
 
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class displays the user's notifications from Firestore — lottery results and event updates.
+ * This class displays the user's notifications from Firestore for lottery results and event updates.
  */
 public class NotificationsActivity extends AppCompatActivity {
 
@@ -52,7 +52,7 @@ public class NotificationsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
-    // querying Firestore for all notifications belonging to the current user, ordered by most recent — US 01.04.03
+    // querying Firestore for all notifications belonging to the current user, ordered by most recent US 01.04.03
     private void loadNotifications() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
@@ -126,7 +126,7 @@ public class NotificationsActivity extends AppCompatActivity {
             holder.card.setCardBackgroundColor(holder.itemView.getContext().getColor(
                     isRead ? R.color.card_background : R.color.surface_gray));
 
-            // clicking a notification marks it as read and opens the event detail screen — US 01.04.03
+            // clicking a notification marks it as read and opens the event detail screen US 01.04.03
             holder.itemView.setOnClickListener(v -> {
                 String notifId = entry.get("id");
                 if (notifId != null) {
@@ -154,7 +154,7 @@ public class NotificationsActivity extends AppCompatActivity {
         }
 
         /**
-         * ViewHolder for notification card — holds title, message and card views.
+         * ViewHolder for notification card holding title, message and card views.
          */
         static class NotifViewHolder extends RecyclerView.ViewHolder {
             TextView titleText, messageText;

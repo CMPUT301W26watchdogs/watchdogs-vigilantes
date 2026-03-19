@@ -1,4 +1,4 @@
-// unit tests for category-based event filtering logic — case insensitivity, null categories, empty lists — US 01.01.04
+// testing category based event filtering logic including case insensitivity, null categories and empty lists US 01.01.04
 
 package com.example.vigilante;
 
@@ -35,7 +35,7 @@ public class EventCategoryFilterTest {
     }
 
     private List<Event> applyFilter(String filter) {
-        // applying filter logic — "All" returns everything, otherwise filters by category (case-insensitive)
+        // applying filter logic where All returns everything, otherwise filters by category (case insensitive)
         List<Event> filtered = new ArrayList<>();
         if ("All".equals(filter)) {
             filtered.addAll(allEvents);
@@ -50,68 +50,68 @@ public class EventCategoryFilterTest {
         return filtered;
     }
 
+    // verifying All filter returns all 6 events US 01.01.04
     @Test
     public void filterAll_returnsAllEvents() {
         List<Event> result = applyFilter("All");
-        // verifying "All" filter returns all 6 events — US 01.01.04
         assertEquals(6, result.size());
     }
 
+    // verifying Sports filter returns only the 2 sports events US 01.01.04
     @Test
     public void filterSports_returnsOnlySportsEvents() {
         List<Event> result = applyFilter("Sports");
-        // verifying Sports filter returns only the 2 sports events — US 01.01.04
         assertEquals(2, result.size());
         for (Event e : result) {
             assertEquals("Sports", e.getCategory());
         }
     }
 
+    // verifying Arts filter returns only the 1 arts event US 01.01.04
     @Test
     public void filterArts_returnsOnlyArtsEvents() {
         List<Event> result = applyFilter("Arts");
-        // verifying Arts filter returns only the 1 arts event — US 01.01.04
         assertEquals(1, result.size());
         assertEquals("Painting", result.get(0).getTitle());
     }
 
+    // verifying Music filter returns only the 2 music events US 01.01.04
     @Test
     public void filterMusic_returnsOnlyMusicEvents() {
         List<Event> result = applyFilter("Music");
-        // verifying Music filter returns only the 2 music events — US 01.01.04
         assertEquals(2, result.size());
         for (Event e : result) {
             assertEquals("Music", e.getCategory());
         }
     }
 
+    // verifying an unknown category returns an empty result US 01.01.04
     @Test
     public void filterUnknownCategory_returnsEmpty() {
         List<Event> result = applyFilter("Technology");
-        // verifying an unknown category returns an empty result — US 01.01.04
         assertEquals(0, result.size());
     }
 
+    // verifying filter is case insensitive so lowercase sports matches Sports US 01.01.04
     @Test
     public void filterIsCaseInsensitive() {
         List<Event> result = applyFilter("sports");
-        // verifying filter is case-insensitive (lowercase "sports" matches "Sports") — US 01.01.04
         assertEquals(2, result.size());
     }
 
+    // verifying null category events are excluded from specific category filters US 01.01.04
     @Test
     public void eventWithNullCategory_excludedFromCategoryFilter() {
         List<Event> result = applyFilter("Sports");
-        // verifying null-category events are excluded from specific category filters — US 01.01.04
         for (Event e : result) {
             assertNotNull(e.getCategory());
         }
     }
 
+    // verifying null category events are included when All filter is selected US 01.01.04
     @Test
     public void eventWithNullCategory_includedInAllFilter() {
         List<Event> result = applyFilter("All");
-        // verifying null-category events are included when "All" filter is selected — US 01.01.04
         boolean foundNull = false;
         for (Event e : result) {
             if (e.getCategory() == null) {
@@ -122,19 +122,19 @@ public class EventCategoryFilterTest {
         assertTrue(foundNull);
     }
 
+    // verifying All filter on an empty list returns empty US 01.01.04
     @Test
     public void emptyEventList_allFilterReturnsEmpty() {
         allEvents.clear();
         List<Event> result = applyFilter("All");
-        // verifying "All" filter on an empty list returns empty — US 01.01.04
         assertEquals(0, result.size());
     }
 
+    // verifying category filter on an empty list returns empty US 01.01.04
     @Test
     public void emptyEventList_categoryFilterReturnsEmpty() {
         allEvents.clear();
         List<Event> result = applyFilter("Sports");
-        // verifying category filter on an empty list returns empty — US 01.01.04
         assertEquals(0, result.size());
     }
 }

@@ -1,4 +1,4 @@
-// lists all attendees for an event from the Firestore attendees subcollection — US 02.02.01
+// listing all attendees for an event from the Firestore attendees subcollection US 02.02.01
 
 package com.example.vigilante;
 
@@ -74,7 +74,7 @@ public class viewAttendee extends AppCompatActivity {
             mapButton.setVisibility(View.VISIBLE);
             cancelAllButton.setVisibility(View.VISIBLE);
             drawLotteryButton.setVisibility(View.VISIBLE);
-            // notify waiting list button — lets organizer send a message to all pending entrants — US 02.07.01
+            // notify waiting list button lets organizer send a message to all pending entrants US 02.07.01
             notifyWaitingButton.setVisibility(View.VISIBLE);
             notifySelectedButton.setVisibility(View.GONE);
             drawReplacementButton.setVisibility(View.GONE);
@@ -96,15 +96,15 @@ public class viewAttendee extends AppCompatActivity {
             cancelAllButton.setVisibility(View.VISIBLE);
             cancelAllButton.setText("Cancel Non-Signups");
             drawLotteryButton.setVisibility(View.GONE);
-            // notify selected entrants button — US 02.07.02
+            // notify selected entrants button US 02.07.02
             notifySelectedButton.setVisibility(View.VISIBLE);
-            // draw replacement from waitlist when selected entrants cancel or decline — US 02.05.03
+            // drawing replacement from waitlist when selected entrants cancel or decline US 02.05.03
             drawReplacementButton.setVisibility(View.VISIBLE);
             notifyWaitingButton.setVisibility(View.GONE);
             exportCsvButton.setVisibility(View.GONE);
             loadAttendees("selected");
         } else if ("enrolled".equals(type)) {
-            // showing the final list of entrants who accepted their invitation — US 02.06.03
+            // showing the final list of entrants who accepted their invitation US 02.06.03
             titleText.setText("Enrolled Entrants");
             mapButton.setVisibility(View.GONE);
             cancelAllButton.setVisibility(View.GONE);
@@ -112,7 +112,7 @@ public class viewAttendee extends AppCompatActivity {
             notifySelectedButton.setVisibility(View.GONE);
             notifyWaitingButton.setVisibility(View.GONE);
             drawReplacementButton.setVisibility(View.GONE);
-            // export CSV button for the enrolled list — US 02.06.05
+            // export CSV button for the enrolled list US 02.06.05
             exportCsvButton.setVisibility(View.VISIBLE);
             loadAttendees("accepted");
         }
@@ -134,21 +134,21 @@ public class viewAttendee extends AppCompatActivity {
 
         drawLotteryButton.setOnClickListener(v -> showDrawLotteryDialog());
 
-        // draw replacement button — draws a single replacement from the pending waitlist — US 02.05.03
+        // draw replacement button draws a single replacement from the pending waitlist US 02.05.03
         drawReplacementButton.setOnClickListener(v -> drawReplacementFromWaitlist());
 
         notifySelectedButton.setOnClickListener(v -> sendNotificationToSelected());
 
-        // notify waiting list button — sends a custom notification to all pending entrants — US 02.07.01
+        // notify waiting list button sends a custom notification to all pending entrants US 02.07.01
         notifyWaitingButton.setOnClickListener(v -> showNotifyWaitingDialog());
 
-        // export CSV button — exports the enrolled entrants list as a CSV file — US 02.06.05
+        // export CSV button exports the enrolled entrants list as a CSV file US 02.06.05
         exportCsvButton.setOnClickListener(v -> exportEnrolledCsv());
 
         back_button.setOnClickListener(v -> finish());
     }
 
-    // lottery draw dialog — lets organizer specify how many entrants to select — US 02.05.01
+    // lottery draw dialog letting organizer specify how many entrants to select US 02.05.01
     private void showDrawLotteryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Draw Lottery");
@@ -169,7 +169,7 @@ public class viewAttendee extends AppCompatActivity {
         builder.show();
     }
 
-    // performs the lottery draw — randomly selects entrants from pending list — US 02.05.01
+    // performing the lottery draw by randomly selecting entrants from the pending list US 02.05.01
     private void performLotteryDraw(int numToDraw) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -204,7 +204,7 @@ public class viewAttendee extends AppCompatActivity {
                 });
     }
 
-    // draws a replacement entrant from the pending waitlist when a selected entrant cancels or declines — US 02.05.03
+    // drawing a replacement entrant from the pending waitlist when a selected entrant cancels or declines US 02.05.03
     private void drawReplacementFromWaitlist() {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -248,7 +248,7 @@ public class viewAttendee extends AppCompatActivity {
                 });
     }
 
-    // sends notifications to all selected entrants, respecting opt-out preference — US 02.07.02
+    // sending notifications to all selected entrants, respecting opt out preference US 02.07.02
     private void sendNotificationToSelected() {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
             String eventTitle = eventDoc.getString("title");
@@ -263,7 +263,7 @@ public class viewAttendee extends AppCompatActivity {
                             String userId = doc.getString("userId");
                             if (userId == null) continue;
 
-                            // checking user notification preference before sending — respects opt-out
+                            // checking user notification preference before sending, respecting opt out
                             db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
                                 Boolean notificationsEnabled = userDoc.getBoolean("notificationsEnabled");
                                 if (Boolean.FALSE.equals(notificationsEnabled)) return;
@@ -285,7 +285,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
-    // shows a dialog to compose a notification message for all waiting list entrants — US 02.07.01
+    // showing a dialog to compose a notification message for all waiting list entrants US 02.07.01
     private void showNotifyWaitingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Notify Waiting List");
@@ -308,7 +308,7 @@ public class viewAttendee extends AppCompatActivity {
         builder.show();
     }
 
-    // sends a notification to all entrants on the waiting list (status "pending") — US 02.07.01
+    // sending a notification to all entrants on the waiting list with status pending US 02.07.01
     private void sendNotificationToWaiting(String customMessage) {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
             String eventTitle = eventDoc.getString("title");
@@ -323,7 +323,7 @@ public class viewAttendee extends AppCompatActivity {
                             String userId = doc.getString("userId");
                             if (userId == null) continue;
 
-                            // checking user notification preference before sending — respects opt-out
+                            // checking user notification preference before sending, respecting opt out
                             db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
                                 Boolean notificationsEnabled = userDoc.getBoolean("notificationsEnabled");
                                 if (Boolean.FALSE.equals(notificationsEnabled)) return;
@@ -345,7 +345,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
-    // exports the enrolled entrants list as a CSV file and opens a share dialog — US 02.06.05
+    // exporting the enrolled entrants list as a CSV file and opening a share dialog US 02.06.05
     private void exportEnrolledCsv() {
         if (attendeeList.isEmpty()) {
             Toast.makeText(this, "No enrolled entrants to export", Toast.LENGTH_SHORT).show();
@@ -384,7 +384,7 @@ public class viewAttendee extends AppCompatActivity {
         }
     }
 
-    // escapes a CSV field value — wraps in quotes if it contains commas, quotes or newlines
+    // escaping a CSV field value by wrapping in quotes if it contains commas, quotes or newlines US 02.06.05
     static String escapeCsvField(String field) {
         if (field == null) return "";
         if (field.contains(",") || field.contains("\"") || field.contains("\n")) {
@@ -393,7 +393,7 @@ public class viewAttendee extends AppCompatActivity {
         return field;
     }
 
-    // builds a CSV string from a list of entrants — used for export — US 02.06.05
+    // building a CSV string from a list of entrants for export US 02.06.05
     static String buildCsvContent(List<Entrant> entrants) {
         StringBuilder csv = new StringBuilder();
         csv.append("Name,Email,Status\n");
@@ -426,7 +426,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
-    // cancels all pending/selected entrants for this event — US 02.06.04
+    // cancelling all pending or selected entrants for this event US 02.06.04
     private void cancelPendingEntrants() {
         String targetStatus = "selected".equals(type) ? "selected" : "pending";
 

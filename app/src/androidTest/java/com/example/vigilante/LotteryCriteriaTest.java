@@ -1,4 +1,4 @@
-// espresso tests for lottery criteria display — verifies criteria text, spot count and waitlist count — US 01.05.05
+// testing the lottery criteria display including criteria text, spot count and waitlist count US 01.05.05
 
 package com.example.vigilante;
 
@@ -33,9 +33,9 @@ public class LotteryCriteriaTest {
     private static final String TEST_EVENT_ID = "test_event_lottery_criteria";
     private FirebaseFirestore db;
 
+    // signing in with test account and creating test event with 5 pending attendees
     @Before
     public void setUp() throws Exception {
-        // signing in with test account and creating test event with 5 pending attendees
         FirebaseAuth.getInstance().signOut();
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
         Thread.sleep(1000);
@@ -61,97 +61,97 @@ public class LotteryCriteriaTest {
         }
     }
 
+    // verifying the lottery criteria section is displayed US 01.05.05
     @Test
     public void lotteryInfo_displaysCriteriaSection() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying the lottery criteria section is displayed — US 01.05.05
             onView(withId(R.id.lotteryCriteria)).check(matches(isDisplayed()));
         } catch (InterruptedException e) {}
     }
 
+    // verifying criteria mentions "equal chance" for all entrants US 01.05.05
     @Test
     public void lotteryInfo_criteriaContainsEqualChanceRule() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying criteria mentions "equal chance" for all entrants — US 01.05.05
             onView(withId(R.id.lotteryCriteria)).check(matches(withText(containsString("equal chance"))));
         } catch (InterruptedException e) {}
     }
 
+    // verifying criteria mentions "randomly selects" process US 01.05.05
     @Test
     public void lotteryInfo_criteriaContainsRandomSelectionRule() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying criteria mentions "randomly selects" process — US 01.05.05
             onView(withId(R.id.lotteryCriteria)).check(matches(withText(containsString("randomly selects"))));
         } catch (InterruptedException e) {}
     }
 
+    // verifying criteria mentions "replacement" draw for declined spots US 01.05.05
     @Test
     public void lotteryInfo_criteriaContainsReplacementRule() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying criteria mentions "replacement" draw for declined spots — US 01.05.05
             onView(withId(R.id.lotteryCriteria)).check(matches(withText(containsString("replacement"))));
         } catch (InterruptedException e) {}
     }
 
+    // verifying total spots shows the waitingListLimit value of 15 US 01.05.05
     @Test
     public void lotteryInfo_criteriaShowsCorrectSpotCount() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying total spots shows the waitingListLimit value of 15 — US 01.05.05
             onView(withId(R.id.lotteryTotalSpots)).check(matches(withText("15")));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the waitlist count shows 5 pending attendees US 01.05.05
     @Test
     public void lotteryInfo_showsWaitlistCount() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying the waitlist count shows 5 pending attendees — US 01.05.05
             onView(withId(R.id.lotteryWaitlistCount)).check(matches(withText("5")));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the event name is displayed correctly US 01.05.05
     @Test
     public void lotteryInfo_showsEventName() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying the event name is displayed correctly — US 01.05.05
             onView(withId(R.id.lotteryEventName)).check(matches(withText("Lottery Criteria Test Event")));
         } catch (InterruptedException e) {}
     }
 
+    // verifying the draw date matches the registration end date US 01.05.05
     @Test
     public void lotteryInfo_showsDrawDate() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LotteryInfoActivity.class);
         intent.putExtra("event_id", TEST_EVENT_ID);
         try (ActivityScenario<LotteryInfoActivity> scenario = ActivityScenario.launch(intent)) {
             Thread.sleep(3000);
-            // verifying the draw date matches the registration end date — US 01.05.05
             onView(withId(R.id.lotteryDrawDate)).check(matches(withText("Mar 15")));
         } catch (InterruptedException e) {}
     }
 
+    // cleaning up test attendee and event data from Firestore
     @After
     public void tearDown() throws Exception {
-        // cleaning up test attendee and event data from Firestore
         for (int i = 0; i < 5; i++) {
             db.collection("events").document(TEST_EVENT_ID)
                     .collection("attendees").document("criteria-uid-" + i).delete();

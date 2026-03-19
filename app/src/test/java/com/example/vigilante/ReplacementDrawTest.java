@@ -1,4 +1,4 @@
-// unit tests for replacement draw logic — selecting from remaining pool after cancellation — US 02.05.03
+// testing replacement draw logic for selecting from remaining pool after cancellation US 02.05.03
 
 package com.example.vigilante;
 
@@ -37,8 +37,8 @@ public class ReplacementDrawTest {
         return chosen;
     }
 
+    // verifying a single replacement is drawn from the pending pool US 02.05.03
     @Test
-    // verifying a single replacement is drawn from the pending pool — US 02.05.03
     public void replacementDraw_selectsOneFromPool() {
         List<Entrant> pool = buildPendingPool(5);
         Entrant replacement = drawOneReplacement(pool);
@@ -47,16 +47,16 @@ public class ReplacementDrawTest {
         assertEquals(4, pool.size());
     }
 
+    // verifying replacement draw returns null when pool is empty US 02.05.03
     @Test
-    // verifying replacement draw returns null when pool is empty — US 02.05.03
     public void replacementDraw_emptyPool_returnsNull() {
         List<Entrant> pool = buildPendingPool(0);
         Entrant replacement = drawOneReplacement(pool);
         assertNull(replacement);
     }
 
+    // verifying replacement is not a duplicate of already selected entrants US 02.05.03
     @Test
-    // verifying replacement is not a duplicate of already selected entrants — US 02.05.03
     public void replacementDraw_notInAlreadySelectedSet() {
         List<Entrant> pool = buildPendingPool(10);
         Set<String> alreadySelected = new HashSet<>();
@@ -75,8 +75,8 @@ public class ReplacementDrawTest {
         assertFalse(alreadySelected.contains(replacement.getId()));
     }
 
+    // verifying replacement draw with single entrant in pool works US 02.05.03
     @Test
-    // verifying replacement draw with single entrant in pool works — US 02.05.03
     public void replacementDraw_singleEntrantPool_selectsIt() {
         List<Entrant> pool = buildPendingPool(1);
         Entrant replacement = drawOneReplacement(pool);
@@ -86,8 +86,8 @@ public class ReplacementDrawTest {
         assertTrue(pool.isEmpty());
     }
 
+    // verifying multiple sequential replacement draws deplete the pool correctly US 02.05.03
     @Test
-    // verifying multiple sequential replacement draws deplete the pool correctly — US 02.05.03
     public void replacementDraw_multipleDraws_depletesPool() {
         List<Entrant> pool = buildPendingPool(3);
         Set<String> drawnIds = new HashSet<>();
@@ -102,8 +102,8 @@ public class ReplacementDrawTest {
         assertNull(drawOneReplacement(pool));
     }
 
+    // verifying replacement draw changes status from pending to selected US 02.05.03
     @Test
-    // verifying replacement draw changes status from pending to selected — US 02.05.03
     public void replacementDraw_changesStatusToSelected() {
         List<Entrant> pool = buildPendingPool(5);
         for (Entrant e : pool) {

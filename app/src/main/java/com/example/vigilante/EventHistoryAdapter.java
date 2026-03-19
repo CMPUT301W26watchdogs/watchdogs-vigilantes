@@ -1,4 +1,4 @@
-// RecyclerView adapter for event history cards — displays event title, date and a color-coded status badge — US 01.02.03
+// RecyclerView adapter for event history cards displaying event title, date and a color coded status badge US 01.02.03
 
 package com.example.vigilante;
 
@@ -40,7 +40,7 @@ public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapte
         holder.titleText.setText(entry.get("title"));
         holder.dateText.setText(entry.get("date"));
 
-        // applying color-coded badge based on the entrant's status in the event — US 01.02.03
+        // applying color coded badge based on the entrant's status in the event US 01.02.03
         String status = entry.get("status");
         if (status != null) {
             holder.statusText.setText(status.substring(0, 1).toUpperCase() + status.substring(1));

@@ -1,4 +1,4 @@
-// shows a Google Map with markers at the locations entrants joined the waiting list from — US 02.02.02
+// showing a Google Map with markers at the locations entrants joined the waiting list from US 02.02.02
 
 package com.example.vigilante;
 

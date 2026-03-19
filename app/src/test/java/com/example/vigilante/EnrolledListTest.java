@@ -1,4 +1,4 @@
-// unit tests for enrolled entrants list filtering logic — US 02.06.03
+// testing enrolled entrants list filtering logic US 02.06.03
 
 package com.example.vigilante;
 
@@ -14,8 +14,8 @@ public class EnrolledListTest {
 
     private List<Entrant> allAttendees;
 
+    // setting up test data with a mix of pending, selected and accepted entrants
     @Before
-    // creating test data with mixed statuses
     public void setUp() {
         allAttendees = new ArrayList<>();
 
@@ -36,7 +36,7 @@ public class EnrolledListTest {
         allAttendees.add(e7);
     }
 
-    // filtering entrants by status — same logic used in loadAttendees()
+    // filtering entrants by status, same logic used in loadAttendees()
     private List<Entrant> filterByStatus(String status) {
         List<Entrant> filtered = new ArrayList<>();
         for (Entrant e : allAttendees) {
@@ -47,8 +47,8 @@ public class EnrolledListTest {
         return filtered;
     }
 
+    // checking that only entrants with accepted status show up in the enrolled list US 02.06.03
     @Test
-    // verifying "accepted" filter returns only enrolled entrants — US 02.06.03
     public void filterAccepted_returnsOnlyEnrolled() {
         List<Entrant> enrolled = filterByStatus("accepted");
         assertEquals(3, enrolled.size());
@@ -57,8 +57,8 @@ public class EnrolledListTest {
         }
     }
 
+    // verifying enrolled list contains correct names US 02.06.03
     @Test
-    // verifying enrolled list contains correct names — US 02.06.03
     public void filterAccepted_containsCorrectNames() {
         List<Entrant> enrolled = filterByStatus("accepted");
         List<String> names = new ArrayList<>();
@@ -71,8 +71,8 @@ public class EnrolledListTest {
         assertFalse(names.contains("Bob"));
     }
 
+    // verifying enrolled list excludes pending entrants US 02.06.03
     @Test
-    // verifying enrolled list excludes pending entrants — US 02.06.03
     public void filterAccepted_excludesPending() {
         List<Entrant> enrolled = filterByStatus("accepted");
         for (Entrant e : enrolled) {
@@ -80,8 +80,8 @@ public class EnrolledListTest {
         }
     }
 
+    // verifying enrolled list excludes cancelled and declined entrants US 02.06.03
     @Test
-    // verifying enrolled list excludes cancelled and declined entrants — US 02.06.03
     public void filterAccepted_excludesCancelledAndDeclined() {
         List<Entrant> enrolled = filterByStatus("accepted");
         for (Entrant e : enrolled) {
@@ -90,16 +90,16 @@ public class EnrolledListTest {
         }
     }
 
+    // verifying enrolled list from empty attendee list returns empty US 02.06.03
     @Test
-    // verifying enrolled list from empty attendee list returns empty — US 02.06.03
     public void filterAccepted_emptyList_returnsEmpty() {
         allAttendees.clear();
         List<Entrant> enrolled = filterByStatus("accepted");
         assertEquals(0, enrolled.size());
     }
 
+    // verifying enrolled list when no one accepted returns empty US 02.06.03
     @Test
-    // verifying enrolled list when no one accepted returns empty — US 02.06.03
     public void filterAccepted_noAccepted_returnsEmpty() {
         allAttendees.clear();
         allAttendees.add(new Entrant("1", "Bob", "bob@test.com", "", "pending"));
@@ -108,8 +108,8 @@ public class EnrolledListTest {
         assertEquals(0, enrolled.size());
     }
 
+    // verifying all attendees are accepted returns full list US 02.06.03
     @Test
-    // verifying all attendees are accepted returns full list — US 02.06.03
     public void filterAccepted_allAccepted_returnsAll() {
         allAttendees.clear();
         for (int i = 0; i < 5; i++) {

@@ -1,4 +1,4 @@
-// unit tests for event history status formatting — capitalization and history entry structure — US 01.02.03
+// testing event history status formatting including capitalization and history entry structure US 01.02.03
 
 package com.example.vigilante;
 
@@ -26,68 +26,68 @@ public class EventHistoryStatusTest {
         return entry;
     }
 
+    // verifying pending capitalizes to Pending US 01.02.03
     @Test
     public void capitalizeStatus_pending() {
-        // verifying "pending" capitalizes to "Pending" — US 01.02.03
         assertEquals("Pending", capitalizeStatus("pending"));
     }
 
+    // verifying selected capitalizes to Selected US 01.02.03
     @Test
     public void capitalizeStatus_selected() {
-        // verifying "selected" capitalizes to "Selected" — US 01.02.03
         assertEquals("Selected", capitalizeStatus("selected"));
     }
 
+    // verifying accepted capitalizes to Accepted US 01.02.03
     @Test
     public void capitalizeStatus_accepted() {
-        // verifying "accepted" capitalizes to "Accepted" — US 01.02.03
         assertEquals("Accepted", capitalizeStatus("accepted"));
     }
 
+    // verifying declined capitalizes to Declined US 01.02.03
     @Test
     public void capitalizeStatus_declined() {
-        // verifying "declined" capitalizes to "Declined" — US 01.02.03
         assertEquals("Declined", capitalizeStatus("declined"));
     }
 
+    // verifying cancelled capitalizes to Cancelled US 01.02.03
     @Test
     public void capitalizeStatus_cancelled() {
-        // verifying "cancelled" capitalizes to "Cancelled" — US 01.02.03
         assertEquals("Cancelled", capitalizeStatus("cancelled"));
     }
 
+    // verifying empty string returns empty US 01.02.03
     @Test
     public void capitalizeStatus_emptyString() {
-        // verifying empty string returns empty — US 01.02.03
         assertEquals("", capitalizeStatus(""));
     }
 
+    // verifying null input returns null US 01.02.03
     @Test
     public void capitalizeStatus_null() {
-        // verifying null input returns null — US 01.02.03
         assertNull(capitalizeStatus(null));
     }
 
+    // verifying all fields are correctly stored in the history entry map US 01.02.03
     @Test
     public void historyEntry_containsAllFields() {
         Map<String, String> entry = buildHistoryEntry("Swimming", "Mar 15", "selected");
-        // verifying all fields are correctly stored in the history entry map — US 01.02.03
         assertEquals("Swimming", entry.get("title"));
         assertEquals("Mar 15", entry.get("date"));
         assertEquals("selected", entry.get("status"));
     }
 
+    // verifying null title is stored as null in the entry US 01.02.03
     @Test
     public void historyEntry_nullTitle_storesNull() {
         Map<String, String> entry = buildHistoryEntry(null, "Mar 15", "pending");
-        // verifying null title is stored as null in the entry — US 01.02.03
         assertNull(entry.get("title"));
     }
 
+    // verifying unknown status is stored and can be capitalized US 01.02.03
     @Test
     public void historyEntry_unknownStatus_stillStored() {
         Map<String, String> entry = buildHistoryEntry("Event", "Mar 15", "unknown");
-        // verifying unknown status is stored and can be capitalized — US 01.02.03
         assertEquals("unknown", entry.get("status"));
         assertEquals("Unknown", capitalizeStatus("unknown"));
     }

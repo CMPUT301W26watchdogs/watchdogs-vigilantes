@@ -1,4 +1,4 @@
-// shows the current user's event participation history with color-coded status badges — US 01.02.03
+// showing the current user's event participation history with color coded status badges US 01.02.03
 
 package com.example.vigilante;
 
@@ -42,14 +42,14 @@ public class EventHistoryActivity extends AppCompatActivity {
         adapter = new EventHistoryAdapter(historyList);
         recyclerView.setAdapter(adapter);
 
-        // back arrow — closing this screen
+        // back arrow closes this screen
         findViewById(R.id.backArrow).setOnClickListener(v -> finish());
 
         loadHistory();
         setupBottomNav();
     }
 
-    // loads the user's event history by checking every event's attendees subcollection — US 01.02.03
+    // loading the user's event history by checking every event's attendees subcollection US 01.02.03
     private void loadHistory() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;

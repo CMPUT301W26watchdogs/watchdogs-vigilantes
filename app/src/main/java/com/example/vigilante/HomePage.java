@@ -1,4 +1,4 @@
-// main hub after login — QR code scanner to join events, quick access to events list and profile — US 01.06.01
+// main hub after login with QR code scanner to join events, quick access to events list and profile US 01.06.01
 
 package com.example.vigilante;
 
@@ -61,7 +61,7 @@ public class HomePage extends AppCompatActivity {
             return insets;
         });
 
-        // quick access cards — tapping the events/profile cards also navigates
+        // quick access cards, tapping the events or profile cards also navigates
         findViewById(R.id.eventsCard).setOnClickListener(v -> {
             Intent intent = new Intent(this, AllEventsActivity.class);
             intent.putExtra("type", "all");

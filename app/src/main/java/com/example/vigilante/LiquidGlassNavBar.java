@@ -93,7 +93,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         activeColor = Color.parseColor("#1A1A1A");
         inactiveColor = Color.parseColor("#AAAAAA");
 
-        // no clipping — we draw a glow that extends above our bounds
+        // no clipping since we draw a glow that extends above our bounds
         setClipChildren(false);
         setClipToPadding(false);
 
@@ -106,7 +106,7 @@ public class LiquidGlassNavBar extends FrameLayout {
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), r);
             }
         });
-        // no clipToOutline — we paint everything ourselves including the glow above
+        // no clipToOutline since we paint everything ourselves including the glow above
 
         // bar background paint
         barBgPaint.setColor(Color.parseColor("#E8EAEC"));
@@ -126,7 +126,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         pillShadowPaint.setMaskFilter(
                 new android.graphics.BlurMaskFilter(4 * density, android.graphics.BlurMaskFilter.Blur.NORMAL));
 
-        // refraction glow paint — updated per-frame with a RadialGradient
+        // refraction glow paint updated per frame with a RadialGradient
         refractionPaint.setStyle(Paint.Style.FILL);
 
         setLayerType(LAYER_TYPE_SOFTWARE, null);
@@ -263,7 +263,7 @@ public class LiquidGlassNavBar extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        // handled in draw() — skip default to avoid double-drawing children
+        // handled in draw() so skipping default to avoid double drawing children
     }
 
     private void drawRefractionGlow(Canvas canvas) {
@@ -294,7 +294,7 @@ public class LiquidGlassNavBar extends FrameLayout {
                 refractionPaint
         );
 
-        // secondary caustic — a tighter, brighter spot closer to the bar
+        // secondary caustic with a tighter, brighter spot closer to the bar
         float causticRadius = tabWidth * 0.35f;
         float causticY = -causticRadius * 0.3f;
         RadialGradient caustic = new RadialGradient(
@@ -332,7 +332,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         // main white capsule
         canvas.drawRoundRect(pillRect, pillCornerRadius, pillCornerRadius, pillFillPaint);
 
-        // top highlight — glass refraction shine on the capsule itself
+        // top highlight for glass refraction shine on the capsule itself
         highlightRect.set(
                 pillRect.left + 10 * density, pillRect.top + 2 * density,
                 pillRect.right - 10 * density, pillRect.top + pillRect.height() * 0.32f);

@@ -1,4 +1,4 @@
-// shows lottery details for an event — entrant status, draw date and total spots from Firestore — US 01.05.05
+// showing lottery details for an event including entrant status, draw date and total spots from Firestore US 01.05.05
 
 package com.example.vigilante;
 
