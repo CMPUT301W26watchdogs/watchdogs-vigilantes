@@ -118,6 +118,11 @@ public class ProfilePage extends AppCompatActivity {
             }
         });
 
+        // accessibility settings button opens the accessibility preferences screen (Wildcard)
+        findViewById(R.id.accessibility_button).setOnClickListener(v -> {
+            startActivity(new Intent(this, AccessibilityActivity.class));
+        });
+
         eventHistoryBtn.setOnClickListener(v -> {
             startActivity(new Intent(this, EventHistoryActivity.class));
         });
@@ -162,6 +167,13 @@ public class ProfilePage extends AppCompatActivity {
         deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
 
         setupBottomNav();
+    }
+
+    // applying accessibility settings whenever the profile page is resumed
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccessibilityHelper.apply(this);
     }
 
     // loading event participation stats from Firestore counting events joined, selected, and waiting US 01.02.03

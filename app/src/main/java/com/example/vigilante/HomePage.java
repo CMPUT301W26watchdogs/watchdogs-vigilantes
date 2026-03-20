@@ -84,6 +84,13 @@ public class HomePage extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // applying accessibility settings whenever the home page is resumed
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccessibilityHelper.apply(this);
+    }
+
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(1);

@@ -85,6 +85,13 @@ public class AllEventsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // applying accessibility settings whenever the events page is resumed
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccessibilityHelper.apply(this);
+    }
+
     // setting up category chip filter listeners for filtering events by type US 01.01.04
     private void setupChipListeners() {
         View.OnClickListener chipListener = v -> {

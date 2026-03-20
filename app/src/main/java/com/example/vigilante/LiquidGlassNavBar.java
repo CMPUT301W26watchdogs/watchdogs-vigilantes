@@ -198,20 +198,31 @@ public class LiquidGlassNavBar extends FrameLayout {
         this.listener = listener;
     }
 
+    // animating the pill to the tapped tab, or snapping instantly if reduce motion is on
     private void animateToTab(int position) {
         int prevTab = selectedTab;
         selectedTab = position;
         float targetX = position * tabWidth + tabWidth / 2f;
 
-        ValueAnimator anim = ValueAnimator.ofFloat(pillCenterX, targetX);
-        anim.setDuration(ANIM_DURATION);
-        anim.setInterpolator(new OvershootInterpolator(0.6f));
-        anim.addUpdateListener(a -> {
-            pillCenterX = (float) a.getAnimatedValue();
+        // checking if the user has reduce motion enabled in accessibility settings
+        boolean reduceMotion = new AccessibilityManager(getContext()).isReduceMotionEnabled();
+
+        if (reduceMotion) {
+            // skipping animation and snapping directly to the target position
+            pillCenterX = targetX;
             updateTabAppearance();
             invalidate();
-        });
-        anim.start();
+        } else {
+            ValueAnimator anim = ValueAnimator.ofFloat(pillCenterX, targetX);
+            anim.setDuration(ANIM_DURATION);
+            anim.setInterpolator(new OvershootInterpolator(0.6f));
+            anim.addUpdateListener(a -> {
+                pillCenterX = (float) a.getAnimatedValue();
+                updateTabAppearance();
+                invalidate();
+            });
+            anim.start();
+        }
 
         if (listener != null && position != prevTab) {
             listener.onTabSelected(position);
