@@ -28,6 +28,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import android.content.ContentValues;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +85,7 @@ public class EventDetailActivity extends AppCompatActivity {
         Button registerButton = findViewById(R.id.registerButton);
         Button acceptButton = findViewById(R.id.acceptButton);
         Button declineButton = findViewById(R.id.declineButton);
+        Button downloadTicketButton = findViewById(R.id.downloadTicketButton);
         ImageView posterImage = findViewById(R.id.eventPoster);
         TextView regStartDate = findViewById(R.id.regStartDate);
         TextView regEndDate = findViewById(R.id.regEndDate);
@@ -164,12 +176,20 @@ public class EventDetailActivity extends AppCompatActivity {
                                     acceptButton.setOnClickListener(v -> acceptInvitation(eventId, currentUser.getUid()));
                                     declineButton.setOnClickListener(v -> declineInvitation(eventId, currentUser.getUid()));
                                 } else if ("accepted".equals(status)) {
-                                    signUpStatus.setText("Your status: Accepted — You're in!");
+                                    signUpStatus.setText("Your status: Accepted. You're in!");
                                     registerButton.setText("Enrolled");
                                     registerButton.setEnabled(false);
                                     registerButton.setVisibility(View.VISIBLE);
                                     acceptButton.setVisibility(View.GONE);
                                     declineButton.setVisibility(View.GONE);
+
+                                    // showing the download ticket button for accepted entrants (Wildcard)
+                                    downloadTicketButton.setVisibility(View.VISIBLE);
+                                    downloadTicketButton.setOnClickListener(v ->
+                                            generateAndSaveTicket(title.getText().toString(),
+                                                    date.getText().toString(),
+                                                    location.getText().toString(),
+                                                    currentUser.getUid()));
                                 } else if ("cancelled".equals(status) || "declined".equals(status)) {
                                     signUpStatus.setText("You are no longer on the waitlist.");
                                     registerButton.setText("Sign Up");
@@ -283,6 +303,58 @@ public class EventDetailActivity extends AppCompatActivity {
                     waitlistCount.setText(String.valueOf(count));
                 })
                 .addOnFailureListener(e -> waitlistCount.setText("0"));
+    }
+
+    // generating a PDF ticket and saving it to the device's Downloads folder (Wildcard)
+    private void generateAndSaveTicket(String eventTitle, String eventDate, String eventLocation, String userId) {
+        // fetching the attendee's name from Firestore to put on the ticket
+        db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
+            String attendeeName = "Attendee";
+            if (userDoc.exists() && userDoc.getString("name") != null) {
+                attendeeName = userDoc.getString("name");
+            }
+
+            // using the event ID as the ticket number
+            String ticketId = eventId != null ? eventId : "000000";
+
+            TicketGenerator generator = new TicketGenerator(eventTitle, eventDate, eventLocation, attendeeName, ticketId);
+            PdfDocument document = generator.generate();
+
+            try {
+                // saving to Downloads using MediaStore on Android 10+ or direct file write on older versions
+                String fileName = "ticket_" + ticketId.substring(0, Math.min(8, ticketId.length())) + ".pdf";
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                    values.put(MediaStore.Downloads.MIME_TYPE, "application/pdf");
+                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                    Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                    if (uri != null) {
+                        OutputStream out = getContentResolver().openOutputStream(uri);
+                        if (out != null) {
+                            document.writeTo(out);
+                            out.close();
+                            Toast.makeText(this, "Ticket saved to Downloads!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    File file = new File(downloadsDir, fileName);
+                    FileOutputStream out = new FileOutputStream(file);
+                    document.writeTo(out);
+                    out.close();
+                    Toast.makeText(this, "Ticket saved to Downloads!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (IOException e) {
+                Toast.makeText(this, "Could not save ticket: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            } finally {
+                document.close();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Could not load user info for ticket", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void setupBottomNav() {
