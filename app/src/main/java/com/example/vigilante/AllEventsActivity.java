@@ -61,16 +61,26 @@ public class AllEventsActivity extends AppCompatActivity {
 
         setupChipListeners();
 
+        // updating the header and subtitle based on which type of event listing this is
+        TextView header = findViewById(R.id.all_events_header);
+        TextView subtitle = findViewById(R.id.eventsSubtitle);
+
         String type = getIntent().getStringExtra("type");
         if (type.equals("all")) {
+            header.setText("Upcoming Events");
+            subtitle.setText("Explore events available near you");
             eventAdapter = new EventAdapter(eventList, false, false, true);
             recyclerView.setAdapter(eventAdapter);
             fetchAllEvents();
         } else if (type.equals("myactivityorg")) {
+            header.setText("Your Events");
+            subtitle.setText("Events you are organizing");
             eventAdapter = new EventAdapter(eventList, true, false, false);
             recyclerView.setAdapter(eventAdapter);
             fetchMyOrgEvents();
         } else if (type.equals("admin")) {
+            header.setText("All Events");
+            subtitle.setText("Manage all events on the platform");
             eventAdapter = new EventAdapter(eventList, false, true, false);
             recyclerView.setAdapter(eventAdapter);
             fetchAdminEvents();
