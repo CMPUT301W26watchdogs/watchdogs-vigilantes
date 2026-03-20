@@ -12,12 +12,15 @@
 
     <ImageView
         android:id="@+id/backArrow"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:src="@android:drawable/ic_menu_revert"
         android:contentDescription="Back"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
