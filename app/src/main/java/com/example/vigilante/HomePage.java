@@ -72,6 +72,11 @@ public class HomePage extends AppCompatActivity {
             startActivity(new Intent(this, NotificationsActivity.class));
         });
 
+        // calendar card opens the event calendar view (Wildcard)
+        findViewById(R.id.calendarCard).setOnClickListener(v -> {
+            startActivity(new Intent(this, CalendarActivity.class));
+        });
+
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();
             options.setDesiredBarcodeFormats(ScanOptions.QR_CODE); // only accepting QR codes, not barcodes
