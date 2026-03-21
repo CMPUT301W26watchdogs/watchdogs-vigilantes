@@ -1,4 +1,4 @@
-// shows lottery details for an event — entrant status, draw date and total spots from Firestore — US 01.05.05
+// showing lottery details for an event including entrant status, draw date and total spots from Firestore US 01.05.05
 
 package com.example.vigilante;
 
@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class LotteryInfoActivity extends AppCompatActivity {
 
@@ -36,6 +37,8 @@ public class LotteryInfoActivity extends AppCompatActivity {
         TextView lotteryStatus = findViewById(R.id.lotteryStatus);
         TextView lotteryDrawDate = findViewById(R.id.lotteryDrawDate);
         TextView lotteryTotalSpots = findViewById(R.id.lotteryTotalSpots);
+        TextView lotteryWaitlistCount = findViewById(R.id.lotteryWaitlistCount);
+        TextView lotteryCriteria = findViewById(R.id.lotteryCriteria);
 
         if (eventId != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -45,29 +48,62 @@ public class LotteryInfoActivity extends AppCompatActivity {
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
                             lotteryEventName.setText(doc.getString("title") != null ? doc.getString("title") : "Unknown Event");
-                            lotteryTotalSpots.setText(doc.getString("capacity") != null ? doc.getString("capacity") : "N/A");
                             lotteryDrawDate.setText(doc.getString("registrationEnd") != null ? doc.getString("registrationEnd") : "N/A");
+
+                            Long waitLimit = doc.getLong("waitingListLimit");
+                            if (waitLimit != null) {
+                                lotteryTotalSpots.setText(String.valueOf(waitLimit));
+                            } else {
+                                lotteryTotalSpots.setText(doc.getString("capacity") != null ? doc.getString("capacity") : "N/A");
+                            }
+
+                            String spotsText = lotteryTotalSpots.getText().toString();
+
+                            StringBuilder criteria = new StringBuilder();
+                            criteria.append("1. All entrants who join the waiting list before the registration deadline have an equal chance of being selected.\n\n");
+                            criteria.append("2. After the registration period closes, the system randomly selects ");
+                            criteria.append(spotsText.equals("N/A") ? "a set number of" : spotsText);
+                            criteria.append(" entrants from the waiting list.\n\n");
+                            criteria.append("3. Selected entrants are notified and must confirm their spot. If a selected entrant declines or does not respond, the system automatically draws a replacement from the remaining waitlist.\n\n");
+                            criteria.append("4. The selection is fully random — no priority is given based on sign-up time or any other factor.\n\n");
+                            criteria.append("5. You can cancel your waitlist entry at any time before the draw.");
+
+                            lotteryCriteria.setText(criteria.toString());
                         } else {
                             lotteryEventName.setText("Event Not Found");
-                            lotteryTotalSpots.setText("N/A");
-                            lotteryDrawDate.setText("N/A");
+                            lotteryTotalSpots.setText("-");
+                            lotteryDrawDate.setText("-");
                         }
                     })
                     .addOnFailureListener(e -> {
                         lotteryEventName.setText("Error loading event");
-                        lotteryTotalSpots.setText("N/A");
-                        lotteryDrawDate.setText("N/A");
+                        lotteryTotalSpots.setText("-");
+                        lotteryDrawDate.setText("-");
                     });
 
-            // checking the current user's status in the waitingList subcollection
+            db.collection("events").document(eventId)
+                    .collection("attendees")
+                    .whereEqualTo("status", "pending")
+                    .get()
+                    .addOnSuccessListener(snapshots -> {
+                        int count = 0;
+                        for (QueryDocumentSnapshot ignored : snapshots) {
+                            count++;
+                        }
+                        lotteryWaitlistCount.setText(String.valueOf(count));
+                    })
+                    .addOnFailureListener(e -> lotteryWaitlistCount.setText("0"));
+
+            // checking the current user's status in the attendees subcollection
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
-                        .collection("waitingList").document(currentUser.getUid())
+                        .collection("attendees").document(currentUser.getUid())
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists() && doc.getString("status") != null) {
-                                lotteryStatus.setText(doc.getString("status"));
+                                String status = doc.getString("status");
+                                lotteryStatus.setText(status.substring(0, 1).toUpperCase() + status.substring(1));
                             } else {
                                 lotteryStatus.setText("Not on waiting list");
                             }
@@ -82,6 +118,8 @@ public class LotteryInfoActivity extends AppCompatActivity {
             lotteryStatus.setText("N/A");
             lotteryDrawDate.setText("N/A");
             lotteryTotalSpots.setText("N/A");
+            lotteryWaitlistCount.setText("0");
+            lotteryCriteria.setText("");
         }
 
         // back button for closing this screen and returning to EventDetailActivity

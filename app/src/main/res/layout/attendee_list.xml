@@ -1,40 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/background_light">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/headerBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:padding="16dp"
-        android:background="@color/design_default_color_primary">
-        
+        android:background="@color/vigilante_red"
+        app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:id="@+id/title_waiting_list"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Waiting List"
             android:textColor="@android:color/white"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"/>
+            android:textStyle="bold" />
 
-    </RelativeLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/map_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Map"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/attendees_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:padding="8dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/headerBar"
+        app:layout_constraintBottom_toTopOf="@id/buttonBar" />
 
-
-    <Button
-        android:id="@+id/back_button"
+    <LinearLayout
+        android:id="@+id/buttonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:text="Go Back" />
-</RelativeLayout>
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/draw_lottery_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Draw Lottery"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_selected"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/draw_replacement_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Draw Replacement"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_selected"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/notify_selected_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Notify Selected Entrants"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_open"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/notify_waiting_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Notify Waiting List"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_open"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/export_csv_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Export CSV"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_waiting"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_all_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Cancel All Pending"
+            android:textSize="14sp"
+            android:backgroundTint="@color/vigilante_red"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+
+        <Button
+            android:id="@+id/back_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Go Back"
+            app:cornerRadius="10dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

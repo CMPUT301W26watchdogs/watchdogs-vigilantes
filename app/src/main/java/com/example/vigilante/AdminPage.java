@@ -1,4 +1,4 @@
-// admin dashboard — navigation hub with buttons to browse events, profiles, organizers and sign out — US 03.04.01, US 03.05.01, US 03.07.01
+// admin dashboard navigation hub with buttons to browse events, profiles, organizers and sign out US 03.04.01, US 03.05.01, US 03.07.01
 
 package com.example.vigilante;
 
@@ -14,13 +14,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+
 /**
-* This class is used to view the AdminPage when admin logs in which is different than other user's homepage
+ * This class is used to view the AdminPage when admin logs in which is different than other user's homepage
  */
 public class AdminPage extends AppCompatActivity {
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.adminpage);
@@ -29,11 +30,14 @@ public class AdminPage extends AppCompatActivity {
         Button browseevents_button = (Button) findViewById(R.id.browseevents_button);
         Button browseprofiles_button = (Button) findViewById(R.id.browseprofiles_button);
         Button browseorganizers_button = (Button) findViewById(R.id.browseorganizers_button);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        findViewById(R.id.backArrow).setOnClickListener(v -> finish());
 
         signout_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -46,17 +50,15 @@ public class AdminPage extends AppCompatActivity {
 
         browseevents_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
                 Intent intent = new Intent(AdminPage.this, AllEventsActivity.class);
                 intent.putExtra("type", "admin");
-                //Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
                 startActivity(intent);
-               // finish();
             }
         });
 
         browseprofiles_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
                 intent.putExtra("type", "all");
                 startActivity(intent);
@@ -66,14 +68,11 @@ public class AdminPage extends AppCompatActivity {
 
         browseorganizers_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
                 intent.putExtra("type", "org");
                 startActivity(intent);
                 finish();
             }
         });
-
-
     }
 }

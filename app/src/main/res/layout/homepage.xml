@@ -5,6 +5,8 @@
     android:id="@+id/homepage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:background="@color/background_light"
     tools:context=".HomePage">
 
@@ -22,12 +24,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/settingsIcon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="24dp"
+        android:src="@android:drawable/ic_menu_manage"
+        android:contentDescription="Settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/brandHeader"
+        app:layout_constraintBottom_toBottomOf="@id/brandHeader" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/scanCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:strokeWidth="0dp"
@@ -83,7 +96,7 @@
         android:id="@+id/quickAccessLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="28dp"
         android:layout_marginStart="24dp"
         android:text="QUICK ACCESS"
         android:textSize="12sp"
@@ -114,6 +127,13 @@
             android:gravity="center"
             android:orientation="vertical"
             android:padding="20dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:src="@android:drawable/ic_menu_agenda"
+                android:contentDescription="Browse Events" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -155,10 +175,17 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:src="@android:drawable/ic_popup_reminder"
+                android:contentDescription="My Alerts" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Profile"
+                android:text="My Alerts"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
@@ -166,48 +193,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="View &amp; edit"
+                android:text="Lottery results"
                 android:textSize="12sp"
                 android:textColor="@color/text_secondary" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
+    <com.example.vigilante.LiquidGlassNavBar
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/events_button"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Events"
-            android:textColor="@color/text_secondary" />
-
-        <Button
-            android:id="@+id/home_button"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Home"
-            android:textColor="@color/vigilante_red" />
-
-        <Button
-            android:id="@+id/profile_button"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Profile"
-            android:textColor="@color/text_secondary" />
-
-    </LinearLayout>
+        android:layout_height="68dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
 
     <application
         android:allowBackup="true"
@@ -35,6 +38,22 @@
     <activity android:name=".EventDetailActivity"/>
         <activity android:name=".AllProfiles" />
         <activity android:name=".viewAttendee"/>
+        <activity android:name=".EntrantMapActivity"/>
+        <activity android:name=".LotteryInfoActivity"/>
+        <activity android:name=".EventCreatedActivity"/>
+        <activity android:name=".WaitingListActivity"/>
+        <activity android:name=".EventHistoryActivity"/>
+        <activity android:name=".NotificationsActivity"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 
