@@ -198,6 +198,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         this.listener = listener;
     }
 
+    // Citation: Ved, March 14 2025, https://developer.android.com/reference/android/animation/ValueAnimator
     private void animateToTab(int position) {
         int prevTab = selectedTab;
         selectedTab = position;

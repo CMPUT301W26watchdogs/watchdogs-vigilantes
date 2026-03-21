@@ -96,6 +96,7 @@ public class AllEventsActivity extends AppCompatActivity {
     }
 
     // setting up category chip filter listeners for filtering events by type US 01.01.04
+    // Citation: Ved, March 10 2025, https://developer.android.com/develop/ui/views/touch-and-input/click-handlers
     private void setupChipListeners() {
         View.OnClickListener chipListener = v -> {
             int id = v.getId();
