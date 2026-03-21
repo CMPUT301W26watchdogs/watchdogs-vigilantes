@@ -22,6 +22,7 @@ public class AccessibilityManager {
 
     private final SharedPreferences prefs;
 
+    // Citation: Ved, March 17 2025, https://developer.android.com/training/data-storage/shared-preferences
     public AccessibilityManager(Context context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }

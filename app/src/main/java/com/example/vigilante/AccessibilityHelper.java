@@ -39,6 +39,7 @@ public class AccessibilityHelper {
     }
 
     // applying a color matrix filter to simulate different types of color blindness
+    // Citation: Ved, March 17 2025, https://developer.android.com/reference/android/graphics/ColorMatrix
     private static void applyColorBlindFilter(View view, String mode) {
         if (AccessibilityManager.COLOR_BLIND_NONE.equals(mode)) {
             view.setLayerType(View.LAYER_TYPE_NONE, null);
@@ -85,6 +86,7 @@ public class AccessibilityHelper {
     }
 
     // walking through all views and increasing text size by a scale factor for readability
+    // Citation: Ved, March 17 2025, https://stackoverflow.com/questions/12128331/how-to-change-fontsize-of-all-textviews-in-activity
     private static void applyLargeText(View view) {
         if (view instanceof TextView) {
             TextView tv = (TextView) view;

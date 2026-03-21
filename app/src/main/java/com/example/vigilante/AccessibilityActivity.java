@@ -84,6 +84,7 @@ public class AccessibilityActivity extends AppCompatActivity {
     }
 
     // reading the current accessibility preferences and setting the UI controls to match
+    // Citation: Ved, March 17 2025, https://developer.android.com/reference/android/widget/RadioGroup#check(int)
     private void loadCurrentSettings() {
         String colorMode = accessibilityManager.getColorBlindMode();
         switch (colorMode) {
