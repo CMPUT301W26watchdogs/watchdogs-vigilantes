@@ -84,6 +84,7 @@ public class CalendarActivity extends AppCompatActivity {
         selectedDateLabel.setText("Events on " + selectedDateStr);
 
         // listening for date changes on the calendar widget
+        // Citation: Ved, March 18 2025, https://developer.android.com/reference/android/widget/CalendarView#setOnDateChangeListener(android.widget.CalendarView.OnDateChangeListener)
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             selectedDateStr = normalizeDate(dayOfMonth, month + 1, year);
             selectedDateLabel.setText("Events on " + selectedDateStr);
@@ -116,6 +117,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     // fetching all events from Firestore and storing them locally for calendar filtering
+    // Citation: Ved, March 18 2025, https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
     private void fetchAllEvents() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -203,6 +205,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     // normalizing an event's date string to match our comparison format
     // handles both "d/M/yyyy" and potential extra whitespace
+    // Citation: Ved, March 18 2025, https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
     static String normalizeEventDate(String dateStr) {
         if (dateStr == null) return "";
         String trimmed = dateStr.trim();
