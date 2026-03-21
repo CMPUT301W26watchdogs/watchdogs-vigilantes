@@ -5,6 +5,7 @@ package com.example.vigilante;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,12 +14,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 /**
 * This class allows user to view event by scanning a qr code from their homescreen
@@ -26,14 +34,23 @@ import java.util.Map;
 public class EventDetailActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
+    private RecyclerView recyclerView;
     private String eventId;
     private Button joinButton;
+
+    private List<Comment> commentList;
+    private CommentAdapter commentAdapter;
+    private EditText commentInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_detail);
+
+        recyclerView = findViewById(R.id.commentsRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -44,6 +61,10 @@ public class EventDetailActivity extends AppCompatActivity {
         // getting the event ID string that was passed from MainActivity after scanning the QR code
         String eventId = getIntent().getStringExtra("event_id");
 
+        commentList = new ArrayList<>();
+
+        commentAdapter = new CommentAdapter(commentList);
+        recyclerView.setAdapter(commentAdapter);
         // getting references to all the text views that display event details
         TextView title = findViewById(R.id.eventTitle);
         TextView description = findViewById(R.id.eventDescription);
@@ -55,10 +76,15 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView signUpStatus = findViewById(R.id.signUpStatus);
         Button registerButton = findViewById(R.id.registerButton);
 
+        commentInput = findViewById(R.id.comment_description);
+        Button postCommentButton = findViewById(R.id.send_comment_button);
+
+
+
         // querying Firestore for the event document using the scanned event ID
         if (eventId != null) {
             db = FirebaseFirestore.getInstance();
-
+            fetchAllComments(eventId);
             db.collection("events").document(eventId)
                     .get()
                     .addOnSuccessListener(doc -> {
@@ -144,6 +170,18 @@ public class EventDetailActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+
+        postCommentButton.setOnClickListener(v -> {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            db.collection("users").document(currentUser.getUid()).get().addOnSuccessListener(userDoc -> {
+                        if (userDoc.exists()) {
+                            String name = userDoc.getString("name");
+                            postComment(eventId, currentUser.getUid(), name);
+                        }
+                    });
+
+        });
+
         // closing this screen and return to the previous one
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
@@ -200,5 +238,46 @@ public class EventDetailActivity extends AppCompatActivity {
                 .addOnFailureListener( e -> {
                     Toast.makeText(this, "Error cancelling: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void postComment(String eventId, String userId, String userName){
+        String comment = commentInput.getText().toString().trim();
+        if (comment.isEmpty()) {
+            Toast.makeText(this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Map<String, Object> commentData = new HashMap<>();
+        commentData.put("userId", userId);
+        commentData.put("name", userName);
+        commentData.put("commentText", comment);
+        commentData.put("timestamp", FieldValue.serverTimestamp());
+
+        db.collection("events").document(eventId).collection("comments").add(commentData).addOnSuccessListener(documentReference -> {
+            commentInput.setText("");
+            Toast.makeText(this, "Comment posted!", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to post comment!" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+//Gemini March 21st 2026, help me retrieve comments from firebase
+    private void fetchAllComments(String eventId) {
+        db.collection("events").document(eventId).collection("comments").orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener((value,error)-> {
+            if(error != null){
+                Toast.makeText(this, "Error loading comments:" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            if(value != null) {
+                commentList.clear();
+
+                for (QueryDocumentSnapshot document : value) {
+                    Comment comment = document.toObject(Comment.class);
+                    commentList.add(comment);
+                }
+                commentAdapter.notifyDataSetChanged();
+
+                if (!commentList.isEmpty()) {
+                    recyclerView.scrollToPosition(commentList.size() - 1);
+                }
+            }
+        });
     }
 }
