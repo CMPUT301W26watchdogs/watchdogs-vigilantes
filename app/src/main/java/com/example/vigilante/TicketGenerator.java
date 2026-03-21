@@ -32,6 +32,7 @@ public class TicketGenerator {
     }
 
     // building the full PDF document with the ticket drawn on a single page
+    // Citation: Ved, March 16 2025, https://developer.android.com/reference/android/graphics/pdf/PdfDocument
     public PdfDocument generate() {
         PdfDocument document = new PdfDocument();
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, 1).create();
@@ -194,6 +195,7 @@ public class TicketGenerator {
     }
 
     // shortening text with an ellipsis if it exceeds the max width in pixels
+    // Citation: Ved, March 16 2025, https://developer.android.com/reference/android/graphics/Paint#measureText(java.lang.String)
     static String truncateText(String text, Paint paint, float maxWidth) {
         if (text == null) return "";
         if (paint.measureText(text) <= maxWidth) return text;

@@ -306,6 +306,7 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     // generating a PDF ticket and saving it to the device's Downloads folder (Wildcard)
+    // Citation: Ved, March 16 2025, https://developer.android.com/training/data-storage/shared/media#add-item
     private void generateAndSaveTicket(String eventTitle, String eventDate, String eventLocation, String userId) {
         // fetching the attendee's name from Firestore to put on the ticket
         db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
