@@ -132,7 +132,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     // querying Firestore for the most recent events to show in the carousel
-    // Citation: Ved, March 15 2025, https://firebase.google.com/docs/firestore/query-data/order-limit-data#order_and_limit_data
+    // Citation: Ved, March 15 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/order-limit-data#order_and_limit_data
     private void loadFeaturedEvents() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events")
@@ -206,7 +206,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     // starting auto scroll so the carousel moves to the next page automatically
-    // Citation: Ved, March 15 2025, https://developer.android.com/reference/android/os/Handler#postDelayed(java.lang.Runnable,%20long)
+    // Citation: Ved, March 15 2025, Claude referred to https://developer.android.com/reference/android/os/Handler#postDelayed(java.lang.Runnable,%20long)
     private void startAutoScroll() {
         autoScrollHandler = new Handler(Looper.getMainLooper());
         autoScrollRunnable = new Runnable() {

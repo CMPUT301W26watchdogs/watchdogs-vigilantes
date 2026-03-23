@@ -37,7 +37,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Carous
         return new CarouselViewHolder(view);
     }
 
-    // Citation: Ved, March 15 2025, https://developer.android.com/develop/ui/views/layout/recyclerview#implement-adapter
+    // Citation: Ved, March 15 2025, Claude referred to https://developer.android.com/develop/ui/views/layout/recyclerview#implement-adapter
     @Override
     public void onBindViewHolder(@NotNull CarouselViewHolder holder, int position) {
         Event event = events.get(position);
