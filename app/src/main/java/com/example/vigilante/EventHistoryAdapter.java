@@ -33,7 +33,7 @@ public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapte
         return new HistoryViewHolder(view);
     }
 
-    // Citation: Ved, March 11 2025, https://developer.android.com/develop/ui/views/layout/recyclerview#implement-adapter
+    // Citation: Ved, March 11 2025, Claude referred to https://developer.android.com/develop/ui/views/layout/recyclerview#implement-adapter
     @Override
     public void onBindViewHolder(@NotNull HistoryViewHolder holder, int position) {
         Map<String, String> entry = historyList.get(position);

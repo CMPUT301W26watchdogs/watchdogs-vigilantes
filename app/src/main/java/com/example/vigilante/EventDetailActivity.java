@@ -238,7 +238,7 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     // randomly selecting a replacement entrant from pending waitlist after a decline US 01.05.01
-    // Citation: Ved, March 13 2025, https://docs.oracle.com/javase/8/docs/api/java/util/Random.html#nextInt-int-
+    // Citation: Ved, March 13 2025, Claude referred to https://docs.oracle.com/javase/8/docs/api/java/util/Random.html#nextInt-int-
     private void drawReplacementFromWaitlist(String eventId) {
         db.collection("events").document(eventId)
                 .collection("attendees")

@@ -53,7 +53,7 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     // querying Firestore for all notifications belonging to the current user, ordered by most recent US 01.04.03
-    // Citation: Ved, March 12 2025, https://firebase.google.com/docs/firestore/query-data/order-limit-data
+    // Citation: Ved, March 12 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/order-limit-data
     private void loadNotifications() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;

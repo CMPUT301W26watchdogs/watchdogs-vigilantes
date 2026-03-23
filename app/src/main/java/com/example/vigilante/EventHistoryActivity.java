@@ -50,7 +50,7 @@ public class EventHistoryActivity extends AppCompatActivity {
     }
 
     // loading the user's event history by checking every event's attendees subcollection US 01.02.03
-    // Citation: Ved, March 11 2025, https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
+    // Citation: Ved, March 11 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
     private void loadHistory() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;

@@ -170,7 +170,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // performing the lottery draw by randomly selecting entrants from the pending list US 02.05.01
-    // Citation: Ved, March 10 2025, https://stackoverflow.com/questions/4702036/take-n-random-elements-from-a-lista
+    // Citation: Ved, March 10 2025, Claude referred to https://stackoverflow.com/questions/4702036/take-n-random-elements-from-a-lista
     private void performLotteryDraw(int numToDraw) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -206,7 +206,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // drawing a replacement entrant from the pending waitlist when a selected entrant cancels or declines US 02.05.03
-    // Citation: Ved, March 11 2025, https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
+    // Citation: Ved, March 11 2025, Claude referred to https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
     private void drawReplacementFromWaitlist() {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -311,7 +311,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // sending a notification to all entrants on the waiting list with status pending US 02.07.01
-    // Citation: Ved, March 12 2025, https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
+    // Citation: Ved, March 12 2025, Claude referred to https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
     private void sendNotificationToWaiting(String customMessage) {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
             String eventTitle = eventDoc.getString("title");
@@ -349,7 +349,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // exporting the enrolled entrants list as a CSV file and opening a share dialog US 02.06.05
-    // Citation: Ved, March 13 2025, https://developer.android.com/training/sharing/send#send-binary-content
+    // Citation: Ved, March 13 2025, Claude referred to https://developer.android.com/training/sharing/send#send-binary-content
     private void exportEnrolledCsv() {
         if (attendeeList.isEmpty()) {
             Toast.makeText(this, "No enrolled entrants to export", Toast.LENGTH_SHORT).show();
