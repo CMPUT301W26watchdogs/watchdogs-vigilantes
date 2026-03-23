@@ -1,5 +1,6 @@
 package com.example.vigilante;
 
+import android.annotation.SuppressLint;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -247,6 +248,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         return Color.argb(a, r, g, b);
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void draw(Canvas canvas) {
         // draw the refraction glow ABOVE the bar (negative y) before anything else
