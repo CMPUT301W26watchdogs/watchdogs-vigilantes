@@ -143,11 +143,12 @@ public class EventDetailActivity extends AppCompatActivity {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
-                        .collection("attendees").document(currentUser.getUid()) // MATCHES ADAPTER
+                        .collection("attendees").document(currentUser.getUid())
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
                                 String status = doc.getString("status");
+                                findViewById(R.id.lotteryInfoButton).setVisibility(View.VISIBLE);
 
                                 if ("pending".equals(status)) {
                                     signUpStatus.setText("Your status: Pending");

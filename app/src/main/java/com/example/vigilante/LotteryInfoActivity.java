@@ -122,7 +122,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
             lotteryCriteria.setText("");
         }
 
-        // back button for closing this screen and returning to EventDetailActivity
+        findViewById(R.id.backArrow).setOnClickListener(v -> finish());
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 }

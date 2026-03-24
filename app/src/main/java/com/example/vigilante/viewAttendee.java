@@ -118,9 +118,13 @@ public class viewAttendee extends AppCompatActivity {
         }
 
         mapButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, EntrantMapActivity.class);
-            intent.putExtra("event_id", eventId);
-            startActivity(intent);
+            try {
+                Intent intent = new Intent(this, EntrantMapActivity.class);
+                intent.putExtra("event_id", eventId);
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "Map feature unavailable (Google Maps API key not configured)", Toast.LENGTH_LONG).show();
+            }
         });
 
         cancelAllButton.setOnClickListener(v -> {

@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class RegisterPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private boolean isOrganizer = false;
+    private String selectedRole = "entrant";
     private TextView roleEntrant, roleOrganizer, roleAdmin;
 
     @Override
@@ -62,17 +62,17 @@ public class RegisterPage extends AppCompatActivity {
 
         roleEntrant.setOnClickListener(v -> {
             selectRole(roleEntrant);
-            isOrganizer = false;
+            selectedRole = "entrant";
         });
 
         roleOrganizer.setOnClickListener(v -> {
             selectRole(roleOrganizer);
-            isOrganizer = true;
+            selectedRole = "organizer";
         });
 
         roleAdmin.setOnClickListener(v -> {
             selectRole(roleAdmin);
-            isOrganizer = false;
+            selectedRole = "admin";
         });
 
         register_button.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +96,8 @@ public class RegisterPage extends AppCompatActivity {
                         Map<String, Object> userMap = new HashMap<>();
                         userMap.put("name", name);
                         userMap.put("email", email);
-                        userMap.put("isOrganizer", isOrganizer);
+                        userMap.put("role", selectedRole);
+                        userMap.put("isOrganizer", selectedRole.equals("organizer"));
                         if (!phone.isEmpty()) {
                             userMap.put("phone", phone);
                         }

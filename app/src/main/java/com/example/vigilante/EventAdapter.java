@@ -69,7 +69,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         if (isMyEventsPageUser) {
             holder.signUpEvent.setVisibility(View.VISIBLE);
-            // 1. IMPORTANT: Set a default state immediately so it's clickable while loading
             holder.signUpEvent.setEnabled(true);
             holder.signUpEvent.setText("Sign Up");
             holder.signUpEvent.setOnClickListener(v -> {
@@ -79,7 +78,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            // 2. Now check the database to see if we should OVERRIDE the default
+            // checking if this entrant already signed up for this event
             db.collection("events").document(event.getId())
                     .collection("attendees").document(currentUserId)
                     .get()
@@ -320,16 +319,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             db.collection("users").document(currentUserId).get().addOnSuccessListener(userDoc -> {
                 if (userDoc.exists()) {
-                    // Convert doc to Profile object to get the name/email
                     Profile currentUser = userDoc.toObject(Profile.class);
 
-                    // 2. PREPARE the attendee data
+                    // building the attendee document for this sign up
                     Map<String, Object> attendeeData = new HashMap<>();
-                    attendeeData.put("name", currentUser.getName());   // Critical for the list!
-                    attendeeData.put("email", currentUser.getEmail()); // Critical for the list!
+                    attendeeData.put("name", currentUser.getName());
+                    attendeeData.put("email", currentUser.getEmail());
                     attendeeData.put("userId", currentUserId);
                     attendeeData.put("status", "pending");
-                    attendeeData.put("timestamp", FieldValue.serverTimestamp()); // Logs exact time
+                    attendeeData.put("timestamp", FieldValue.serverTimestamp());
 
                     db.collection("events").document(event.getId()).collection("attendees").document(event.getCurrentUser()).set(attendeeData).addOnSuccessListener(aVoid -> {
                         Toast.makeText(context, "Signed Up Successfully!", Toast.LENGTH_SHORT).show();

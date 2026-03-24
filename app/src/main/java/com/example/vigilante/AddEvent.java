@@ -184,16 +184,12 @@ public class AddEvent extends AppCompatActivity {
         }
 
         db.collection("events").add(eventMap).addOnSuccessListener(documentReference -> {
-            // 1. Get the newly generated Event ID
             String newEventId = documentReference.getId();
 
-            // 2. Generate the QR Code with this ID
             Bitmap qrBitmap = generateQrCode(newEventId);
 
             if (qrBitmap != null) {
-                // 3. Save to device gallery
                 saveQrCodeToGallery(qrBitmap, title);
-                // 4. Show the QR code to the organizer in a popup
                 showQrCodeDialog(qrBitmap);
             } else {
                 Toast.makeText(getApplicationContext(), "Event Created, but QR failed", Toast.LENGTH_SHORT).show();
