@@ -30,7 +30,7 @@ public class RegistrationTest {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
         }
-        onView(withId(R.id.home_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class RegistrationTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.home_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -78,6 +78,6 @@ public class RegistrationTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.home_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
     }
 }

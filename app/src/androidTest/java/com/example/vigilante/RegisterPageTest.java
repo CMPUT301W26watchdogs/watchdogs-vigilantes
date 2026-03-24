@@ -50,7 +50,7 @@ public class RegisterPageTest {
     @Test
     public void organizerCheckbox_isDisplayed() {
         try (ActivityScenario<RegisterPage> scenario = ActivityScenario.launch(RegisterPage.class)) {
-            onView(withId(R.id.organizer_checkbox)).check(matches(isDisplayed()));
+            onView(withId(R.id.roleOrganizer)).check(matches(isDisplayed()));
         }
     }
 

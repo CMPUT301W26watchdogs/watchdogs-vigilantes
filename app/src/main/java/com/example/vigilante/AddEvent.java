@@ -117,7 +117,7 @@ public class AddEvent extends AppCompatActivity {
             }
         });
 
-        setupBottomNav();
+        //setupBottomNav();
     }
 
     private void setupBottomNav() {
