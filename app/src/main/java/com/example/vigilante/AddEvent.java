@@ -4,6 +4,8 @@ package com.example.vigilante;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -43,7 +45,8 @@ import java.io.OutputStream;
  */
 public class AddEvent extends AppCompatActivity {
 
-    private EditText titleInput, descriptionInput, posterUrlInput, maxEntrantsField, categoryInput;
+    private EditText titleInput, descriptionInput, posterUrlInput, maxEntrantsField;
+    private AutoCompleteTextView categoryInput;
 
     private String selectedStartDate = "";
     private String selectedEndDate = "";
@@ -76,6 +79,9 @@ public class AddEvent extends AppCompatActivity {
         geolocationCheck = findViewById(R.id.geolocation_checkbox);
         maxEntrantsField = findViewById(R.id.fieldMaxEntrants); // the number input itself
         categoryInput = findViewById(R.id.event_category);
+        String[] categories = {"Sports", "Arts", "Music", "Education", "Technology", "Social", "Other"};
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categories);
+        categoryInput.setAdapter(categoryAdapter);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
