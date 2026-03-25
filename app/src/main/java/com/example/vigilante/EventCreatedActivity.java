@@ -1,4 +1,5 @@
 //Success screen after creating Event showing the generated QR code for the event
+
 package com.example.vigilante;
 
 import android.content.Intent;
@@ -34,7 +35,7 @@ public class EventCreatedActivity extends AppCompatActivity {
         Event event = (Event) getIntent().getSerializableExtra("event");
 
         TextView titleView = findViewById(R.id.createdEventTitle);
-        
+
         ImageView qrView = findViewById(R.id.generatedQrCode);
 
         // showing the event title above the QR code

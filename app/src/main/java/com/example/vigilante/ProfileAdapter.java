@@ -1,4 +1,4 @@
-// RecyclerView adapter for profile cards — shows name and a delete button for admin to remove profiles — US 03.02.01
+// RecyclerView adapter for profile cards showing name and a delete button for admin to remove profiles US 03.02.01
 
 package com.example.vigilante;
 
@@ -32,7 +32,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
     private List<Profile> profileList;
 
-
     public ProfileAdapter(List<Profile> profileList) {
         this.profileList = profileList;
 
@@ -49,14 +48,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     public void onBindViewHolder(@NotNull ProfileViewHolder holder, int position) {
         Profile profile = profileList.get(position);
         holder.nameText.setText(profile.getName());
-        //holder.emailText.setText(profile.getEmail());
         holder.deleteProfile.setVisibility(View.VISIBLE);
         holder.deleteProfile.setOnClickListener(v -> {
             showDeleteDialog(v.getContext(), profile, position);
         });
     }
-
-
 
     /**
 * This function returns the number for profiles in firebase
@@ -77,7 +73,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         public ProfileViewHolder(@NotNull View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.item_profile_title);
-            //emailText = itemView.findViewById(R.id.item_profile_email);
             deleteProfile = itemView.findViewById(R.id.deleteProfile);
         }
     }

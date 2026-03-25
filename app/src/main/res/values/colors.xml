@@ -15,5 +15,10 @@
     <color name="status_open">#27AE60</color>
     <color name="status_waiting">#F39C12</color>
     <color name="status_closed">#95A5A6</color>
+    <color name="status_selected">#2196F3</color>
+    <color name="status_declined">#E74C3C</color>
     <color name="card_background">#FFFFFF</color>
+    <color name="nav_icon_inactive">#999999</color>
+    <color name="nav_icon_active">#C62828</color>
+    <color name="bottom_nav_bg">#FAFAFA</color>
 </resources>
