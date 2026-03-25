@@ -3,6 +3,7 @@
 package com.example.vigilante;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
@@ -13,6 +14,8 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
+import android.content.Intent;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -34,7 +37,9 @@ public class AllEventsActivityTest {
 
     @Test
     public void header_isDisplayed() {
-        try (ActivityScenario<AllEventsActivity> scenario = ActivityScenario.launch(AllEventsActivity.class)) {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AllEventsActivity.class);
+        intent.putExtra("type", "all");
+        try (ActivityScenario<AllEventsActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.all_events_header)).check(matches(isDisplayed()));
         }
     }
@@ -42,14 +47,18 @@ public class AllEventsActivityTest {
     @Test
     public void recyclerView_isDisplayed() {
         // verifying that the events list container is present on the screen
-        try (ActivityScenario<AllEventsActivity> scenario = ActivityScenario.launch(AllEventsActivity.class)) {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AllEventsActivity.class);
+        intent.putExtra("type", "all");
+        try (ActivityScenario<AllEventsActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.all_events_recycler_view)).check(matches(isDisplayed()));
         }
     }
 
     @Test
     public void backButton_isDisplayed() {
-        try (ActivityScenario<AllEventsActivity> scenario = ActivityScenario.launch(AllEventsActivity.class)) {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AllEventsActivity.class);
+        intent.putExtra("type", "all");
+        try (ActivityScenario<AllEventsActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.back_button)).check(matches(isDisplayed()));
         }
     }

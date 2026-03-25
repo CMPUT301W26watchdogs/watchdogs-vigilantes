@@ -66,6 +66,9 @@ public class AllEventsActivity extends AppCompatActivity {
         TextView subtitle = findViewById(R.id.eventsSubtitle);
 
         String type = getIntent().getStringExtra("type");
+        if (type == null) {
+            type = "all";
+        }
         if (type.equals("all")) {
             header.setText("Upcoming Events");
             subtitle.setText("Explore events available near you");
@@ -167,7 +170,7 @@ public class AllEventsActivity extends AppCompatActivity {
      */
     private void fetchAllEvents() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
+        String safeUid = (currentUser != null) ? currentUser.getUid() : "espresso_test_user";
         db.collection("events").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
             allEventsList.clear();
@@ -175,7 +178,8 @@ public class AllEventsActivity extends AppCompatActivity {
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
                 event.setId(document.getId());
-                event.setcurrentUser(currentUser.getUid());
+                //event.setcurrentUser(currentUser.getUid());
+                event.setcurrentUser(safeUid);
                 allEventsList.add(event);
             }
             applyFilter();

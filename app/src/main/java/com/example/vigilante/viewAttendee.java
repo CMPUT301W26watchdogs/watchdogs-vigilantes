@@ -79,7 +79,7 @@ public class viewAttendee extends AppCompatActivity {
             notifySelectedButton.setVisibility(View.GONE);
             drawReplacementButton.setVisibility(View.GONE);
             exportCsvButton.setVisibility(View.GONE);
-            loadAttendees(null);
+            loadAttendees("pending");
         } else if ("cancelled".equals(type)) {
             titleText.setText("Cancelled Entrants");
             mapButton.setVisibility(View.GONE);
@@ -205,7 +205,7 @@ public class viewAttendee extends AppCompatActivity {
                     }
 
                     Toast.makeText(this, actualDraw + " entrants selected!", Toast.LENGTH_SHORT).show();
-                    loadAttendees(null);
+                    loadAttendees("pending");
                 });
     }
 
@@ -448,7 +448,7 @@ public class viewAttendee extends AppCompatActivity {
                         count++;
                     }
                     Toast.makeText(this, count + " entrants cancelled", Toast.LENGTH_SHORT).show();
-                    loadAttendees("selected".equals(type) ? "selected" : null);
+                    loadAttendees("selected".equals(type) ? "selected" : "pending");
                 });
     }
 }

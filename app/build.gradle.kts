@@ -60,5 +60,14 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.3.1")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     implementation("com.google.android.material:material:1.9.0")
+    implementation("com.google.protobuf:protobuf-javalite:3.22.3")
+    androidTestImplementation("com.google.protobuf:protobuf-javalite:3.22.3")
 
+}
+configurations.configureEach {
+    // 1. Force the correct, updated version
+    resolutionStrategy.force("com.google.protobuf:protobuf-javalite:3.22.3")
+
+    // 2. BAN the old, broken version that Espresso is trying to sneak in
+    exclude(group = "com.google.protobuf", module = "protobuf-lite")
 }

@@ -25,6 +25,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,12 +66,23 @@ public class NotificationsActivity extends AppCompatActivity {
         Toast.makeText(this,user.getUid(), Toast.LENGTH_LONG).show();
         db.collection("notifications")
                 .whereEqualTo("userId", user.getUid())
-                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(snapshots -> {
                     notificationList.clear();
+                    List<QueryDocumentSnapshot> docs = new ArrayList<>();
                     // building notification entries from Firestore documents
                     for (QueryDocumentSnapshot doc : snapshots) {
+                        docs.add(doc);
+                    }
+                    Collections.sort(docs, (a, b) -> {
+                        com.google.firebase.Timestamp ta = a.getTimestamp("timestamp");
+                        com.google.firebase.Timestamp tb = b.getTimestamp("timestamp");
+                        if (ta == null && tb == null) return 0;
+                        if (ta == null) return 1;
+                        if (tb == null) return -1;
+                        return tb.compareTo(ta);
+                    });
+                    for (QueryDocumentSnapshot doc : docs) {
                         Map<String, String> entry = new HashMap<>();
                         entry.put("id", doc.getId());
                         entry.put("title", doc.getString("title") != null ? doc.getString("title") : "Notification");
@@ -134,14 +146,14 @@ public class NotificationsActivity extends AppCompatActivity {
             holder.card.setCardBackgroundColor(holder.itemView.getContext().getColor(
                     isRead ? R.color.card_background : R.color.surface_gray));
 
-            String type = entry.get("type");
+
             String eventId = entry.get("eventId");
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             // Show buttons only if it's an invitation and we have an eventId
-            if ("invitation".equals(type) && eventId != null && !eventId.isEmpty()) {
+            if (eventId != null && !eventId.isEmpty()) {
                 holder.buttonRow.setVisibility(View.VISIBLE);
-                
+
                 holder.btnAccept.setOnClickListener(v -> {
                     handleAction(v, eventId, currentUserId, "accepted", position);
                 });
@@ -162,6 +174,7 @@ public class NotificationsActivity extends AppCompatActivity {
                     entry.put("read", "true");
                     holder.card.setCardBackgroundColor(v.getContext().getColor(R.color.card_background));
                 }
+
                 if (eventId != null && !eventId.isEmpty()) {
                     Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
                     intent.putExtra("event_id", eventId);
@@ -187,8 +200,12 @@ public class NotificationsActivity extends AppCompatActivity {
                 db.collection("events").document(eventId)
                         .collection("attendees").document(userId)
                         .update("status", "accepted")
-                        .addOnSuccessListener(aVoid -> cleanupNotification(v, notifId, position, "Joined event!"))
-                        .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Failed to join", Toast.LENGTH_SHORT).show());
+                        .addOnSuccessListener(unused -> {
+                            Toast.makeText(v.getContext(), "You've accepted the invitation!", Toast.LENGTH_SHORT).show();
+                            //recreate();
+                        })
+                        .addOnFailureListener(e ->
+                                Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }
 
