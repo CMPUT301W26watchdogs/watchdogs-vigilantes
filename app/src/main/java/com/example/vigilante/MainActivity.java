@@ -1,4 +1,4 @@
-// login screen — authenticates via Firebase Auth then routes to HomePage or AdminPage based on credentials
+// login screen authenticating via Firebase Auth then routing to HomePage or AdminPage based on credentials
 
 package com.example.vigilante;
 
