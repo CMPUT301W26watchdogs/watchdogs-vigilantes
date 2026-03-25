@@ -4,10 +4,14 @@ package com.example.vigilante;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -57,7 +61,8 @@ public class NotificationsActivity extends AppCompatActivity {
     private void loadNotifications() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
-
+        Log.d("user", user.getUid());
+        Toast.makeText(this,user.getUid(), Toast.LENGTH_LONG).show();
         db.collection("notifications")
                 .whereEqualTo("userId", user.getUid())
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -76,6 +81,8 @@ public class NotificationsActivity extends AppCompatActivity {
                         notificationList.add(entry);
                     }
                     adapter.notifyDataSetChanged();
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to load notifications", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -127,6 +134,25 @@ public class NotificationsActivity extends AppCompatActivity {
             holder.card.setCardBackgroundColor(holder.itemView.getContext().getColor(
                     isRead ? R.color.card_background : R.color.surface_gray));
 
+            String type = entry.get("type");
+            String eventId = entry.get("eventId");
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            // Show buttons only if it's an invitation and we have an eventId
+            if ("invitation".equals(type) && eventId != null && !eventId.isEmpty()) {
+                holder.buttonRow.setVisibility(View.VISIBLE);
+                
+                holder.btnAccept.setOnClickListener(v -> {
+                    handleAction(v, eventId, currentUserId, "accepted", position);
+                });
+
+                holder.btnDecline.setOnClickListener(v -> {
+                    handleAction(v, eventId, currentUserId, "declined", position);
+                });
+            } else {
+                holder.buttonRow.setVisibility(View.GONE);
+            }
+
             // clicking a notification marks it as read and opens the event detail screen US 01.04.03
             holder.itemView.setOnClickListener(v -> {
                 String notifId = entry.get("id");
@@ -136,14 +162,43 @@ public class NotificationsActivity extends AppCompatActivity {
                     entry.put("read", "true");
                     holder.card.setCardBackgroundColor(v.getContext().getColor(R.color.card_background));
                 }
-
-                String eventId = entry.get("eventId");
                 if (eventId != null && !eventId.isEmpty()) {
                     Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
                     intent.putExtra("event_id", eventId);
                     v.getContext().startActivity(intent);
                 }
             });
+        }
+
+        private void handleAction(View v, String eventId, String userId, String action, int position) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Map<String, String> entry = list.get(position);
+            String notifId = entry.get("id");
+
+            if ("declined".equals(action)) {
+                // Remove user from the event's attendee collection as requested
+                db.collection("events").document(eventId)
+                        .collection("attendees").document(userId)
+                        .delete()
+                        .addOnSuccessListener(aVoid -> cleanupNotification(v, notifId, position, "Invitation declined"))
+                        .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Failed to decline", Toast.LENGTH_SHORT).show());
+            } else {
+                // Update status to accepted to join the event
+                db.collection("events").document(eventId)
+                        .collection("attendees").document(userId)
+                        .update("status", "accepted")
+                        .addOnSuccessListener(aVoid -> cleanupNotification(v, notifId, position, "Joined event!"))
+                        .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Failed to join", Toast.LENGTH_SHORT).show());
+            }
+        }
+
+        private void cleanupNotification(View v, String notifId, int position, String toastMsg) {
+            if (notifId != null) {
+                FirebaseFirestore.getInstance().collection("notifications").document(notifId).delete();
+            }
+            list.remove(position);
+            notifyItemRemoved(position);
+            Toast.makeText(v.getContext(), toastMsg, Toast.LENGTH_SHORT).show();
         }
 
         /**
@@ -160,12 +215,17 @@ public class NotificationsActivity extends AppCompatActivity {
         static class NotifViewHolder extends RecyclerView.ViewHolder {
             TextView titleText, messageText;
             MaterialCardView card;
+            LinearLayout buttonRow;
+            Button btnAccept, btnDecline;
 
             NotifViewHolder(View itemView) {
                 super(itemView);
                 titleText = itemView.findViewById(R.id.notifTitle);
                 messageText = itemView.findViewById(R.id.notifMessage);
                 card = itemView.findViewById(R.id.notifCard);
+                buttonRow = itemView.findViewById(R.id.notifButtonRow);
+                btnAccept = itemView.findViewById(R.id.btnAccept);
+                btnDecline = itemView.findViewById(R.id.btnDecline);
             }
         }
     }
