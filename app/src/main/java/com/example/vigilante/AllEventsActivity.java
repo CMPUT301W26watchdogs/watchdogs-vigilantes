@@ -95,7 +95,7 @@ public class AllEventsActivity extends AppCompatActivity {
             }
         });
 
-        //setupBottomNav();
+        setupBottomNav();
     }
 
     // setting up category chip filter listeners for filtering events by type US 01.01.04

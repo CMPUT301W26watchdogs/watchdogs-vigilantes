@@ -63,9 +63,11 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
                                     .collection("attendees").document(entrant.getId())
                                     .update("status", "cancelled")
                                     .addOnSuccessListener(aVoid -> {
-                                        entrant.setStatus("cancelled");
-                                        holder.statusText.setText("cancelled");
-                                        holder.cancelButton.setVisibility(View.GONE);
+                                        int pos = entrants.indexOf(entrant);
+                                        if (pos != -1) {
+                                            entrants.remove(pos);
+                                            notifyItemRemoved(pos);
+                                        }
                                         Toast.makeText(v.getContext(), entrant.getName() + " cancelled", Toast.LENGTH_SHORT).show();
                                     })
                                     .addOnFailureListener(e -> {
