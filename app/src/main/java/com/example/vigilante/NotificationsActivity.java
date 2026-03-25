@@ -17,10 +17,10 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,12 +60,22 @@ public class NotificationsActivity extends AppCompatActivity {
 
         db.collection("notifications")
                 .whereEqualTo("userId", user.getUid())
-                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(snapshots -> {
                     notificationList.clear();
-                    // building notification entries from Firestore documents
+                    List<QueryDocumentSnapshot> docs = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : snapshots) {
+                        docs.add(doc);
+                    }
+                    Collections.sort(docs, (a, b) -> {
+                        com.google.firebase.Timestamp ta = a.getTimestamp("timestamp");
+                        com.google.firebase.Timestamp tb = b.getTimestamp("timestamp");
+                        if (ta == null && tb == null) return 0;
+                        if (ta == null) return 1;
+                        if (tb == null) return -1;
+                        return tb.compareTo(ta);
+                    });
+                    for (QueryDocumentSnapshot doc : docs) {
                         Map<String, String> entry = new HashMap<>();
                         entry.put("id", doc.getId());
                         entry.put("title", doc.getString("title") != null ? doc.getString("title") : "Notification");
