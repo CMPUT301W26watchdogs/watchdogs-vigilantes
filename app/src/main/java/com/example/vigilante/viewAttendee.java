@@ -200,9 +200,23 @@ public class viewAttendee extends AppCompatActivity {
                         selected.add(pending.remove(index));
                     }
 
-                    for (QueryDocumentSnapshot doc : selected) {
-                        doc.getReference().update("status", "selected");
-                    }
+                    db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
+                        String eventTitle = eventDoc.getString("title");
+                        for (QueryDocumentSnapshot doc : selected) {
+                            doc.getReference().update("status", "selected");
+                            String userId = doc.getString("userId");
+                            if (userId != null) {
+                                Map<String, Object> notification = new HashMap<>();
+                                notification.put("userId", userId);
+                                notification.put("eventId", eventId);
+                                notification.put("title", "You've been selected!");
+                                notification.put("message", "You've been chosen for " + (eventTitle != null ? eventTitle : "an event") + ". Open the event to accept or decline your invitation.");
+                                notification.put("timestamp", FieldValue.serverTimestamp());
+                                notification.put("read", false);
+                                db.collection("notifications").add(notification);
+                            }
+                        }
+                    });
 
                     Toast.makeText(this, actualDraw + " entrants selected!", Toast.LENGTH_SHORT).show();
                     loadAttendees("pending");
