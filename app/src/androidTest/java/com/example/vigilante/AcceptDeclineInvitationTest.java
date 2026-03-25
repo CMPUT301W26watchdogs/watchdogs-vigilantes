@@ -103,7 +103,6 @@ public class AcceptDeclineInvitationTest {
         }
     }
 
-
     // checking that an accepted user sees the enrolled state US 01.05.01
     @Test
     public void acceptedUser_seesEnrolledState() throws Exception {
@@ -122,7 +121,6 @@ public class AcceptDeclineInvitationTest {
             onView(withId(R.id.signUpStatus)).check(matches(withText(containsString("Accepted"))));
         }
     }
-
 
     // checking that a declined user can re sign up for the event US 01.05.01
     @Test
