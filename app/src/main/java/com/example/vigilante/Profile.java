@@ -1,6 +1,7 @@
-// data model for a user profile — holds name, email, organizer flag for Firestore deserialization — US 01.02.01
+// data model for a user profile holding name, email, organizer flag for Firestore deserialization US 01.02.01
 
 package com.example.vigilante;
+
 /**
 * This class is what creates a profile for a user.
  */
@@ -25,6 +26,7 @@ public class Profile {
         this.isOrganizer = isOrganizer;
 
     }
+
     /**
 * Getter function for name
  */
@@ -33,16 +35,13 @@ public class Profile {
      * Getter function for email
      */
     public String getEmail() {return  email;}
-
     /**
      * Getter function for organizerid
      */
     public  String getOrganizerId() {return  organizerId;}
-
     /**
      * Getter function for id
      */
-
     public String getId() { return id; }
     /**
      * Getter function for bool isorganizer
@@ -68,6 +67,4 @@ public class Profile {
      * Setter function for bool isorganzier
      */
     public void setIsOrganizer(Boolean isOrganizer) { this.isOrganizer = isOrganizer;}
-
-
 }

@@ -30,7 +30,7 @@ public class RegistrationTest {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
         }
-        onView(withId(R.id.home_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -57,11 +57,11 @@ public class RegistrationTest {
         onView(withId(R.id.password_register)).perform(typeText("pass123"));
         onView(withId(R.id.register_button)).perform(click());
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.home_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -74,10 +74,10 @@ public class RegistrationTest {
         onView(withId(R.id.organizer_checkbox)).perform(click());
         onView(withId(R.id.organizer_checkbox)).check(matches(isChecked()));
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.home_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.bottomNav)).check(matches(isDisplayed()));
     }
 }

@@ -34,19 +34,6 @@
             app:layout_constraintTop_toTopOf="@id/item_profile_poster"
             app:layout_constraintStart_toEndOf="@id/item_profile_poster"
             app:layout_constraintEnd_toEndOf="parent" />
-<!--
-        <TextView
-            android:id="@+id/item_profile_email"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Profile Email"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            app:layout_constraintTop_toTopOf="@id/item_profile_title"
-            app:layout_constraintStart_toEndOf="@id/item_profile_title"
-            app:layout_constraintEnd_toEndOf="parent" />
--->
-
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

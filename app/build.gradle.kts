@@ -45,19 +45,29 @@ dependencies {
     implementation(libs.zxing.core)
     implementation(libs.zxing.embedded)
     implementation(libs.play.services.maps)
+    implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     implementation ("com.google.firebase:firebase-storage")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     testImplementation("org.mockito:mockito-core:5.3.1")
-// Allows mocking of static methods like FirebaseAuth.getInstance()
     testImplementation("org.mockito:mockito-inline:5.2.0")
     implementation("com.google.android.material:material:1.9.0")
-    //implementation(files("/Users/suryanshankur/Library/Android/sdk/platforms/android-36/android.jar"))
+    implementation("com.google.protobuf:protobuf-javalite:3.22.3")
+    androidTestImplementation("com.google.protobuf:protobuf-javalite:3.22.3")
 
+}
+configurations.configureEach {
+    // 1. Force the correct, updated version
+    resolutionStrategy.force("com.google.protobuf:protobuf-javalite:3.22.3")
+
+    // 2. BAN the old, broken version that Espresso is trying to sneak in
+    exclude(group = "com.google.protobuf", module = "protobuf-lite")
 }

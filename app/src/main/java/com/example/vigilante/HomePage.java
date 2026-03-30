@@ -1,4 +1,4 @@
-// main hub after login — QR code scanner to join events, quick access to events list and profile — US 01.06.01
+// main hub after login with QR code scanner to join events, quick access to events list and profile US 01.06.01
 
 package com.example.vigilante;
 
@@ -21,6 +21,7 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import com.google.firebase.auth.FirebaseAuth;
+
 /**
 * This class shows the home page to our user, it has the option to scan qr
 * goto events or profile page.
@@ -54,40 +55,21 @@ public class HomePage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.homepage);
 
-        Button profile_button = (Button) findViewById(R.id.profile_button);
-        Button events_button = (Button) findViewById(R.id.events_button);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homepage), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
 
-
-        profile_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, ProfilePage.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        events_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(HomePage.this, AllEventsActivity.class);
-                intent.putExtra("type", "all");
-                startActivity(intent);
-                //finish();
-            }
-        });
-
-
-        // quick access cards — tapping the events/profile cards also navigates
+        // quick access cards, tapping the events or profile cards also navigates
         findViewById(R.id.eventsCard).setOnClickListener(v -> {
-            startActivity(new Intent(this, AllEventsActivity.class));
+            Intent intent = new Intent(this, AllEventsActivity.class);
+            intent.putExtra("type", "all");
+            startActivity(intent);
         });
+
         findViewById(R.id.profileCard).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfilePage.class));
+            startActivity(new Intent(this, NotificationsActivity.class));
         });
 
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
@@ -99,6 +81,22 @@ public class HomePage extends AppCompatActivity {
             scanLauncher.launch(options); // open the camera scanner
         });
 
+        setupBottomNav();
+    }
 
+    private void setupBottomNav() {
+        LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        navBar.setSelectedTab(1);
+        navBar.setOnTabSelectedListener(position -> {
+            if (position == 0) {
+                Intent intent = new Intent(this, AllEventsActivity.class);
+                intent.putExtra("type", "all");
+                startActivity(intent);
+            } else if (position == 2) {
+                startActivity(new Intent(this, NotificationsActivity.class));
+            } else if (position == 3) {
+                startActivity(new Intent(this, ProfilePage.class));
+            }
+        });
     }
 }

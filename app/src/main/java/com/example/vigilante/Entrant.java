@@ -1,4 +1,4 @@
-// data model for a waiting list entrant — holds name, email, phone and lottery status for Firestore deserialization
+// data model for a waiting list entrant holding name, email, phone and lottery status for Firestore deserialization
 
 package com.example.vigilante;
 
@@ -13,7 +13,7 @@ public class Entrant implements Serializable {
     private String name;   // full name
     private String email;  // contact email
     private String phone;  // contact phone number
-    private String status; // current lottery status 
+    private String status; // current lottery status
 
     // no-arg constructor required by Firestore for automatic deserialization
     public Entrant() {}
