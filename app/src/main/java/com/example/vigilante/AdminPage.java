@@ -33,7 +33,7 @@ public class AdminPage extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
 
@@ -53,6 +53,7 @@ public class AdminPage extends AppCompatActivity {
                 //Intent intent = new Intent(AdminPage.this, MyEventsAdmin.class);
                 Intent intent = new Intent(AdminPage.this, AllEventsActivity.class);
                 intent.putExtra("type", "admin");
+                intent.putExtra("IS_ADMIN", true);
                 startActivity(intent);
             }
         });
@@ -61,8 +62,9 @@ public class AdminPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
                 intent.putExtra("type", "all");
+                intent.putExtra("IS_ADMIN", true);
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
 
@@ -70,9 +72,36 @@ public class AdminPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
                 intent.putExtra("type", "org");
+                intent.putExtra("IS_ADMIN", true);
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
+
+        setupBottomNav();
+    }
+    private void setupBottomNav() {
+        LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+
+        if (navBar != null) {
+            // Highlights the home icon (index 1) since this acts as the admin's home
+            navBar.setSelectedTab(1);
+            navBar.setOnTabSelectedListener(position -> {
+                if (position == 0) {
+                    Intent intent = new Intent(this, AllEventsActivity.class);
+                    intent.putExtra("type", "all");
+                    intent.putExtra("IS_ADMIN", true);
+                    startActivity(intent);
+                } else if (position == 2) {
+                    Intent intent = new Intent(this, NotificationsActivity.class);
+                    intent.putExtra("IS_ADMIN", true);
+                    startActivity(intent);
+                } else if (position == 3) {
+                    Intent intent = new Intent(this, ProfilePage.class);
+                    intent.putExtra("IS_ADMIN", true);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 }

@@ -36,6 +36,8 @@ public class ProfilePage extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    boolean isAdmin = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +131,7 @@ public class ProfilePage extends AppCompatActivity {
         myEventsBtn.setOnClickListener(view -> {
             Intent intent = new Intent(ProfilePage.this, AllEventsActivity.class);
             intent.putExtra("type", "myactivityorg");
+            intent.putExtra("IS_ADMIN", isAdmin);
             startActivity(intent);
         });
 
@@ -157,10 +160,13 @@ public class ProfilePage extends AppCompatActivity {
                 finish();
             }
         });
-
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         Button deleteBtn = findViewById(R.id.delete_account_button);
-        deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
-
+        if(isAdmin){
+            deleteBtn.setVisibility(View.INVISIBLE);
+        }else {
+            deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
+        }
         setupBottomNav();
     }
 
@@ -204,17 +210,30 @@ public class ProfilePage extends AppCompatActivity {
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(3);
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         navBar.setOnTabSelectedListener(position -> {
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
                 intent.putExtra("type", "all");
                 startActivity(intent);
                 finish();
             } else if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+
+                if(isAdmin) {
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                } else{
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });
