@@ -276,6 +276,14 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_primary" />
 
+            <CheckBox
+                android:id="@+id/private_event_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Make this a Private Event"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"/>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/publish_button"
                 android:layout_width="match_parent"

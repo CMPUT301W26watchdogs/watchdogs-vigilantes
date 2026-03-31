@@ -206,7 +206,9 @@ public class NotificationsActivity extends AppCompatActivity {
                 //String eventId = entry.get("eventId");
                 if (eventId != null && !eventId.isEmpty()) {
                     Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+                    boolean isAdmin = ((android.app.Activity) v.getContext()).getIntent().getBooleanExtra("IS_ADMIN", false);
                     intent.putExtra("event_id", eventId);
+                    intent.putExtra("IS_ADMIN", isAdmin);
                     v.getContext().startActivity(intent);
                 }
             });

@@ -191,10 +191,12 @@ public class AllEventsActivity extends AppCompatActivity {
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
-                event.setId(document.getId());
-                //event.setcurrentUser(currentUser.getUid());
-                event.setcurrentUser(safeUid);
-                allEventsList.add(event);
+                if(!Boolean.TRUE.equals(event.getIsPrivate())) {
+                    event.setId(document.getId());
+                    //event.setcurrentUser(currentUser.getUid());
+                    event.setcurrentUser(safeUid);
+                    allEventsList.add(event);
+                }
             }
             applyFilter();
         }).addOnFailureListener(e -> {
