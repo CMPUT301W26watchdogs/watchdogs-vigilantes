@@ -53,6 +53,8 @@ public class AddEvent extends AppCompatActivity {
 
     private CheckBox geolocationCheck;
 
+    private CheckBox privateEventCheck;
+
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
@@ -77,6 +79,7 @@ public class AddEvent extends AppCompatActivity {
         TextView startDateDisplay = findViewById(R.id.startDateDisplay);
         TextView endDateDisplay = findViewById(R.id.endDateDisplay);
         geolocationCheck = findViewById(R.id.geolocation_checkbox);
+        privateEventCheck = findViewById(R.id.private_event_checkbox);
         maxEntrantsField = findViewById(R.id.fieldMaxEntrants); // the number input itself
         categoryInput = findViewById(R.id.event_category);
         String[] categories = {"Sports", "Arts", "Music", "Education", "Technology", "Social", "Other"};
@@ -122,20 +125,35 @@ public class AddEvent extends AppCompatActivity {
 
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         navBar.setOnTabSelectedListener(position -> {
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
+                intent.putExtra("IS_ADMIN", isAdmin);
                 startActivity(intent);
                 finish();
             } else if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+                if(isAdmin){
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             } else if (position == 3) {
-                startActivity(new Intent(this, ProfilePage.class));
+                Intent intent = new Intent(this, ProfilePage.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });
@@ -151,6 +169,7 @@ public class AddEvent extends AppCompatActivity {
         String imageUrl = posterUrlInput.getText().toString().trim();
 
         boolean geolocationCheckChecked = geolocationCheck.isChecked();
+        boolean isPrivateEvent = privateEventCheck.isChecked();
 
         String maxText = maxEntrantsField.getText().toString().trim();
 
@@ -181,6 +200,7 @@ public class AddEvent extends AppCompatActivity {
         eventMap.put("registrationStart", selectedStartDate);
         eventMap.put("registrationEnd", selectedEndDate);
         eventMap.put("geolocationRequired", geolocationCheckChecked);
+        eventMap.put("isPrivate", isPrivateEvent);
         eventMap.put("waitingListLimit", max);
 
         // saving the event category so entrants can filter by type US 01.01.04
@@ -194,12 +214,23 @@ public class AddEvent extends AppCompatActivity {
 
             Bitmap qrBitmap = generateQrCode(newEventId);
 
+
             if (qrBitmap != null) {
-                saveQrCodeToGallery(qrBitmap, title);
-                showQrCodeDialog(qrBitmap);
+                if(isPrivateEvent){
+                    Toast.makeText(getApplicationContext(), "Event Created, No QR for Private Event", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else {
+                    saveQrCodeToGallery(qrBitmap, title);
+                    showQrCodeDialog(qrBitmap);
+
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "Event Created, but QR failed", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(AddEvent.this, ProfilePage.class));
+                boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
+                Intent intent = new Intent(AddEvent.this, ProfilePage.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
+
                 finish();
             }
 
@@ -268,7 +299,11 @@ public class AddEvent extends AppCompatActivity {
                 .setMessage("Here is your event QR Code. A copy has been saved to your device's photo gallery.")
                 .setView(imageView)
                 .setPositiveButton("Done", (dialog, which) -> {
-                    startActivity(new Intent(AddEvent.this, ProfilePage.class));
+                    boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
+                    Intent intent = new Intent(AddEvent.this, ProfilePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+
                     finish();
                 })
                 .setCancelable(false)

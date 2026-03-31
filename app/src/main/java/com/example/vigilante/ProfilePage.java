@@ -119,13 +119,17 @@ public class ProfilePage extends AppCompatActivity {
                         });
             }
         });
-
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         eventHistoryBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, EventHistoryActivity.class));
+            Intent intent = new Intent(this, EventHistoryActivity.class);
+            intent.putExtra("IS_ADMIN", isAdmin);
+            startActivity(intent);
         });
 
         addEventBtn.setOnClickListener(view -> {
-            startActivity(new Intent(ProfilePage.this, AddEvent.class));
+            Intent intent =  new Intent(ProfilePage.this, AddEvent.class);
+            intent.putExtra("IS_ADMIN", isAdmin);
+            startActivity(intent);
         });
 
         myEventsBtn.setOnClickListener(view -> {

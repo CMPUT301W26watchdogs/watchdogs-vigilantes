@@ -26,6 +26,8 @@ public class Event implements Serializable {
     private String organizerId;  // ID of the event organizer
     private String category;     // event category
 
+    private Boolean isPrivate;
+
     // no-arg constructor required by Firestore for automatic deserialization
     public Event() {}
 
@@ -136,6 +138,11 @@ public class Event implements Serializable {
     public void setOrganizerId(String organizerId) { this.organizerId = organizerId; }
 
     public String getCategory() { return category; }
+
+    public Boolean getIsPrivate() {
+
+        return  isPrivate;
+    }
 
     public void setCategory(String category) { this.category = category; }
 

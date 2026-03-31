@@ -328,19 +328,34 @@ public class EventDetailActivity extends AppCompatActivity {
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setOnTabSelectedListener(position -> {
+            boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
+                intent.putExtra("IS_ADMIN", isAdmin);
                 startActivity(intent);
                 finish();
             } else if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+                if(isAdmin){
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             } else if (position == 3) {
-                startActivity(new Intent(this, ProfilePage.class));
+                Intent intent = new Intent(this, ProfilePage.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });
