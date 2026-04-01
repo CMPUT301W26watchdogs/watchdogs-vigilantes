@@ -239,6 +239,7 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="16dp"
                 android:text="Accessibility Settings"
+                android:textColor="@color/vigilante_red"
                 android:textSize="14sp"
                 app:cornerRadius="12dp"
                 app:icon="@android:drawable/ic_menu_preferences"
@@ -252,6 +253,7 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="16dp"
                 android:text="Event History"
+                android:textColor="@color/vigilante_red"
                 android:textSize="14sp"
                 app:cornerRadius="12dp" />
 
@@ -262,6 +264,7 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="8dp"
                 android:text="+ Create New Event"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:visibility="gone"
                 app:cornerRadius="12dp" />
@@ -274,6 +277,7 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="8dp"
                 android:text="My Events"
+                android:textColor="@color/vigilante_red"
                 android:textSize="14sp"
                 android:visibility="gone"
                 app:cornerRadius="12dp" />
