@@ -18,22 +18,26 @@ public class AccessibilityHelper {
     public static void apply(Activity activity) {
         AccessibilityManager manager = new AccessibilityManager(activity);
 
+        String colorMode = manager.getColorBlindMode();
+        boolean colorBlindActive = !AccessibilityManager.COLOR_BLIND_NONE.equals(colorMode);
+
+        if (!colorBlindActive && !manager.isLargeTextEnabled()
+                && !manager.isLargeButtonsEnabled() && !manager.isHighContrastEnabled()) {
+            return;
+        }
+
         View rootView = activity.getWindow().getDecorView().getRootView();
 
-        // applying color blind filter to the entire window
-        applyColorBlindFilter(rootView, manager.getColorBlindMode());
+        applyColorBlindFilter(rootView, colorMode);
 
-        // applying large text if enabled
         if (manager.isLargeTextEnabled()) {
             applyLargeText(rootView);
         }
 
-        // applying large buttons if enabled
         if (manager.isLargeButtonsEnabled()) {
             applyLargeButtons(rootView);
         }
 
-        // applying high contrast if enabled
         if (manager.isHighContrastEnabled()) {
             applyHighContrast(rootView);
         }
@@ -43,7 +47,9 @@ public class AccessibilityHelper {
     // Citation: Ved, March 17 2025, Claude referred to https://developer.android.com/reference/android/graphics/ColorMatrix
     private static void applyColorBlindFilter(View view, String mode) {
         if (AccessibilityManager.COLOR_BLIND_NONE.equals(mode)) {
-            view.setLayerType(View.LAYER_TYPE_NONE, null);
+            if (view.getLayerType() != View.LAYER_TYPE_NONE) {
+                view.setLayerType(View.LAYER_TYPE_NONE, null);
+            }
             return;
         }
 
