@@ -89,6 +89,8 @@ public class AllEventsActivity extends AppCompatActivity {
             fetchAdminEvents();
         }
 
+        AccessibilityHelper.apply(this);
+
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();

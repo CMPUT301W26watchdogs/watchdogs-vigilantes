@@ -205,15 +205,23 @@ public class LiquidGlassNavBar extends FrameLayout {
         selectedTab = position;
         float targetX = position * tabWidth + tabWidth / 2f;
 
-        ValueAnimator anim = ValueAnimator.ofFloat(pillCenterX, targetX);
-        anim.setDuration(ANIM_DURATION);
-        anim.setInterpolator(new OvershootInterpolator(0.6f));
-        anim.addUpdateListener(a -> {
-            pillCenterX = (float) a.getAnimatedValue();
+        boolean reduceMotion = new AccessibilityManager(getContext()).isReduceMotionEnabled();
+
+        if (reduceMotion) {
+            pillCenterX = targetX;
             updateTabAppearance();
             invalidate();
-        });
-        anim.start();
+        } else {
+            ValueAnimator anim = ValueAnimator.ofFloat(pillCenterX, targetX);
+            anim.setDuration(ANIM_DURATION);
+            anim.setInterpolator(new OvershootInterpolator(0.6f));
+            anim.addUpdateListener(a -> {
+                pillCenterX = (float) a.getAnimatedValue();
+                updateTabAppearance();
+                invalidate();
+            });
+            anim.start();
+        }
 
         if (listener != null && position != prevTab) {
             listener.onTabSelected(position);
