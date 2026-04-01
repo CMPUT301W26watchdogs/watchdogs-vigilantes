@@ -27,7 +27,9 @@ public class AccessibilityHelper {
 
         View rootView = activity.getWindow().getDecorView().getRootView();
 
-        applyColorBlindFilter(rootView, colorMode);
+        if (!AccessibilityManager.COLOR_BLIND_NONE.equals(colorMode)) {
+            applyColorBlindFilter(rootView, colorMode);
+        }
 
         if (manager.isLargeTextEnabled()) {
             applyLargeText(rootView);
@@ -45,11 +47,6 @@ public class AccessibilityHelper {
     // applying a color matrix filter to simulate different types of color blindness
     // Citation: Ved, March 17 2025, Claude referred to https://developer.android.com/reference/android/graphics/ColorMatrix
     private static void applyColorBlindFilter(View view, String mode) {
-        if (AccessibilityManager.COLOR_BLIND_NONE.equals(mode)) {
-            view.setLayerType(View.LAYER_TYPE_NONE, null);
-            return;
-        }
-
         ColorMatrix colorMatrix = new ColorMatrix();
 
         switch (mode) {
