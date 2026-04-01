@@ -30,6 +30,7 @@ public class AdminPage extends AppCompatActivity {
         Button browseevents_button = (Button) findViewById(R.id.browseevents_button);
         Button browseprofiles_button = (Button) findViewById(R.id.browseprofiles_button);
         Button browseorganizers_button = (Button) findViewById(R.id.browseorganizers_button);
+        Button browseimages_button = (Button) findViewById(R.id.browseimages_button);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -75,6 +76,14 @@ public class AdminPage extends AppCompatActivity {
                 intent.putExtra("IS_ADMIN", true);
                 startActivity(intent);
                 //finish();
+            }
+        });
+
+        browseimages_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminPage.this, AdminBrowseImagesActivity.class);
+                intent.putExtra("IS_ADMIN", true);
+                startActivity(intent);
             }
         });
 
