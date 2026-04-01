@@ -158,6 +158,7 @@ public class ProfilePage extends AppCompatActivity {
 
         signout_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                NotificationHelper.stopListening();
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(ProfilePage.this, MainActivity.class);
                 startActivity(intent);
@@ -334,6 +335,8 @@ public class ProfilePage extends AppCompatActivity {
                 user.delete().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(ProfilePage.this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
+                        // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
+                        NotificationHelper.stopListening();
                         Intent intent = new Intent(ProfilePage.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
