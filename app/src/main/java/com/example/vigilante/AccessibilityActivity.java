@@ -1,4 +1,4 @@
-// accessibility settings screen letting users configure color blind mode, large text, large buttons, high contrast and reduce motion (Wildcard)
+// accessibility settings screen letting users configure color blind mode and reduce motion (Wildcard)
 
 package com.example.vigilante;
 
@@ -14,7 +14,7 @@ public class AccessibilityActivity extends AppCompatActivity {
 
     private AccessibilityManager accessibilityManager;
     private RadioGroup colorBlindGroup;
-    private SwitchMaterial largeTextToggle, largeButtonsToggle, highContrastToggle, reduceMotionToggle;
+    private SwitchMaterial reduceMotionToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +24,6 @@ public class AccessibilityActivity extends AppCompatActivity {
         accessibilityManager = new AccessibilityManager(this);
 
         colorBlindGroup = findViewById(R.id.colorBlindGroup);
-        largeTextToggle = findViewById(R.id.largeTextToggle);
-        largeButtonsToggle = findViewById(R.id.largeButtonsToggle);
-        highContrastToggle = findViewById(R.id.highContrastToggle);
         reduceMotionToggle = findViewById(R.id.reduceMotionToggle);
 
         // loading saved preferences into the UI controls
@@ -46,24 +43,6 @@ public class AccessibilityActivity extends AppCompatActivity {
             }
             accessibilityManager.setColorBlindMode(mode);
             Toast.makeText(this, "Color filter updated", Toast.LENGTH_SHORT).show();
-        });
-
-        // saving large text preference when toggled
-        largeTextToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            accessibilityManager.setLargeTextEnabled(isChecked);
-            Toast.makeText(this, isChecked ? "Large text enabled" : "Large text disabled", Toast.LENGTH_SHORT).show();
-        });
-
-        // saving large buttons preference when toggled
-        largeButtonsToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            accessibilityManager.setLargeButtonsEnabled(isChecked);
-            Toast.makeText(this, isChecked ? "Large buttons enabled" : "Large buttons disabled", Toast.LENGTH_SHORT).show();
-        });
-
-        // saving high contrast preference when toggled
-        highContrastToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            accessibilityManager.setHighContrastEnabled(isChecked);
-            Toast.makeText(this, isChecked ? "High contrast enabled" : "High contrast disabled", Toast.LENGTH_SHORT).show();
         });
 
         // saving reduce motion preference when toggled
@@ -102,9 +81,6 @@ public class AccessibilityActivity extends AppCompatActivity {
                 break;
         }
 
-        largeTextToggle.setChecked(accessibilityManager.isLargeTextEnabled());
-        largeButtonsToggle.setChecked(accessibilityManager.isLargeButtonsEnabled());
-        highContrastToggle.setChecked(accessibilityManager.isHighContrastEnabled());
         reduceMotionToggle.setChecked(accessibilityManager.isReduceMotionEnabled());
     }
 }
