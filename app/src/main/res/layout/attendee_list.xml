@@ -25,14 +25,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/map_button"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Map"
-            android:textColor="@android:color/white"
-            android:visibility="gone" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -51,6 +43,16 @@
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/map_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="View Entrant Map"
+            android:textSize="14sp"
+            android:backgroundTint="#FF9800"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/draw_lottery_button"

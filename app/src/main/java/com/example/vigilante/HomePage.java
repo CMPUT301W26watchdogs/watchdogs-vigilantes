@@ -84,7 +84,6 @@ public class HomePage extends AppCompatActivity {
         setupBottomNav();
     }
 
-    // applying accessibility settings whenever the home page is resumed
     @Override
     protected void onResume() {
         super.onResume();

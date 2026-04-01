@@ -79,7 +79,7 @@ public class viewAttendee extends AppCompatActivity {
             notifySelectedButton.setVisibility(View.GONE);
             drawReplacementButton.setVisibility(View.GONE);
             exportCsvButton.setVisibility(View.GONE);
-            loadAttendees(null);
+            loadAttendees("pending");
         } else if ("cancelled".equals(type)) {
             titleText.setText("Cancelled Entrants");
             mapButton.setVisibility(View.GONE);
@@ -118,9 +118,13 @@ public class viewAttendee extends AppCompatActivity {
         }
 
         mapButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, EntrantMapActivity.class);
-            intent.putExtra("event_id", eventId);
-            startActivity(intent);
+            try {
+                Intent intent = new Intent(this, EntrantMapActivity.class);
+                intent.putExtra("event_id", eventId);
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "Map feature unavailable (Google Maps API key not configured)", Toast.LENGTH_LONG).show();
+            }
         });
 
         cancelAllButton.setOnClickListener(v -> {
@@ -170,6 +174,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // performing the lottery draw by randomly selecting entrants from the pending list US 02.05.01
+    // Citation: Ved, March 10 2025, Claude referred to https://stackoverflow.com/questions/4702036/take-n-random-elements-from-a-lista
     private void performLotteryDraw(int numToDraw) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -195,16 +200,31 @@ public class viewAttendee extends AppCompatActivity {
                         selected.add(pending.remove(index));
                     }
 
-                    for (QueryDocumentSnapshot doc : selected) {
-                        doc.getReference().update("status", "selected");
-                    }
+                    db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
+                        String eventTitle = eventDoc.getString("title");
+                        for (QueryDocumentSnapshot doc : selected) {
+                            doc.getReference().update("status", "selected");
+                            String userId = doc.getString("userId");
+                            if (userId != null) {
+                                Map<String, Object> notification = new HashMap<>();
+                                notification.put("userId", userId);
+                                notification.put("eventId", eventId);
+                                notification.put("title", "You've been selected!");
+                                notification.put("message", "You've been chosen for " + (eventTitle != null ? eventTitle : "an event") + ". Open the event to accept or decline your invitation.");
+                                notification.put("timestamp", FieldValue.serverTimestamp());
+                                notification.put("read", false);
+                                db.collection("notifications").add(notification);
+                            }
+                        }
+                    });
 
                     Toast.makeText(this, actualDraw + " entrants selected!", Toast.LENGTH_SHORT).show();
-                    loadAttendees(null);
+                    loadAttendees("pending");
                 });
     }
 
     // drawing a replacement entrant from the pending waitlist when a selected entrant cancels or declines US 02.05.03
+    // Citation: Ved, March 11 2025, Claude referred to https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
     private void drawReplacementFromWaitlist() {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -309,6 +329,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // sending a notification to all entrants on the waiting list with status pending US 02.07.01
+    // Citation: Ved, March 12 2025, Claude referred to https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
     private void sendNotificationToWaiting(String customMessage) {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
             String eventTitle = eventDoc.getString("title");
@@ -346,6 +367,7 @@ public class viewAttendee extends AppCompatActivity {
     }
 
     // exporting the enrolled entrants list as a CSV file and opening a share dialog US 02.06.05
+    // Citation: Ved, March 13 2025, Claude referred to https://developer.android.com/training/sharing/send#send-binary-content
     private void exportEnrolledCsv() {
         if (attendeeList.isEmpty()) {
             Toast.makeText(this, "No enrolled entrants to export", Toast.LENGTH_SHORT).show();
@@ -440,7 +462,7 @@ public class viewAttendee extends AppCompatActivity {
                         count++;
                     }
                     Toast.makeText(this, count + " entrants cancelled", Toast.LENGTH_SHORT).show();
-                    loadAttendees("selected".equals(type) ? "selected" : null);
+                    loadAttendees("selected".equals(type) ? "selected" : "pending");
                 });
     }
 }

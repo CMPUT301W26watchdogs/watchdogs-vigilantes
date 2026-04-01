@@ -103,10 +103,15 @@ public class ProfileTest {
     @Test
     public  void DeleteAccountTest(){
         onView(withId(R.id.delete_account_button)).perform(click());
+
         onView(withText("Delete Account")).check(matches(isDisplayed()));
-        onView(withText(containsString("Are you sure you want to delete your account ? This action cannot be undone all your data will be removed"))).check(matches(isDisplayed()));
-        onView(withId(android.R.id.button2)).perform(click());
-        onView(withText(containsString("Are you sure you want to delete your account ? This action cannot be undone all your data will be removed"))).check(doesNotExist());
+
+        onView(withText("Are you sure you want to delete your account? This action cannot be undone and all your data will be removed.")).check(matches(isDisplayed()));
+
+        onView(withText("Cancel")).perform(click());
+
+        onView(withText("Are you sure you want to delete your account? This action cannot be undone and all your data will be removed.")).check(doesNotExist());
+
         onView(withId(R.id.name_text)).check(matches(isDisplayed()));
 
     }

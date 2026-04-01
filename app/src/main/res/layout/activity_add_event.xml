@@ -145,18 +145,19 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:hint="Category">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/event_category"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:inputType="none"
+                        android:focusable="false" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -274,6 +275,14 @@
                 android:text="Geolocation required"
                 android:textSize="14sp"
                 android:textColor="@color/text_primary" />
+
+            <CheckBox
+                android:id="@+id/private_event_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Make this a Private Event"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/publish_button"

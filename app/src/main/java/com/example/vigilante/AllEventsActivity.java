@@ -61,20 +61,35 @@ public class AllEventsActivity extends AppCompatActivity {
 
         setupChipListeners();
 
+        // updating the header and subtitle based on which type of event listing this is
+        TextView header = findViewById(R.id.all_events_header);
+        TextView subtitle = findViewById(R.id.eventsSubtitle);
+
         String type = getIntent().getStringExtra("type");
+        if (type == null) {
+            type = "all";
+        }
         if (type.equals("all")) {
+            header.setText("Upcoming Events");
+            subtitle.setText("Explore events available near you");
             eventAdapter = new EventAdapter(eventList, false, false, true);
             recyclerView.setAdapter(eventAdapter);
             fetchAllEvents();
         } else if (type.equals("myactivityorg")) {
+            header.setText("Your Events");
+            subtitle.setText("Events you are organizing");
             eventAdapter = new EventAdapter(eventList, true, false, false);
             recyclerView.setAdapter(eventAdapter);
             fetchMyOrgEvents();
         } else if (type.equals("admin")) {
+            header.setText("All Events");
+            subtitle.setText("Manage all events on the platform");
             eventAdapter = new EventAdapter(eventList, false, true, false);
             recyclerView.setAdapter(eventAdapter);
             fetchAdminEvents();
         }
+
+        AccessibilityHelper.apply(this);
 
         back_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -85,14 +100,8 @@ public class AllEventsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
-    // applying accessibility settings whenever the events page is resumed
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AccessibilityHelper.apply(this);
-    }
-
     // setting up category chip filter listeners for filtering events by type US 01.01.04
+    // Citation: Ved, March 10 2025, Claude referred to https://developer.android.com/develop/ui/views/touch-and-input/click-handlers
     private void setupChipListeners() {
         View.OnClickListener chipListener = v -> {
             int id = v.getId();
@@ -144,15 +153,29 @@ public class AllEventsActivity extends AppCompatActivity {
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(0);
+        boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         navBar.setOnTabSelectedListener(position -> {
             if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+                if(isAdmin){
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             } else if (position == 3) {
-                startActivity(new Intent(this, ProfilePage.class));
+                Intent intent = new Intent(this, ProfilePage.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });
@@ -163,16 +186,19 @@ public class AllEventsActivity extends AppCompatActivity {
      */
     private void fetchAllEvents() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
+        String safeUid = (currentUser != null) ? currentUser.getUid() : "espresso_test_user";
         db.collection("events").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
             eventList.clear();
             allEventsList.clear();
 
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 Event event = document.toObject(Event.class);
-                event.setId(document.getId());
-                event.setcurrentUser(currentUser.getUid());
-                allEventsList.add(event);
+                if(!Boolean.TRUE.equals(event.getIsPrivate())) {
+                    event.setId(document.getId());
+                    //event.setcurrentUser(currentUser.getUid());
+                    event.setcurrentUser(safeUid);
+                    allEventsList.add(event);
+                }
             }
             applyFilter();
         }).addOnFailureListener(e -> {

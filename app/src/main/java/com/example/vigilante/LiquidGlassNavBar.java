@@ -1,5 +1,6 @@
 package com.example.vigilante;
 
+import android.annotation.SuppressLint;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -198,17 +199,15 @@ public class LiquidGlassNavBar extends FrameLayout {
         this.listener = listener;
     }
 
-    // animating the pill to the tapped tab, or snapping instantly if reduce motion is on
+    // Citation: Ved, March 14 2025, Claude referred to https://developer.android.com/reference/android/animation/ValueAnimator
     private void animateToTab(int position) {
         int prevTab = selectedTab;
         selectedTab = position;
         float targetX = position * tabWidth + tabWidth / 2f;
 
-        // checking if the user has reduce motion enabled in accessibility settings
         boolean reduceMotion = new AccessibilityManager(getContext()).isReduceMotionEnabled();
 
         if (reduceMotion) {
-            // skipping animation and snapping directly to the target position
             pillCenterX = targetX;
             updateTabAppearance();
             invalidate();
@@ -257,6 +256,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         return Color.argb(a, r, g, b);
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void draw(Canvas canvas) {
         // draw the refraction glow ABOVE the bar (negative y) before anything else

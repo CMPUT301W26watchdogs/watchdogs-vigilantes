@@ -116,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="LOGIN AS"
+            android:text="CREATE ACCOUNT AS"
             android:textSize="11sp"
             android:textStyle="bold"
             android:textColor="@color/text_secondary"

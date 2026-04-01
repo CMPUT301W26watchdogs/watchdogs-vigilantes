@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,13 +20,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -40,16 +46,25 @@ import java.util.Random;
 public class EventDetailActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
+    private RecyclerView recyclerView;
     private String eventId;
     private boolean geolocationRequired = false;
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
+
+    private List<Comment> commentList;
+    private CommentAdapter commentAdapter;
+    private EditText commentInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_detail);
+
+        recyclerView = findViewById(R.id.commentsRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -62,6 +77,10 @@ public class EventDetailActivity extends AppCompatActivity {
         // getting the event ID string that was passed from MainActivity after scanning the QR code
         eventId = getIntent().getStringExtra("event_id");
 
+        commentList = new ArrayList<>();
+
+        commentAdapter = new CommentAdapter(commentList);
+        recyclerView.setAdapter(commentAdapter);
         // getting references to all the text views that display event details
         TextView title = findViewById(R.id.eventTitle);
         TextView description = findViewById(R.id.eventDescription);
@@ -79,10 +98,17 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView regEndDate = findViewById(R.id.regEndDate);
         TextView waitlistCount = findViewById(R.id.waitlistCount);
 
+        commentInput = findViewById(R.id.comment_description);
+        Button postCommentButton = findViewById(R.id.send_comment_button);
+
+
+
+        // querying Firestore for the event document using the scanned event ID
         if (eventId != null) {
             db = FirebaseFirestore.getInstance();
 
             // querying Firestore for the event document using the scanned event ID
+            fetchAllComments(eventId);
             db.collection("events").document(eventId)
                     .get()
                     .addOnSuccessListener(doc -> {
@@ -143,11 +169,12 @@ public class EventDetailActivity extends AppCompatActivity {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
                 db.collection("events").document(eventId)
-                        .collection("attendees").document(currentUser.getUid()) // MATCHES ADAPTER
+                        .collection("attendees").document(currentUser.getUid())
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
                                 String status = doc.getString("status");
+                                findViewById(R.id.lotteryInfoButton).setVisibility(View.VISIBLE);
 
                                 if ("pending".equals(status)) {
                                     signUpStatus.setText("Your status: Pending");
@@ -204,6 +231,18 @@ public class EventDetailActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+
+        postCommentButton.setOnClickListener(v -> {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            db.collection("users").document(currentUser.getUid()).get().addOnSuccessListener(userDoc -> {
+                        if (userDoc.exists()) {
+                            String name = userDoc.getString("name");
+                            postComment(eventId, currentUser.getUid(), name);
+                        }
+                    });
+
+        });
+
         // closing this screen and return to the previous one
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
 
@@ -238,6 +277,7 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     // randomly selecting a replacement entrant from pending waitlist after a decline US 01.05.01
+    // Citation: Ved, March 13 2025, Claude referred to https://docs.oracle.com/javase/8/docs/api/java/util/Random.html#nextInt-int-
     private void drawReplacementFromWaitlist(String eventId) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -288,19 +328,34 @@ public class EventDetailActivity extends AppCompatActivity {
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setOnTabSelectedListener(position -> {
+            boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
+                intent.putExtra("IS_ADMIN", isAdmin);
                 startActivity(intent);
                 finish();
             } else if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+                if(isAdmin){
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             } else if (position == 3) {
-                startActivity(new Intent(this, ProfilePage.class));
+                Intent intent = new Intent(this, ProfilePage.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });
@@ -399,5 +454,46 @@ public class EventDetailActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error cancelling: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void postComment(String eventId, String userId, String userName){
+        String comment = commentInput.getText().toString().trim();
+        if (comment.isEmpty()) {
+            Toast.makeText(this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Map<String, Object> commentData = new HashMap<>();
+        commentData.put("userId", userId);
+        commentData.put("name", userName);
+        commentData.put("commentText", comment);
+        commentData.put("timestamp", FieldValue.serverTimestamp());
+
+        db.collection("events").document(eventId).collection("comments").add(commentData).addOnSuccessListener(documentReference -> {
+            commentInput.setText("");
+            Toast.makeText(this, "Comment posted!", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to post comment!" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+//Gemini March 21st 2026, help me retrieve comments from firebase
+    private void fetchAllComments(String eventId) {
+        db.collection("events").document(eventId).collection("comments").orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener((value,error)-> {
+            if(error != null){
+                Toast.makeText(this, "Error loading comments:" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            if(value != null) {
+                commentList.clear();
+
+                for (QueryDocumentSnapshot document : value) {
+                    Comment comment = document.toObject(Comment.class);
+                    commentList.add(comment);
+                }
+                commentAdapter.notifyDataSetChanged();
+
+                if (!commentList.isEmpty()) {
+                    recyclerView.scrollToPosition(commentList.size() - 1);
+                }
+            }
+        });
     }
 }

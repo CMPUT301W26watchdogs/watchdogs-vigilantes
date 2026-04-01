@@ -36,6 +36,8 @@ public class ProfilePage extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    boolean isAdmin = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,23 +119,28 @@ public class ProfilePage extends AppCompatActivity {
                         });
             }
         });
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
 
-        // accessibility settings button opens the accessibility preferences screen (Wildcard)
         findViewById(R.id.accessibility_button).setOnClickListener(v -> {
             startActivity(new Intent(this, AccessibilityActivity.class));
         });
 
         eventHistoryBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, EventHistoryActivity.class));
+            Intent intent = new Intent(this, EventHistoryActivity.class);
+            intent.putExtra("IS_ADMIN", isAdmin);
+            startActivity(intent);
         });
 
         addEventBtn.setOnClickListener(view -> {
-            startActivity(new Intent(ProfilePage.this, AddEvent.class));
+            Intent intent =  new Intent(ProfilePage.this, AddEvent.class);
+            intent.putExtra("IS_ADMIN", isAdmin);
+            startActivity(intent);
         });
 
         myEventsBtn.setOnClickListener(view -> {
             Intent intent = new Intent(ProfilePage.this, AllEventsActivity.class);
             intent.putExtra("type", "myactivityorg");
+            intent.putExtra("IS_ADMIN", isAdmin);
             startActivity(intent);
         });
 
@@ -162,14 +169,16 @@ public class ProfilePage extends AppCompatActivity {
                 finish();
             }
         });
-
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         Button deleteBtn = findViewById(R.id.delete_account_button);
-        deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
-
+        if(isAdmin){
+            deleteBtn.setVisibility(View.INVISIBLE);
+        }else {
+            deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
+        }
         setupBottomNav();
     }
 
-    // applying accessibility settings whenever the profile page is resumed
     @Override
     protected void onResume() {
         super.onResume();
@@ -216,17 +225,30 @@ public class ProfilePage extends AppCompatActivity {
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(3);
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         navBar.setOnTabSelectedListener(position -> {
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
                 intent.putExtra("type", "all");
                 startActivity(intent);
                 finish();
             } else if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+
+                if(isAdmin) {
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                } else{
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });

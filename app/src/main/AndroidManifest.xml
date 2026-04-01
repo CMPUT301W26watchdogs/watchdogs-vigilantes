@@ -20,6 +20,11 @@
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.Vigilante">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD4u08r6LcjD43tR_wdR00Jn3nudAZG394" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

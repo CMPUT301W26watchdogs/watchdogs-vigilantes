@@ -50,6 +50,7 @@ public class EventHistoryActivity extends AppCompatActivity {
     }
 
     // loading the user's event history by checking every event's attendees subcollection US 01.02.03
+    // Citation: Ved, March 11 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
     private void loadHistory() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
@@ -86,20 +87,35 @@ public class EventHistoryActivity extends AppCompatActivity {
 
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
+        boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         navBar.setOnTabSelectedListener(position -> {
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
+                intent.putExtra("IS_ADMIN", isAdmin);
                 startActivity(intent);
                 finish();
             } else if (position == 1) {
-                startActivity(new Intent(this, HomePage.class));
+                if(isAdmin){
+                    Intent intent = new Intent(this, AdminPage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, HomePage.class);
+                    intent.putExtra("IS_ADMIN", isAdmin);
+                    startActivity(intent);
+                }
                 finish();
             } else if (position == 2) {
-                startActivity(new Intent(this, NotificationsActivity.class));
+                Intent intent = new Intent(this, NotificationsActivity.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             } else if (position == 3) {
-                startActivity(new Intent(this, ProfilePage.class));
+                Intent intent = new Intent(this, ProfilePage.class);
+                intent.putExtra("IS_ADMIN", isAdmin);
+                startActivity(intent);
                 finish();
             }
         });

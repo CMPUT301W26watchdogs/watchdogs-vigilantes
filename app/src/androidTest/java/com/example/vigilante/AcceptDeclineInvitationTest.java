@@ -82,6 +82,7 @@ public class AcceptDeclineInvitationTest {
         }
     }
 
+
     // checking that a pending user only sees the Sign Up button US 01.05.01
     @Test
     public void pendingUser_seesSignUpButtonOnly() throws Exception {
