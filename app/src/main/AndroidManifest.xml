@@ -49,6 +49,7 @@
         <activity android:name=".WaitingListActivity"/>
         <activity android:name=".EventHistoryActivity"/>
         <activity android:name=".NotificationsActivity"/>
+        <activity android:name=".AccessibilityActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
