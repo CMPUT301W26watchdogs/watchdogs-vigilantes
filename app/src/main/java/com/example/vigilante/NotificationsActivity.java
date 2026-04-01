@@ -177,8 +177,10 @@ public class NotificationsActivity extends AppCompatActivity {
 
             // Show buttons only if it's an invitation and we have an eventId
             String title = entry.get("title");
-            boolean isSelectionNotif = title != null && title.contains("selected");
-            if (isSelectionNotif && eventId != null && !eventId.isEmpty()) {
+            // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
+            // Only show buttons if the user was actually selected (not "Not selected")
+            boolean isInvitation = title != null && title.equalsIgnoreCase("You've been selected!");
+            if (isInvitation && eventId != null && !eventId.isEmpty()) {
                 holder.buttonRow.setVisibility(View.VISIBLE);
 
                 holder.btnAccept.setOnClickListener(v -> {

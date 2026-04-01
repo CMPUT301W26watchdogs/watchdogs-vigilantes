@@ -202,25 +202,43 @@ public class viewAttendee extends AppCompatActivity {
 
                     db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
                         String eventTitle = eventDoc.getString("title");
+
+                        // Notify selected entrants
                         for (QueryDocumentSnapshot doc : selected) {
                             doc.getReference().update("status", "selected");
                             String userId = doc.getString("userId");
                             if (userId != null) {
-                                Map<String, Object> notification = new HashMap<>();
-                                notification.put("userId", userId);
-                                notification.put("eventId", eventId);
-                                notification.put("title", "You've been selected!");
-                                notification.put("message", "You've been chosen for " + (eventTitle != null ? eventTitle : "an event") + ". Open the event to accept or decline your invitation.");
-                                notification.put("timestamp", FieldValue.serverTimestamp());
-                                notification.put("read", false);
-                                db.collection("notifications").add(notification);
+                                sendNotification(userId, eventId, "You've been selected!",
+                                    "You've been chosen for " + (eventTitle != null ? eventTitle : "an event") + ". Open the event to accept or decline your invitation.");
+                            }
+                        }
+
+                        // Notify NOT selected entrants
+                        for (QueryDocumentSnapshot doc : pending) {
+                            String userId = doc.getString("userId");
+                            if (userId != null) {
+                                sendNotification(userId, eventId, "Not selected for event",
+                                    "The lottery draw for " + (eventTitle != null ? eventTitle : "an event") + " has concluded and unfortunately you were not selected this time.");
                             }
                         }
                     });
 
-                    Toast.makeText(this, actualDraw + " entrants selected!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, actualDraw + " entrants selected and notifications sent!", Toast.LENGTH_SHORT).show();
                     loadAttendees("pending");
                 });
+    }
+
+    // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
+    // Helper to send notification to Firestore
+    private void sendNotification(String userId, String eventId, String title, String message) {
+        Map<String, Object> notification = new HashMap<>();
+        notification.put("userId", userId);
+        notification.put("eventId", eventId);
+        notification.put("title", title);
+        notification.put("message", message);
+        notification.put("timestamp", FieldValue.serverTimestamp());
+        notification.put("read", false);
+        db.collection("notifications").add(notification);
     }
 
     // drawing a replacement entrant from the pending waitlist when a selected entrant cancels or declines US 02.05.03
@@ -252,14 +270,8 @@ public class viewAttendee extends AppCompatActivity {
                     if (chosenUserId != null) {
                         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
                             String eventTitle = eventDoc.getString("title");
-                            Map<String, Object> notification = new HashMap<>();
-                            notification.put("userId", chosenUserId);
-                            notification.put("eventId", eventId);
-                            notification.put("title", "You've been selected!");
-                            notification.put("message", "A spot opened up for " + (eventTitle != null ? eventTitle : "an event") + " and you were drawn from the waitlist. Open the event to accept or decline.");
-                            notification.put("timestamp", FieldValue.serverTimestamp());
-                            notification.put("read", false);
-                            db.collection("notifications").add(notification);
+                            sendNotification(chosenUserId, eventId, "You've been selected!",
+                                "A spot opened up for " + (eventTitle != null ? eventTitle : "an event") + " and you were drawn from the waitlist. Open the event to accept or decline.");
                         });
                     }
 
@@ -288,14 +300,8 @@ public class viewAttendee extends AppCompatActivity {
                                 Boolean notificationsEnabled = userDoc.getBoolean("notificationsEnabled");
                                 if (Boolean.FALSE.equals(notificationsEnabled)) return;
 
-                                Map<String, Object> notification = new HashMap<>();
-                                notification.put("userId", userId);
-                                notification.put("eventId", eventId);
-                                notification.put("title", "You've been selected!");
-                                notification.put("message", "You've been chosen for " + (eventTitle != null ? eventTitle : "an event") + ". Open the event to accept or decline your invitation.");
-                                notification.put("timestamp", FieldValue.serverTimestamp());
-                                notification.put("read", false);
-                                db.collection("notifications").add(notification);
+                                sendNotification(userId, eventId, "You've been selected!",
+                                    "You've been chosen for " + (eventTitle != null ? eventTitle : "an event") + ". Open the event to accept or decline your invitation.");
                             });
 
                             count++;
@@ -349,14 +355,7 @@ public class viewAttendee extends AppCompatActivity {
                                 Boolean notificationsEnabled = userDoc.getBoolean("notificationsEnabled");
                                 if (Boolean.FALSE.equals(notificationsEnabled)) return;
 
-                                Map<String, Object> notification = new HashMap<>();
-                                notification.put("userId", userId);
-                                notification.put("eventId", eventId);
-                                notification.put("title", "Update for " + (eventTitle != null ? eventTitle : "an event"));
-                                notification.put("message", customMessage);
-                                notification.put("timestamp", FieldValue.serverTimestamp());
-                                notification.put("read", false);
-                                db.collection("notifications").add(notification);
+                                sendNotification(userId, eventId, "Update for " + (eventTitle != null ? eventTitle : "an event"), customMessage);
                             });
 
                             count++;
