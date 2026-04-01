@@ -88,12 +88,16 @@ public class AccessibilityHelper {
 
     // walking through all views and increasing text size by a scale factor for readability
     // Citation: Ved, March 17 2025, Claude referred to https://stackoverflow.com/questions/12128331/how-to-change-fontsize-of-all-textviews-in-activity
+    private static final int TAG_ORIGINAL_TEXT_SIZE = R.id.backArrow;
+
     private static void applyLargeText(View view) {
-        if (view instanceof TextView) {
+        if (view instanceof TextView && !(view instanceof Button)) {
             TextView tv = (TextView) view;
-            float currentSize = tv.getTextSize() / view.getResources().getDisplayMetrics().scaledDensity;
-            // bumping text size up by 30% for better readability
-            tv.setTextSize(currentSize * 1.3f);
+            if (tv.getTag(TAG_ORIGINAL_TEXT_SIZE) == null) {
+                float originalSize = tv.getTextSize() / view.getResources().getDisplayMetrics().scaledDensity;
+                tv.setTag(TAG_ORIGINAL_TEXT_SIZE, originalSize);
+                tv.setTextSize(originalSize * 1.3f);
+            }
         }
 
         if (view instanceof ViewGroup) {
@@ -105,17 +109,22 @@ public class AccessibilityHelper {
     }
 
     // walking through all views and increasing button minimum height and padding
+    private static final int TAG_LARGE_BUTTONS_APPLIED = R.id.backButton;
+
     private static void applyLargeButtons(View view) {
         if (view instanceof Button) {
             Button btn = (Button) view;
-            int extraPadding = (int) (12 * view.getResources().getDisplayMetrics().density);
-            btn.setPadding(
-                    btn.getPaddingLeft() + extraPadding,
-                    btn.getPaddingTop() + extraPadding,
-                    btn.getPaddingRight() + extraPadding,
-                    btn.getPaddingBottom() + extraPadding
-            );
-            btn.setMinHeight((int) (56 * view.getResources().getDisplayMetrics().density));
+            if (btn.getTag(TAG_LARGE_BUTTONS_APPLIED) == null) {
+                btn.setTag(TAG_LARGE_BUTTONS_APPLIED, true);
+                int extraPadding = (int) (12 * view.getResources().getDisplayMetrics().density);
+                btn.setPadding(
+                        btn.getPaddingLeft() + extraPadding,
+                        btn.getPaddingTop() + extraPadding,
+                        btn.getPaddingRight() + extraPadding,
+                        btn.getPaddingBottom() + extraPadding
+                );
+                btn.setMinHeight((int) (56 * view.getResources().getDisplayMetrics().density));
+            }
         }
 
         if (view instanceof ViewGroup) {
@@ -126,9 +135,9 @@ public class AccessibilityHelper {
         }
     }
 
-    // increasing contrast by making text fully black and backgrounds fully white
+    // increasing contrast by making non-button text fully black for readability
     private static void applyHighContrast(View view) {
-        if (view instanceof TextView) {
+        if (view instanceof TextView && !(view instanceof Button)) {
             TextView tv = (TextView) view;
             tv.setTextColor(0xFF000000);
         }
