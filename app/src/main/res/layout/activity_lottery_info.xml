@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- March 31 2026, Claude Opus 4.6, redesigned lottery info layout with VIGILANTE-style header bar, stats row cards, status badge and criteria card -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

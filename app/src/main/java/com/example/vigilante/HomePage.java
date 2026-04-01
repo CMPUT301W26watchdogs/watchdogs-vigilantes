@@ -84,6 +84,7 @@ public class HomePage extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // March 31 2026, Claude Opus 4.6, applying accessibility settings whenever the home page is resumed
     @Override
     protected void onResume() {
         super.onResume();

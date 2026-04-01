@@ -1,4 +1,5 @@
 // applying accessibility settings to any activity's view hierarchy (Wildcard)
+// March 31 2026, Claude Opus 4.6, built helper that walks the view tree to apply color blind filters, large text, large buttons and high contrast
 
 package com.example.vigilante;
 
