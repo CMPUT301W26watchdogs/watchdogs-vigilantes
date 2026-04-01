@@ -1,3 +1,5 @@
+// Helper for sending event-related Android notifications
+
 package com.example.vigilante;
 
 import android.app.NotificationChannel;
@@ -14,7 +16,9 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
-
+/**
+ *This class is a helper for listening to Firebase changes and sending event-related notifications.
+ */
 // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
 public class NotificationHelper {
     private static final String CHANNEL_ID = "vigilante_notifications";
