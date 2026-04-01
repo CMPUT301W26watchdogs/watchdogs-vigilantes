@@ -120,6 +120,11 @@ public class ProfilePage extends AppCompatActivity {
             }
         });
         isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
+
+        findViewById(R.id.accessibility_button).setOnClickListener(v -> {
+            startActivity(new Intent(this, AccessibilityActivity.class));
+        });
+
         eventHistoryBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, EventHistoryActivity.class);
             intent.putExtra("IS_ADMIN", isAdmin);
@@ -173,6 +178,12 @@ public class ProfilePage extends AppCompatActivity {
             deleteBtn.setOnClickListener(v -> showDeleteConfirmationDialog());
         }
         setupBottomNav();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccessibilityHelper.apply(this);
     }
 
     // loading event participation stats from Firestore counting events joined, selected, and waiting US 01.02.03
