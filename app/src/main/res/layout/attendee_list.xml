@@ -97,7 +97,7 @@
             android:backgroundTint="@color/status_open"
             android:visibility="gone"
             app:cornerRadius="10dp" />
-        // Gemini, 2026-03-31, As an organizer, I want to send a notification to all canceled entrants of an event
+        <!-- Gemini, 2026-03-31, As an organizer, I want to send a notification to all canceled entrants of an event-->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/notify_cancelled_button"
             android:layout_width="match_parent"
