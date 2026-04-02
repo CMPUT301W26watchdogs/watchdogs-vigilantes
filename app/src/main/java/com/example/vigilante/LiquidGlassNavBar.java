@@ -205,6 +205,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         selectedTab = position;
         float targetX = position * tabWidth + tabWidth / 2f;
 
+        // March 31 2026, Claude Opus 4.6, added reduce motion check so animations can be skipped for accessibility
         boolean reduceMotion = new AccessibilityManager(getContext()).isReduceMotionEnabled();
 
         if (reduceMotion) {
@@ -256,6 +257,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         return Color.argb(a, r, g, b);
     }
 
+    // March 31 2026, Claude Opus 4.6, fixed MissingSuperCall lint error by suppressing since custom draw pipeline calls dispatchDraw instead
     @SuppressLint("MissingSuperCall")
     @Override
     public void draw(Canvas canvas) {

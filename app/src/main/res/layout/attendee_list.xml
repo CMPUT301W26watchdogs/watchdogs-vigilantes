@@ -44,6 +44,7 @@
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- March 31 2026, Claude Opus 4.6, moved map button from tiny header to full-width bottom bar with orange tint -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/map_button"
             android:layout_width="match_parent"

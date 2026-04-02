@@ -117,6 +117,7 @@ public class viewAttendee extends AppCompatActivity {
             loadAttendees("accepted");
         }
 
+        // March 31 2026, Claude Opus 4.6, moved map button to bottom bar and added crash protection for missing API key
         mapButton.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, EntrantMapActivity.class);

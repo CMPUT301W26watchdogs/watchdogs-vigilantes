@@ -89,6 +89,7 @@ public class AllEventsActivity extends AppCompatActivity {
             fetchAdminEvents();
         }
 
+        // March 31 2026, Claude Opus 4.6, applying accessibility settings when events page loads
         AccessibilityHelper.apply(this);
 
         back_button.setOnClickListener(new View.OnClickListener() {
