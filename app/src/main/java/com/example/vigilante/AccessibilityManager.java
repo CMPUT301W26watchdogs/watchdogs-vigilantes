@@ -1,4 +1,5 @@
 // managing accessibility preferences using SharedPreferences so settings persist across sessions (Wildcard)
+// March 31 2026, Claude Opus 4.6, built SharedPreferences manager for storing and retrieving all accessibility settings
 
 package com.example.vigilante;
 
