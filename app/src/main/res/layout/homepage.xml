@@ -35,170 +35,232 @@
         app:layout_constraintTop_toTopOf="@id/brandHeader"
         app:layout_constraintBottom_toBottomOf="@id/brandHeader" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/scanCard"
+    <ScrollView
+        android:id="@+id/homeScrollView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="2dp"
-        app:strokeWidth="0dp"
-        app:cardBackgroundColor="@color/surface_gray"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/brandHeader"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/brandHeader">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:orientation="vertical"
-            android:padding="32dp">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@android:drawable/ic_menu_camera"
-                android:contentDescription="QR Scanner" />
+            android:paddingBottom="16dp">
 
             <TextView
+                android:id="@+id/featuredLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Scan to Join an Event"
-                android:textSize="18sp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="24dp"
+                android:text="FEATURED EVENTS"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Scan any event's QR code to instantly\nview details and join the waitlist"
-                android:textSize="13sp"
                 android:textColor="@color/text_secondary"
-                android:textAlignment="center" />
+                android:letterSpacing="0.1" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/scanQrButton"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/eventCarousel"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="8dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:overScrollMode="never" />
+
+            <LinearLayout
+                android:id="@+id/carouselDots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:id="@+id/noEventsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="8dp"
+                android:text="No featured events yet"
+                android:textSize="13sp"
+                android:textColor="@color/text_hint"
+                android:textAlignment="center"
+                android:visibility="gone" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/scanCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="20dp"
-                android:text="Scan QR Code"
-                android:textSize="16sp"
-                app:cornerRadius="12dp" />
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@color/surface_gray">
 
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="32dp">
 
-    <TextView
-        android:id="@+id/quickAccessLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginStart="24dp"
-        android:text="QUICK ACCESS"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="@color/text_secondary"
-        android:letterSpacing="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scanCard" />
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:src="@android:drawable/ic_menu_camera"
+                        android:contentDescription="QR Scanner" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/eventsCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="8dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="1dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/divider"
-        app:layout_constraintEnd_toStartOf="@id/profileCard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quickAccessLabel">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Scan to Join an Event"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Scan any event's QR code to instantly\nview details and join the waitlist"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_secondary"
+                        android:textAlignment="center" />
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginBottom="8dp"
-                android:src="@android:drawable/ic_menu_agenda"
-                android:contentDescription="Browse Events" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/scanQrButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="20dp"
+                        android:text="Scan QR Code"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:backgroundTint="@color/vigilante_red"
+                        app:cornerRadius="12dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Browse Events"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
+                android:id="@+id/quickAccessLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="View all available"
+                android:layout_marginTop="28dp"
+                android:layout_marginStart="24dp"
+                android:text="QUICK ACCESS"
                 android:textSize="12sp"
-                android:textColor="@color/text_secondary" />
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/profileCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="24dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="1dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/divider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/eventsCard"
-        app:layout_constraintTop_toBottomOf="@id/quickAccessLabel">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginBottom="8dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                android:contentDescription="My Alerts" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="My Alerts"
-                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary" />
+                android:textColor="@color/text_secondary"
+                android:letterSpacing="0.1" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lottery results"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary" />
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="24dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/eventsCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@android:drawable/ic_menu_agenda"
+                            android:contentDescription="Browse Events" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Browse Events"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View all available"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/profileCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginBottom="8dp"
+                            android:src="@android:drawable/ic_popup_reminder"
+                            android:contentDescription="My Alerts" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Alerts"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lottery results"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
 
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+
+    </ScrollView>
 
     <com.example.vigilante.LiquidGlassNavBar
         android:id="@+id/bottomNav"
