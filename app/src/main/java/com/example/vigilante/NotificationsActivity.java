@@ -171,20 +171,17 @@ public class NotificationsActivity extends AppCompatActivity {
             holder.card.setCardBackgroundColor(holder.itemView.getContext().getColor(
                     isRead ? R.color.card_background : R.color.surface_gray));
 
-
-            //String eventId = entry.get("eventId");
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             // Show buttons only if it's an invitation and we have an eventId
             String title = entry.get("title");
-            // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
-            // Only show buttons if the user was actually selected (not "Not selected")
-            //boolean isInvitation = title != null && title.equalsIgnoreCase("You've been selected!");
+
             boolean isInvitation = title != null && (
                     title.equalsIgnoreCase("You've been selected!") ||
                             title.equalsIgnoreCase("You've been invited!") ||
                             title.equalsIgnoreCase("Co-Organizer Invitation")
             );
+
             if (isInvitation && eventId != null && !eventId.isEmpty()) {
                 holder.buttonRow.setVisibility(View.VISIBLE);
 
@@ -210,7 +207,6 @@ public class NotificationsActivity extends AppCompatActivity {
                     holder.card.setCardBackgroundColor(v.getContext().getColor(R.color.card_background));
                 }
 
-                //String eventId = entry.get("eventId");
                 if (eventId != null && !eventId.isEmpty()) {
                     Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
                     boolean isAdmin = ((android.app.Activity) v.getContext()).getIntent().getBooleanExtra("IS_ADMIN", false);
@@ -225,8 +221,6 @@ public class NotificationsActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Map<String, String> entry = list.get(position);
             String notifId = entry.get("id");
-
-            // Grab the title so we know what kind of invite this is!
             String title = entry.get("title");
 
             if ("declined".equals(action)) {
@@ -240,36 +234,50 @@ public class NotificationsActivity extends AppCompatActivity {
                 db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
                     Boolean isPrivate = eventDoc.getBoolean("isPrivate");
 
+                    Log.d("InviteDebug", "Event isPrivate value: " + isPrivate);
+
+                    // Use addOnCompleteListener to safely check if the attendee document exists
                     db.collection("events").document(eventId)
                             .collection("attendees").document(userId).get()
-                            .addOnSuccessListener(attendeeDoc -> {
-                                String currentStatus = attendeeDoc.getString("status");
+                            .addOnCompleteListener(task -> {
 
-                                // 1. Use temporary variables that are allowed to change
-                                String tempStatus = "accepted";
+                                String currentStatus = null;
+                                if (task.isSuccessful() && task.getResult().exists()) {
+                                    currentStatus = task.getResult().getString("status");
+                                }
+                                Log.d("InviteDebug", "User's current status before click: " + currentStatus);
+
+                                String tempStatus = "accepted"; // Default fallback
                                 String tempToastMsg = "You've joined the event!";
 
+                                // Route user based strictly on the Notification Title
                                 if ("Co-Organizer Invitation".equalsIgnoreCase(title)) {
                                     tempStatus = "accepted_coorg";
                                     tempToastMsg = "You are now a Co-Organizer!";
                                 }
-                                else if (Boolean.TRUE.equals(isPrivate)) {
-                                    if ("pending".equals(currentStatus) || "selected".equals(currentStatus)) {
-                                        tempStatus = "accepted";
-                                    } else {
-                                        tempStatus = "pending";
-                                        tempToastMsg = "Added to Waiting List!";
-                                    }
+                                else if ("You've been invited!".equalsIgnoreCase(title)) {
+                                    // It's a standard invite to a private event -> send to Waiting List
+                                    tempStatus = "pending";
+                                    tempToastMsg = "Added to Waiting List!";
+                                }
+                                else if ("You've been selected!".equalsIgnoreCase(title)) {
+                                    // It's a lottery win -> send to Enrolled List
+                                    tempStatus = "accepted";
+                                    tempToastMsg = "You've joined the event!";
                                 }
 
-                                // 2. Create strict FINAL copies for the lambda!
+                                Log.d("InviteDebug", "App decided next status should be: " + tempStatus);
+
                                 final String nextStatus = tempStatus;
                                 final String finalToastMsg = tempToastMsg;
 
-                                // 3. Use the final copies in your database update
+                                // Use set() with merge() so it creates the document if it doesn't exist
+                                Map<String, Object> updateData = new HashMap<>();
+                                updateData.put("status", nextStatus);
+
                                 db.collection("events").document(eventId)
                                         .collection("attendees").document(userId)
-                                        .update("status", nextStatus)
+                                        .set(updateData, com.google.firebase.firestore.SetOptions.merge())
                                         .addOnSuccessListener(unused -> cleanupNotification(v, notifId, position, finalToastMsg))
                                         .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                             });
@@ -277,78 +285,6 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         }
 
-
-/*
-        private void handleAction(View v, String eventId, String userId, String action, int position) {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Map<String, String> entry = list.get(position);
-            String notifId = entry.get("id");
-            String title = entry.get("title");
-
-            if ("declined".equals(action)) {
-                // Remove user from the event's attendee collection as requested
-                db.collection("events").document(eventId)
-                        .collection("attendees").document(userId)
-                        .delete()
-                        .addOnSuccessListener(aVoid -> cleanupNotification(v, notifId, position, "Invitation declined"))
-                        .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Failed to decline", Toast.LENGTH_SHORT).show());
-            } else {
-
-                db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
-                    Boolean isPrivate = eventDoc.getBoolean("isPrivate");
-                    // Update status to accepted to join the event
-                    db.collection("events").document(eventId)
-                            .collection("attendees").document(userId)
-                            .update("status", "accepted")
-                            .addOnSuccessListener(unused -> cleanupNotification(v, notifId, position, "You've accepted the invitation!"))
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                });
-
-
-
-                db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
-
-                    // GRAB THE BOOLEAN HERE
-                    Boolean isPrivate = eventDoc.getBoolean("isPrivate");
-
-                    // 2. Get the Attendee to check their current status
-                    db.collection("events").document(eventId)
-                            .collection("attendees").document(userId).get()
-                            .addOnSuccessListener(attendeeDoc -> {
-                                String currentStatus = attendeeDoc.getString("status");
-                                String nextStatus = "accepted"; // Default to Enrolled
-                                String finalToastMsg = "You've joined the event!"; // Default toast
-
-                                if ("Co-Organizer Invitation".equalsIgnoreCase(title)) {
-                                    nextStatus = "accepted_coorg";
-                                    finalToastMsg = "You are now a Co-Organizer!";
-                                }
-
-                                // Apply the logic: Private Event check
-                                if (Boolean.TRUE.equals(isPrivate)) {
-                                    // If they are already in the waiting list or were selected in the lottery -> Enroll them
-                                    if ("pending".equals(currentStatus) || "selected".equals(currentStatus)) {
-                                        nextStatus = "accepted";
-                                    } else {
-                                        // Otherwise, this is a new invite -> Send to Waiting List
-                                        nextStatus = "pending";
-                                    }
-                                }
-
-                                // 3. Update the database with their correct next status
-                                finalToastMsg = nextStatus.equals("pending") ? "Added to Waiting List!" : "You've joined the event!";
-
-                                db.collection("events").document(eventId)
-                                        .collection("attendees").document(userId)
-                                        .update("status", nextStatus)
-                                        .addOnSuccessListener(unused -> cleanupNotification(v, notifId, position, finalToastMsg))
-                                        .addOnFailureListener(e -> Toast.makeText(v.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                            });
-                });
-            }
-        }
-*/
         private void cleanupNotification(View v, String notifId, int position, String toastMsg) {
             if (notifId != null) {
                 FirebaseFirestore.getInstance().collection("notifications").document(notifId).delete();
@@ -358,9 +294,6 @@ public class NotificationsActivity extends AppCompatActivity {
             Toast.makeText(v.getContext(), toastMsg, Toast.LENGTH_SHORT).show();
         }
 
-        /**
-         * This function returns the number of notifications in the list.
-         */
         @Override
         public int getItemCount() {
             return list.size();

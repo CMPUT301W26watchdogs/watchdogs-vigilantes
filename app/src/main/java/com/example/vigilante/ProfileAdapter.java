@@ -64,7 +64,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         } else {
             holder.deleteProfile.setVisibility(View.VISIBLE);
             holder.inviteProfile.setVisibility(View.GONE);
-            holder.inviteCoorg.setVisibility(View.GONE);
+            holder.inviteCoorg.setVisibility(View.VISIBLE);
         }
         holder.deleteProfile.setOnClickListener(v -> {
             showDeleteDialog(v.getContext(), profile, position);

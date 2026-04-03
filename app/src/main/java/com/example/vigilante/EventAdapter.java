@@ -61,7 +61,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         Event event = eventList.get(position);
         holder.titleText.setText(event.getTitle());
         holder.descriptionText.setText(event.getDescription());
-        holder.inviteButton.setVisibility(View.GONE);
+        //holder.inviteButton.setVisibility(View.GONE);
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
             intent.putExtra("event_id", event.getId());
@@ -148,7 +148,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         if (isMyEventsPage) {
             holder.orgButtonRow1.setVisibility(View.VISIBLE);
             holder.orgButtonRow2.setVisibility(View.VISIBLE);
-            if(Boolean.TRUE.equals(event.getIsPrivate())) {
+            //if(Boolean.TRUE.equals(event.getIsPrivate())) {
                 holder.inviteButton.setVisibility(View.VISIBLE);
 
                 holder.inviteButton.setOnClickListener(v -> {
@@ -156,7 +156,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     intent.putExtra("event_id", event.getId());
                     v.getContext().startActivity(intent);
                 });
-            }
+           // }
 
             holder.editUrl.setOnClickListener(v -> {
                 //showUpdateDialog(v.getContext(), event, position);
