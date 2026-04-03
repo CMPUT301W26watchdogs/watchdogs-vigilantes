@@ -52,6 +52,7 @@
         <activity android:name=".AccessibilityActivity"/>
         <activity android:name=".EditPosterActivity"/>
         <activity android:name=".NotificationLogActivity"/>
+        <activity android:name=".InviteActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

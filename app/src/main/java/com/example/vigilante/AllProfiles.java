@@ -34,7 +34,7 @@ public class AllProfiles extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.allrprofiles);
+        setContentView(R.layout.allprofiles);
         Button back_button = (Button) findViewById(R.id.back_button);
         db = FirebaseFirestore.getInstance();
 
@@ -42,7 +42,8 @@ public class AllProfiles extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         profileList = new ArrayList<>();
-        profileAdapter = new ProfileAdapter(profileList);
+        profileAdapter = new ProfileAdapter(profileList, true, "null");
+
         recyclerView.setAdapter(profileAdapter);
         String type = getIntent().getStringExtra("type");
         if(type.equals("all")) {
