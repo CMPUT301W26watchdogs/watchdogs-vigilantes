@@ -121,7 +121,22 @@ public class NotificationLogActivity extends AppCompatActivity {
 
             String message = entry.get("message");
             String userId = entry.get("userId");
+            
+            // Set initial message with ID
             holder.messageText.setText("To: " + userId + "\n" + message);
+
+            // Fetch user name to supplement the ID
+            if (userId != null && !userId.equals("Unknown User")) {
+                FirebaseFirestore.getInstance().collection("users").document(userId).get()
+                        .addOnSuccessListener(userDoc -> {
+                            if (userDoc.exists()) {
+                                String name = userDoc.getString("name");
+                                if (name != null) {
+                                    holder.messageText.setText("To: " + name + " (" + userId + ")\n" + message);
+                                }
+                            }
+                        });
+            }
 
             String eventId = entry.get("eventId");
             if (eventId != null && !eventId.isEmpty()) {
