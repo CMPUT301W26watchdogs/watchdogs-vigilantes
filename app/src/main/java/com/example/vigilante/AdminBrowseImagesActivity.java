@@ -1,5 +1,3 @@
-// admin activity to browse and remove event poster images US 03.06.01, US 03.03.01
-
 package com.example.vigilante;
 
 import android.os.Bundle;
@@ -21,10 +19,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Activity that lets admins browse all event poster images in a grid
- * and remove any image by deleting the posterUrl field from Firestore.
- */
 public class AdminBrowseImagesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

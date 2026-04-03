@@ -1,5 +1,3 @@
-// RecyclerView adapter for admin image grid showing event posters with remove functionality US 03.06.01, US 03.03.01
-
 package com.example.vigilante;
 
 import android.content.Context;
@@ -17,14 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * Adapter that displays event poster images in a grid and allows admin to remove them.
- */
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
 
     private List<Event> eventList;
@@ -81,10 +78,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         builder.setMessage("Remove poster image from \"" + event.getTitle() + "\"?");
 
         builder.setPositiveButton("Remove", (dialog, which) -> {
+            String posterUrl = event.getPosterUrl();
+
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("events").document(event.getId())
                     .update("posterUrl", FieldValue.delete())
                     .addOnSuccessListener(aVoid -> {
+                        deleteFromStorage(posterUrl);
                         Toast.makeText(context, "Image Removed!", Toast.LENGTH_SHORT).show();
                         eventList.remove(position);
                         notifyItemRemoved(position);
@@ -95,5 +95,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
+    }
+
+    private void deleteFromStorage(String url) {
+        if (url == null || url.isEmpty()) return;
+        try {
+            StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+            ref.delete();
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 }

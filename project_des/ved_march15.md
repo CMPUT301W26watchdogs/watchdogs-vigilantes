@@ -814,3 +814,143 @@ What to verify: only selected-status entrants receive this notification (not pen
 **new files:** `res/xml/file_paths.xml`
 **new unit tests:** `ReplacementDrawTest.java`, `EnrolledListTest.java`, `CsvExportTest.java`, `WaitingListNotificationTest.java`, `SelectedNotificationTest.java`
 **new espresso tests:** `ReplacementDrawEspressoTest.java`, `EnrolledListEspressoTest.java`, `CsvExportEspressoTest.java`, `NotifyWaitingEspressoTest.java`, `NotifySelectedEspressoTest.java`
+
+---
+---
+
+# apr 2 — admin browse & remove images
+
+## overview
+
+two user stories implemented on branch `ved_last_2B`:
+1. US 03.06.01 — admin browse all event poster images
+2. US 03.03.01 — admin remove event poster images
+
+images are now uploaded to Firebase Storage (`event_posters/`) and the download URL is stored in Firestore `posterUrl`. removal deletes both the Firestore field and the Storage file.
+
+---
+
+## US 03.06.01 — admin browse all event poster images
+
+### what was missing
+- no way for admin to see all event poster images across the platform in one place
+
+### what was done
+- created `AdminBrowseImagesActivity.java` — fetches all events from Firestore `events` collection, filters those with a non-null/non-empty `posterUrl`, displays them in a 2-column grid using `GridLayoutManager`
+- created `ImageAdapter.java` — RecyclerView adapter that loads poster images via Glide and shows event title under each image
+- created `activity_admin_browse_images.xml` — layout with header (back arrow + "Browse Images" title), divider, empty state text, and RecyclerView
+- created `item_admin_image.xml` — MaterialCardView grid item with ImageView (160dp, centerCrop), event title TextView, and Remove MaterialButton (red)
+- added "Browse Images" MaterialButton to `adminpage.xml` below "Notification Log"
+- wired button in `AdminPage.java` to launch `AdminBrowseImagesActivity`
+- registered `AdminBrowseImagesActivity` in `AndroidManifest.xml`
+- added `browse_images` string resource to `strings.xml`
+
+### files changed
+- `AdminBrowseImagesActivity.java` — new file
+- `ImageAdapter.java` — new file
+- `activity_admin_browse_images.xml` — new layout
+- `item_admin_image.xml` — new grid item layout
+- `AdminPage.java` — added browseimages_button click handler
+- `adminpage.xml` — added Browse Images button
+- `AndroidManifest.xml` — registered AdminBrowseImagesActivity
+- `strings.xml` — added browse_images string
+
+### merging
+---
+  US 03.06.01 — Admin Browse All Event Poster Images
+
+  ┌──────────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────┐
+  │              File                │                                   Functions                                      │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ AdminBrowseImagesActivity.java   │ onCreate(), fetchImages()                                                        │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ ImageAdapter.java                │ constructor, onCreateViewHolder(), onBindViewHolder(), getItemCount(),            │
+  │                                  │ ImageViewHolder, showRemoveDialog(), deleteFromStorage()                          │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ AdminPage.java                   │ onCreate() ← browseimages_button click handler                                   │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ activity_admin_browse_images.xml │ entire layout                                                                    │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ item_admin_image.xml             │ card layout (poster image, title, remove button)                                 │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ adminpage.xml                    │ browseimages_button                                                              │
+  ├──────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ AndroidManifest.xml              │ AdminBrowseImagesActivity registered                                             │
+  └──────────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────┘
+
+  Critical dependency: ImageAdapter.java is the core — without it, the grid won't render. Also AdminBrowseImagesActivity must be in the manifest or the app crashes when tapping Browse Images.
+
+### testing
+
+Accounts needed: 1 admin + 1 organizer
+
+1. Log in as **organizer**, create 2–3 events and upload poster images from gallery
+2. Switch to **admin** account → go to **Admin Panel**
+3. Tap **Browse Images** button
+4. You should see a 2-column grid of all event poster images
+5. Each card shows the poster image and the event title underneath
+6. Events without a poster should NOT appear in the grid
+7. If no events have posters, "No images found" message should display
+
+What to verify: images load correctly via Glide, only events with uploaded posters appear, the grid scrolls smoothly, back arrow returns to Admin Panel.
+
+---
+
+## US 03.03.01 — admin remove event poster images
+
+### what was missing
+- no way for admin to remove inappropriate or unwanted event poster images
+
+### what was done
+- each grid item in `ImageAdapter` has a red "Remove" MaterialButton
+- tapping Remove shows an `AlertDialog` confirmation: "Remove poster image from [event title]?"
+- on confirm, deletes the `posterUrl` field from Firestore using `FieldValue.delete()`
+- also deletes the actual image file from Firebase Storage using `FirebaseStorage.getInstance().getReferenceFromUrl(posterUrl).delete()`
+- on success, removes the item from the list and calls `notifyItemRemoved()` for smooth animation
+- shows toast on success ("Image Removed!") or failure with error message
+- `deleteFromStorage()` gracefully handles non-Firebase-Storage URLs (catches `IllegalArgumentException`)
+
+### files changed
+- `ImageAdapter.java` — `showRemoveDialog()` with Firestore + Storage deletion, `deleteFromStorage()` helper
+
+### merging
+---
+  US 03.03.01 — Admin Remove Event Poster Images
+
+  ┌────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────┐
+  │        File        │                                         Functions                                            │
+  ├────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ImageAdapter.java  │ showRemoveDialog() ← AlertDialog + FieldValue.delete() + Storage delete, deleteFromStorage() │
+  └────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+  Critical dependency: deleteFromStorage() uses getReferenceFromUrl() which only works for Firebase Storage URLs. The try/catch handles legacy posterUrl values that were plain URLs.
+
+### testing
+
+Accounts needed: 1 admin + 1 organizer
+
+1. Log in as **organizer**, create an event and upload a poster image from gallery
+2. Switch to **admin** account → Admin Panel → Browse Images
+3. You should see the event's poster in the grid
+4. Tap the **Remove** button on that card
+5. A confirmation dialog appears: "Remove poster image from [event title]?"
+6. Tap **Cancel** — nothing happens, image stays
+7. Tap **Remove** again → tap **Remove** in the dialog
+8. Toast says "Image Removed!", the card disappears from the grid with animation
+9. Go back and re-enter Browse Images — the removed image should NOT reappear
+10. Check Firestore directly — the event document should no longer have a `posterUrl` field
+11. Check Firebase Storage `event_posters/` — the image file should be deleted
+12. Navigate to the event detail — the poster should show the placeholder/fallback image
+
+What to verify: confirmation dialog prevents accidental deletion, the image is removed from grid immediately, the posterUrl field is fully deleted from Firestore, the actual image file is deleted from Firebase Storage, the event itself is NOT deleted (only the poster).
+
+---
+
+## all files changed (apr 2)
+
+**new java:** `AdminBrowseImagesActivity.java`, `ImageAdapter.java`
+**new layouts:** `activity_admin_browse_images.xml`, `item_admin_image.xml`
+**modified java:** `AdminPage.java`
+**modified layouts:** `adminpage.xml`
+**modified config:** `AndroidManifest.xml`
+**modified values:** `strings.xml`

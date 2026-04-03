@@ -121,6 +121,7 @@ public class ProfilePage extends AppCompatActivity {
         });
         isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
 
+        // March 31 2026, Claude Opus 4.6, added accessibility settings button that opens the accessibility preferences screen
         findViewById(R.id.accessibility_button).setOnClickListener(v -> {
             startActivity(new Intent(this, AccessibilityActivity.class));
         });
@@ -180,6 +181,7 @@ public class ProfilePage extends AppCompatActivity {
         setupBottomNav();
     }
 
+    // March 31 2026, Claude Opus 4.6, applying accessibility settings whenever the profile page is resumed
     @Override
     protected void onResume() {
         super.onResume();

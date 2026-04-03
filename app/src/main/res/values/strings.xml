@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Vigilante</string>
+    <string name="notification_log">Notification Log</string>
+    <string name="history_of_all_sent_notifications">History of all sent notifications</string>
+    <string name="browse_events">Browse Events</string>
+    <string name="browse_profiles">Browse Profiles</string>
+    <string name="browse_organizers">Browse Organizers</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="admin_panel">Admin Panel</string>
+    <string name="browse_images">Browse Images</string>
 </resources>

@@ -56,6 +56,7 @@ public class viewAttendee extends AppCompatActivity {
         Button cancelAllButton = findViewById(R.id.cancel_all_button);
         Button notifySelectedButton = findViewById(R.id.notify_selected_button);
         Button notifyWaitingButton = findViewById(R.id.notify_waiting_button);
+            Button notifyCancelledButton = findViewById(R.id.notify_cancelled_button);
         Button drawLotteryButton = findViewById(R.id.draw_lottery_button);
         Button drawReplacementButton = findViewById(R.id.draw_replacement_button);
         Button exportCsvButton = findViewById(R.id.export_csv_button);
@@ -77,6 +78,7 @@ public class viewAttendee extends AppCompatActivity {
             // notify waiting list button lets organizer send a message to all pending entrants US 02.07.01
             notifyWaitingButton.setVisibility(View.VISIBLE);
             notifySelectedButton.setVisibility(View.GONE);
+            notifyCancelledButton.setVisibility(View.GONE);
             drawReplacementButton.setVisibility(View.GONE);
             exportCsvButton.setVisibility(View.GONE);
             loadAttendees("pending");
@@ -87,6 +89,8 @@ public class viewAttendee extends AppCompatActivity {
             drawLotteryButton.setVisibility(View.GONE);
             notifySelectedButton.setVisibility(View.GONE);
             notifyWaitingButton.setVisibility(View.GONE);
+            // US 02.07.03: Send notification to all cancelled entrants
+            notifyCancelledButton.setVisibility(View.VISIBLE);
             drawReplacementButton.setVisibility(View.GONE);
             exportCsvButton.setVisibility(View.GONE);
             loadAttendees("cancelled");
@@ -98,6 +102,7 @@ public class viewAttendee extends AppCompatActivity {
             drawLotteryButton.setVisibility(View.GONE);
             // notify selected entrants button US 02.07.02
             notifySelectedButton.setVisibility(View.VISIBLE);
+            notifyCancelledButton.setVisibility(View.GONE);
             // drawing replacement from waitlist when selected entrants cancel or decline US 02.05.03
             drawReplacementButton.setVisibility(View.VISIBLE);
             notifyWaitingButton.setVisibility(View.GONE);
@@ -111,12 +116,14 @@ public class viewAttendee extends AppCompatActivity {
             drawLotteryButton.setVisibility(View.GONE);
             notifySelectedButton.setVisibility(View.GONE);
             notifyWaitingButton.setVisibility(View.GONE);
+            notifyCancelledButton.setVisibility(View.GONE);
             drawReplacementButton.setVisibility(View.GONE);
             // export CSV button for the enrolled list US 02.06.05
             exportCsvButton.setVisibility(View.VISIBLE);
             loadAttendees("accepted");
         }
 
+        // March 31 2026, Claude Opus 4.6, moved map button to bottom bar and added crash protection for missing API key
         mapButton.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, EntrantMapActivity.class);
@@ -145,6 +152,9 @@ public class viewAttendee extends AppCompatActivity {
 
         // notify waiting list button sends a custom notification to all pending entrants US 02.07.01
         notifyWaitingButton.setOnClickListener(v -> showNotifyWaitingDialog());
+
+        // notify cancelled entrants button US 02.07.03
+        notifyCancelledButton.setOnClickListener(v -> showNotifyCancelledDialog());
 
         // export CSV button exports the enrolled entrants list as a CSV file US 02.06.05
         exportCsvButton.setOnClickListener(v -> exportEnrolledCsv());
@@ -361,6 +371,60 @@ public class viewAttendee extends AppCompatActivity {
                             count++;
                         }
                         Toast.makeText(this, count + " waiting list entrants notified!", Toast.LENGTH_SHORT).show();
+                    });
+        });
+    }
+
+    // Gemini, 2026-03-31, As an organizer, I want to send a notification to all cancelled entrants of an event
+    // US 02.07.03: Show dialog to compose notification for all cancelled entrants
+    private void showNotifyCancelledDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Notify Cancelled Entrants");
+        builder.setMessage("Enter a message to send to all cancelled entrants:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setHint("e.g. You have been cancelled from this event.");
+        builder.setView(input);
+
+        builder.setPositiveButton("Send", (dialog, which) -> {
+            String message = input.getText().toString().trim();
+            if (!message.isEmpty()) {
+                sendNotificationToCancelled(message);
+            } else {
+                Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    // US 02.07.03: Send a custom notification to all cancelled entrants for this event
+    private void sendNotificationToCancelled(String customMessage) {
+        db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
+            String eventTitle = eventDoc.getString("title");
+
+            db.collection("events").document(eventId)
+                    .collection("attendees")
+                    .whereEqualTo("status", "cancelled")
+                    .get()
+                    .addOnSuccessListener(snapshots -> {
+                        int count = 0;
+                        for (QueryDocumentSnapshot doc : snapshots) {
+                            String userId = doc.getString("userId");
+                            if (userId == null) continue;
+
+                            // checking user notification preference before sending, respecting opt out
+                            db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
+                                Boolean notificationsEnabled = userDoc.getBoolean("notificationsEnabled");
+                                if (Boolean.FALSE.equals(notificationsEnabled)) return;
+
+                                sendNotification(userId, eventId, "Update for " + (eventTitle != null ? eventTitle : "an event"), customMessage);
+                            });
+
+                            count++;
+                        }
+                        Toast.makeText(this, count + " cancelled entrants notified!", Toast.LENGTH_SHORT).show();
                     });
         });
     }

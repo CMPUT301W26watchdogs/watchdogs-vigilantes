@@ -41,7 +41,7 @@
         <activity android:name=".AllEventsActivity"/>
         <activity android:name=".AdminPage"/>
         <activity android:name=".AdminBrowseImagesActivity"/>
-    <activity android:name=".EventDetailActivity"/>
+        <activity android:name=".EventDetailActivity"/>
         <activity android:name=".AllProfiles" />
         <activity android:name=".viewAttendee"/>
         <activity android:name=".EntrantMapActivity"/>
@@ -51,6 +51,8 @@
         <activity android:name=".EventHistoryActivity"/>
         <activity android:name=".NotificationsActivity"/>
         <activity android:name=".AccessibilityActivity"/>
+        <activity android:name=".EditPosterActivity"/>
+        <activity android:name=".NotificationLogActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -29,6 +29,7 @@ import java.util.Map;
  */
 public class RegisterPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
+    // March 31 2026, Claude Opus 4.6, fixed role tracking to use string instead of boolean so admin/entrant/organizer are stored correctly in Firestore
     private String selectedRole = "entrant";
     private TextView roleEntrant, roleOrganizer, roleAdmin;
 
@@ -123,6 +124,7 @@ public class RegisterPage extends AppCompatActivity {
         });
     }
 
+    // March 31 2026, Claude Opus 4.6, built role selector UI toggle that highlights selected role and dims the others
     private void selectRole(TextView selected) {
         roleEntrant.setBackground(getDrawable(R.drawable.bg_role_unselected));
         roleEntrant.setTextColor(getColor(R.color.text_primary));

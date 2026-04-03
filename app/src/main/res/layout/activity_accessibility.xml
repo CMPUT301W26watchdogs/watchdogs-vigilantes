@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- March 31 2026, Claude Opus 4.6, built accessibility settings layout with color blind radio group, toggle switches and reset button -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -95,75 +96,6 @@
                 android:textColor="@color/text_primary" />
 
         </RadioGroup>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DISPLAY"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_secondary"
-            android:letterSpacing="0.08"
-            android:layout_marginBottom="8dp" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/largeTextToggle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Larger text"
-            android:textSize="15sp"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Increases font size across the app by 30% for easier reading."
-            android:textSize="12sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="4dp" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/largeButtonsToggle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Larger touch targets"
-            android:textSize="15sp"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Makes buttons bigger and easier to tap."
-            android:textSize="12sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="4dp" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/highContrastToggle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="High contrast"
-            android:textSize="15sp"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Makes text fully black for maximum contrast against backgrounds."
-            android:textSize="12sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="4dp" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"

@@ -44,6 +44,7 @@
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- March 31 2026, Claude Opus 4.6, moved map button from tiny header to full-width bottom bar with orange tint -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/map_button"
             android:layout_width="match_parent"
@@ -92,6 +93,17 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:text="Notify Waiting List"
+            android:textSize="14sp"
+            android:backgroundTint="@color/status_open"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
+        <!-- Gemini, 2026-03-31, As an organizer, I want to send a notification to all canceled entrants of an event-->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/notify_cancelled_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Notify Cancelled Entrants"
             android:textSize="14sp"
             android:backgroundTint="@color/status_open"
             android:visibility="gone"
