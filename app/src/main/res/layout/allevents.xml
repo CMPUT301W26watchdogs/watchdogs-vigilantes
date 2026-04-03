@@ -62,6 +62,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/all_events_header" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="4dp"
+        app:startIconDrawable="@android:drawable/ic_menu_search"
+        app:hintEnabled="false"
+        app:layout_constraintTop_toBottomOf="@id/eventsSubtitle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search events, locations, or tags"
+            android:textSize="14sp"
+            android:paddingVertical="12dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <HorizontalScrollView
         android:id="@+id/chipScroll"
         android:layout_width="match_parent"
@@ -70,7 +90,7 @@
         android:scrollbars="none"
         android:paddingStart="24dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/eventsSubtitle">
+        app:layout_constraintTop_toBottomOf="@id/searchLayout">
 
         <LinearLayout
             android:id="@+id/chipContainer"
