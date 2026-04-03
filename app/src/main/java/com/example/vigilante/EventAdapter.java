@@ -115,6 +115,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                 holder.signUpEvent.setText("Sign Up");
                                 holder.statusBadge.setText("DECLINED");
                                 holder.statusBadge.setBackgroundResource(R.drawable.bg_status_closed);
+                            }else if ("invited_coorg".equals(status)) {
+                                holder.signUpEvent.setText("Accept Co-Org Invite");
+                                holder.statusBadge.setText("INVITED (CO-ORG)");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_selected);
+
+                                holder.signUpEvent.setOnClickListener(v -> {
+                                    acceptCoOrganizerInvite(v.getContext(), event, position);
+                                });
+
+                            } else if ("accepted_coorg".equals(status)) {
+                                holder.signUpEvent.setText("Managing Event");
+                                holder.signUpEvent.setEnabled(false); // Disables the button!
+                                holder.statusBadge.setText("CO-ORGANIZER");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_badge);
                             }
                         }
                     });
@@ -381,5 +395,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
+    }
+//Gemini, April 2nd 2026,  help send an notification for coorganizer invitation.
+    private void acceptCoOrganizerInvite(Context context, Event event, int position) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Update their status to official
+        db.collection("events").document(event.getId())
+                .collection("attendees").document(currentUserId)
+                .update("status", "accepted_coorg")
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "You are now a Co-Organizer!", Toast.LENGTH_SHORT).show();
+                    notifyItemChanged(position); // Refreshes the UI instantly
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
