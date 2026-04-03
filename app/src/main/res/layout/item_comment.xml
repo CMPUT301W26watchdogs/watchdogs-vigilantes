@@ -40,6 +40,18 @@
         app:layout_constraintTop_toTopOf="@id/comment_user_name"
         tools:text="2 hrs ago" />
 
+    <!--Gemini, 2026-04-02, Organizers should be able to delete comments on their own events. Admins should be able to delete comments on any event.-->
+    <ImageButton
+        android:id="@+id/delete_comment_button"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_delete"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Delete comment" />
+
     <TextView
         android:id="@+id/comment_text"
         android:layout_width="0dp"

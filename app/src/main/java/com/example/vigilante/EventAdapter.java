@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//Gemini March 8th 2026, Help view a list of events from firebase
+// Gemini, 2026-03-08, Help view a list of events from firebase
+// Gemini, 2026-04-02, Organizers should be able to delete comments on their own events. Admins should be able to delete comments on any event.
 /**
 * This class is the engine for event class it uses event class to show the user all the events and options
  */
@@ -105,6 +106,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                 holder.signUpEvent.setOnClickListener(v -> {
                                     Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
                                     intent.putExtra("event_id", event.getId());
+                                    intent.putExtra("IS_ADMIN", isMyEventsPageAdmin);
                                     v.getContext().startActivity(intent);
                                 });
                             } else if ("accepted".equals(status)) {
