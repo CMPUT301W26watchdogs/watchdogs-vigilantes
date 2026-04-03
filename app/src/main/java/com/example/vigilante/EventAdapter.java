@@ -41,11 +41,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private boolean isMyEventsPageAdmin;
     private boolean isMyEventsPageUser;
 
-    public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser) {
+    private boolean isAdmin;
+
+    public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser, boolean isAdmin) {
         this.eventList = eventList;
         this.isMyEventsPage = isMyEventsPage;
         this.isMyEventsPageAdmin = isMyEventsPageAdmin;
         this.isMyEventsPageUser = isMyEventsPageUser;
+        this.isAdmin = isAdmin;
     }
 
     @NotNull
@@ -64,6 +67,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
             intent.putExtra("event_id", event.getId());
+            intent.putExtra("IS_ADMIN", isAdmin);
             v.getContext().startActivity(intent);
         });
 
