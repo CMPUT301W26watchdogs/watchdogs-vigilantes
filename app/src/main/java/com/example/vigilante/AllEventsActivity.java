@@ -4,8 +4,10 @@ package com.example.vigilante;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class AllEventsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
+    private String searchQuery = "";
     private String activeFilter = "All";
     private TextView chipAll, chipSports, chipArts, chipMusic;
 
@@ -89,6 +92,24 @@ public class AllEventsActivity extends AppCompatActivity {
             fetchAdminEvents();
         }
 
+        EditText searchBar = findViewById(R.id.searchEditText);
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchQuery = s.toString().toLowerCase().trim();
+                applyFilter();
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // do nothing
+            }
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+
+            }
+        });
+
+
         // March 31 2026, Claude Opus 4.6, applying accessibility settings when events page loads
         AccessibilityHelper.apply(this);
 
@@ -134,18 +155,21 @@ public class AllEventsActivity extends AppCompatActivity {
         chipMusic.setBackgroundResource(activeFilter.equals("Music") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
         chipMusic.setTextColor(getColor(activeFilter.equals("Music") ? R.color.white : R.color.text_primary));
     }
-
+    // Gemini March 31st 2026 "How to implement a search bar"
     // applies the selected category filter to the full event list
     private void applyFilter() {
         eventList.clear();
-        if (activeFilter.equals("All")) {
-            eventList.addAll(allEventsList);
-        } else {
-            for (Event event : allEventsList) {
-                String cat = event.getCategory();
-                if (cat != null && cat.equalsIgnoreCase(activeFilter)) {
-                    eventList.add(event);
-                }
+        for (Event event : allEventsList) {
+            // Check category chip
+            boolean matchesCategory = activeFilter.equals("All") ||
+                    (event.getCategory() != null && event.getCategory().equalsIgnoreCase(activeFilter));
+            // Check search query
+            boolean matchesSearch = searchQuery.isEmpty() ||
+                    (event.getTitle() != null && event.getTitle().toLowerCase().contains(searchQuery)) ||
+                    (event.getCategory() != null && event.getCategory().toLowerCase().contains(searchQuery)) ||
+                    (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchQuery));
+            if (matchesCategory && matchesSearch) {
+                eventList.add(event);
             }
         }
         eventAdapter.notifyDataSetChanged();
