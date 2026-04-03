@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -32,7 +33,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +43,8 @@ import java.util.Random;
 /**
 * This class allows user to view event by scanning a qr code from their homescreen
  */
+
+// Gemini, 2026-04-02, Organizers should be able to delete comments on their own events. Admins should be able to delete comments on any event.
 public class EventDetailActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -55,12 +57,22 @@ public class EventDetailActivity extends AppCompatActivity {
     private List<Comment> commentList;
     private CommentAdapter commentAdapter;
     private EditText commentInput;
+    private String organizerId;
+    private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_detail);
+
+        isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
+        
+        // If intent not passed, check if current user is admin based on email
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (!isAdmin && currentUser != null && "admin@admin.com".equals(currentUser.getEmail())) {
+            isAdmin = true;
+        }
 
         recyclerView = findViewById(R.id.commentsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -79,7 +91,7 @@ public class EventDetailActivity extends AppCompatActivity {
 
         commentList = new ArrayList<>();
 
-        commentAdapter = new CommentAdapter(commentList);
+        commentAdapter = new CommentAdapter(commentList, false, comment -> deleteComment(comment));
         recyclerView.setAdapter(commentAdapter);
         // getting references to all the text views that display event details
         TextView title = findViewById(R.id.eventTitle);
@@ -118,6 +130,9 @@ public class EventDetailActivity extends AppCompatActivity {
                             description.setText(doc.getString("description") != null ? doc.getString("description") : "");
                             date.setText(doc.getString("date") != null ? doc.getString("date") : "TBD");
                             location.setText(doc.getString("location") != null ? doc.getString("location") : "TBD");
+
+                            organizerId = doc.getString("organizerId");
+                            checkCommentPermissions();
 
                             Long waitLimit = doc.getLong("waitingListLimit");
                             if (waitLimit != null) {
@@ -166,10 +181,10 @@ public class EventDetailActivity extends AppCompatActivity {
 
             // checking if the current user is already signed up for this event
             //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (currentUser != null) {
+            FirebaseUser currentUserCheck = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUserCheck != null) {
                 db.collection("events").document(eventId)
-                        .collection("attendees").document(currentUser.getUid())
+                        .collection("attendees").document(currentUserCheck.getUid())
                         .get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
@@ -183,14 +198,14 @@ public class EventDetailActivity extends AppCompatActivity {
                                     registerButton.setVisibility(View.VISIBLE);
                                     acceptButton.setVisibility(View.GONE);
                                     declineButton.setVisibility(View.GONE);
-                                    registerButton.setOnClickListener(v -> cancelSignUp(eventId, currentUser.getUid()));
+                                    registerButton.setOnClickListener(v -> cancelSignUp(eventId, currentUserCheck.getUid()));
                                 } else if ("selected".equals(status)) {
                                     signUpStatus.setText("You've been selected! Accept or decline your invitation.");
                                     registerButton.setVisibility(View.GONE);
                                     acceptButton.setVisibility(View.VISIBLE);
                                     declineButton.setVisibility(View.VISIBLE);
-                                    acceptButton.setOnClickListener(v -> acceptInvitation(eventId, currentUser.getUid()));
-                                    declineButton.setOnClickListener(v -> declineInvitation(eventId, currentUser.getUid()));
+                                    acceptButton.setOnClickListener(v -> acceptInvitation(eventId, currentUserCheck.getUid()));
+                                    declineButton.setOnClickListener(v -> declineInvitation(eventId, currentUserCheck.getUid()));
                                 } else if ("accepted".equals(status)) {
                                     signUpStatus.setText("Your status: Accepted — You're in!");
                                     registerButton.setText("Enrolled");
@@ -204,14 +219,14 @@ public class EventDetailActivity extends AppCompatActivity {
                                     registerButton.setVisibility(View.VISIBLE);
                                     acceptButton.setVisibility(View.GONE);
                                     declineButton.setVisibility(View.GONE);
-                                    registerButton.setOnClickListener(v -> performSignUp(eventId, currentUser.getUid()));
+                                    registerButton.setOnClickListener(v -> performSignUp(eventId, currentUserCheck.getUid()));
                                 }
                             } else {
                                 signUpStatus.setText("You have not signed up for this event");
                                 registerButton.setVisibility(View.VISIBLE);
                                 acceptButton.setVisibility(View.GONE);
                                 declineButton.setVisibility(View.GONE);
-                                registerButton.setOnClickListener(v -> performSignUp(eventId, currentUser.getUid()));
+                                registerButton.setOnClickListener(v -> performSignUp(eventId, currentUserCheck.getUid()));
                             }
                         })
                         .addOnFailureListener(e ->
@@ -234,20 +249,46 @@ public class EventDetailActivity extends AppCompatActivity {
 
 
         postCommentButton.setOnClickListener(v -> {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            db.collection("users").document(currentUser.getUid()).get().addOnSuccessListener(userDoc -> {
-                        if (userDoc.exists()) {
-                            String name = userDoc.getString("name");
-                            postComment(eventId, currentUser.getUid(), name);
-                        }
-                    });
-
+            FirebaseUser currentUserPost = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUserPost != null) {
+                db.collection("users").document(currentUserPost.getUid()).get().addOnSuccessListener(userDoc -> {
+                    if (userDoc.exists()) {
+                        String name = userDoc.getString("name");
+                        postComment(eventId, currentUserPost.getUid(), name);
+                    }
+                });
+            }
         });
 
         // closing this screen and return to the previous one
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
 
         setupBottomNav();
+    }
+
+    private void checkCommentPermissions() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            boolean isOrganizer = currentUser.getUid().equals(organizerId);
+            commentAdapter.setCanDelete(isAdmin || isOrganizer);
+        }
+    }
+
+    private void deleteComment(Comment comment) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Comment")
+                .setMessage("Are you sure you want to delete this comment?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    if (eventId != null && comment.getId() != null) {
+                        db.collection("events").document(eventId)
+                                .collection("comments").document(comment.getId())
+                                .delete()
+                                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show())
+                                .addOnFailureListener(e -> Toast.makeText(this, "Failed to delete comment", Toast.LENGTH_SHORT).show());
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     // handling the accept invitation flow by setting status to accepted US 01.05.01
@@ -329,7 +370,6 @@ public class EventDetailActivity extends AppCompatActivity {
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setOnTabSelectedListener(position -> {
-            boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
             if (position == 0) {
                 Intent intent = new Intent(this, AllEventsActivity.class);
                 intent.putExtra("type", "all");
@@ -458,15 +498,15 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     private void postComment(String eventId, String userId, String userName){
-        String comment = commentInput.getText().toString().trim();
-        if (comment.isEmpty()) {
+        String commentText = commentInput.getText().toString().trim();
+        if (commentText.isEmpty()) {
             Toast.makeText(this, "Comment cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
         Map<String, Object> commentData = new HashMap<>();
         commentData.put("userId", userId);
         commentData.put("name", userName);
-        commentData.put("commentText", comment);
+        commentData.put("commentText", commentText);
         commentData.put("timestamp", FieldValue.serverTimestamp());
 
         db.collection("events").document(eventId).collection("comments").add(commentData).addOnSuccessListener(documentReference -> {
@@ -481,12 +521,14 @@ public class EventDetailActivity extends AppCompatActivity {
         db.collection("events").document(eventId).collection("comments").orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener((value,error)-> {
             if(error != null){
                 Toast.makeText(this, "Error loading comments:" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
             }
             if(value != null) {
                 commentList.clear();
 
                 for (QueryDocumentSnapshot document : value) {
                     Comment comment = document.toObject(Comment.class);
+                    comment.setId(document.getId());
                     commentList.add(comment);
                 }
                 commentAdapter.notifyDataSetChanged();
