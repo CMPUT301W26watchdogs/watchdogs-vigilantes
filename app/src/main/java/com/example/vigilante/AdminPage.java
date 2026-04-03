@@ -30,6 +30,7 @@ public class AdminPage extends AppCompatActivity {
         Button browseevents_button = (Button) findViewById(R.id.browseevents_button);
         Button browseprofiles_button = (Button) findViewById(R.id.browseprofiles_button);
         Button browseorganizers_button = (Button) findViewById(R.id.browseorganizers_button);
+        Button notiflog_button = (Button) findViewById(R.id.notiflog_button);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -75,6 +76,15 @@ public class AdminPage extends AppCompatActivity {
                 intent.putExtra("IS_ADMIN", true);
                 startActivity(intent);
                 //finish();
+            }
+        });
+
+        // Gemini, 2026-04-02, Add an activity for admins to view a log of all notifications stored on Firestore. Should be accessed from the admin panel.
+        notiflog_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminPage.this, NotificationLogActivity.class);
+                intent.putExtra("IS_ADMIN", true);
+                startActivity(intent);
             }
         });
 
