@@ -174,6 +174,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
                                 String status = doc.getString("status");
+                                // March 31 2026, Claude Opus 4.6, made lottery info button visible when user has any attendee status
                                 findViewById(R.id.lotteryInfoButton).setVisibility(View.VISIBLE);
 
                                 if ("pending".equals(status)) {

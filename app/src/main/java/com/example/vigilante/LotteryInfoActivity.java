@@ -1,4 +1,5 @@
 // showing lottery details for an event including entrant status, draw date and total spots from Firestore US 01.05.05
+// March 31 2026, Claude Opus 4.6, redesigned lottery info UI with VIGILANTE-style header, stats row cards, status badge and criteria card
 
 package com.example.vigilante;
 
@@ -122,6 +123,7 @@ public class LotteryInfoActivity extends AppCompatActivity {
             lotteryCriteria.setText("");
         }
 
+        // March 31 2026, Claude Opus 4.6, wired back arrow in redesigned header bar
         findViewById(R.id.backArrow).setOnClickListener(v -> finish());
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }

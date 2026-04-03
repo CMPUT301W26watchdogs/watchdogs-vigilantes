@@ -110,6 +110,7 @@ public class AllEventsActivity extends AppCompatActivity {
         });
 
 
+        // March 31 2026, Claude Opus 4.6, applying accessibility settings when events page loads
         AccessibilityHelper.apply(this);
 
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -173,24 +174,6 @@ public class AllEventsActivity extends AppCompatActivity {
         }
         eventAdapter.notifyDataSetChanged();
     }
-
-    /**
-     * Old applyFilter() method:
-     * private void applyFilter() {
-     *         eventList.clear();
-     *         if (activeFilter.equals("All")) {
-     *             eventList.addAll(allEventsList);
-     *         } else {
-     *             for (Event event : allEventsList) {
-     *                 String cat = event.getCategory();
-     *                 if (cat != null && cat.equalsIgnoreCase(activeFilter)) {
-     *                     eventList.add(event);
-     *                 }
-     *             }
-     *         }
-     *         eventAdapter.notifyDataSetChanged();
-     *     }
-     */
 
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);

@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
         if(currentUser != null) {
             Log.d("AUTH", "User is already logged in: " + currentUser.getEmail());
+            
+            // Start listening for notifications for the logged-in user
+            NotificationHelper.listenForNotifications(this);
+            
             if(currentUser.getEmail().equals("admin@admin.com")) {
                 Intent intent = new Intent(MainActivity.this, AdminPage.class);
                 startActivity(intent);
@@ -79,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
                 mAuth.signInWithEmailAndPassword(textEmail, textPassword).addOnCompleteListener(MainActivity.this, task ->{
                     if(task.isSuccessful()){
                         Log.d("AUTH", "signInWithEmail:success");
+                        // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
+                        // Start listening for notifications after successful login
+                        NotificationHelper.listenForNotifications(MainActivity.this);
+
                         if("admin@admin.com".equals(textEmail)){
 
                             Intent intent = new Intent(MainActivity.this, AdminPage.class);
