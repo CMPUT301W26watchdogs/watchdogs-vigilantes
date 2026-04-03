@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -25,6 +27,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -58,6 +62,27 @@ public class AddEvent extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
+    private Uri selectedImageUri = null;
+    private StorageReference storageRef;
+    private ImageView posterPreviewImage;
+
+
+    //Gemini, April 2, 2026, help me integrate firestorage with our add event activity
+    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    selectedImageUri = result.getData().getData();
+
+                    // SHOW THE PREVIEW!
+                    posterPreviewImage.setImageURI(selectedImageUri);
+                    posterPreviewImage.setVisibility(View.VISIBLE);
+
+                    Toast.makeText(this, "Poster attached!", Toast.LENGTH_SHORT).show();
+                }
+            }
+    );
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +99,6 @@ public class AddEvent extends AppCompatActivity {
         Button back_button = (Button) findViewById(R.id.back_button);
         titleInput = findViewById(R.id.event_title_input);
         descriptionInput = findViewById(R.id.event_description);
-        posterUrlInput = findViewById(R.id.et_poster_url);
         // text views that display the selected dates below each button
         TextView startDateDisplay = findViewById(R.id.startDateDisplay);
         TextView endDateDisplay = findViewById(R.id.endDateDisplay);
@@ -85,9 +109,18 @@ public class AddEvent extends AppCompatActivity {
         String[] categories = {"Sports", "Arts", "Music", "Education", "Technology", "Social", "Other"};
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categories);
         categoryInput.setAdapter(categoryAdapter);
+        storageRef = FirebaseStorage.getInstance().getReference("event_posters");
+        Button pickImageBtn = findViewById(R.id.pick_image_button);
+        posterPreviewImage = findViewById(R.id.poster_preview_image);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        pickImageBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            pickImageLauncher.launch(intent);
+        });
 
         /* DatePickerDialog used to let the organizer select registration open/close dates
          * https://developer.android.com/reference/android/app/DatePickerDialog */
@@ -111,7 +144,8 @@ public class AddEvent extends AppCompatActivity {
 
         findViewById(R.id.backArrow).setOnClickListener(v -> finish());
 
-        publish_button.setOnClickListener(view -> saveEventToFirestore());
+        //publish_button.setOnClickListener(view -> saveEventToFirestore());
+        publish_button.setOnClickListener(view -> uploadImageAndSaveEvent());
 
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +157,34 @@ public class AddEvent extends AppCompatActivity {
         setupBottomNav();
     }
 
+    //Gemini, April 2, 2026, help me integrate firestorage with our add event activity
+    private void uploadImageAndSaveEvent() {
+        // Basic validation first
+        String title = titleInput.getText().toString().trim();
+        if (title.isEmpty() /* add your other empty checks here */) {
+            Toast.makeText(this, "Please fill required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // If the user didn't pick an image, save with a default URL
+        if (selectedImageUri == null) {
+            saveEventToFirestore("https://yourdefaultimage.com/placeholder.jpg");
+            return;
+        }
+        Toast.makeText(this, "Uploading event, please wait...", Toast.LENGTH_LONG).show();
+
+        StorageReference fileRef = storageRef.child(System.currentTimeMillis() + ".jpg");
+        fileRef.putFile(selectedImageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        saveEventToFirestore(downloadUrl);
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
@@ -163,10 +225,9 @@ public class AddEvent extends AppCompatActivity {
     /*
      * This helper functions allows us to save the event information in firebase
      */
-    private void saveEventToFirestore() {
+    private void saveEventToFirestore(String uploadedImageUrl) {
         String title = titleInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
-        String imageUrl = posterUrlInput.getText().toString().trim();
 
         boolean geolocationCheckChecked = geolocationCheck.isChecked();
         boolean isPrivateEvent = privateEventCheck.isChecked();
@@ -178,9 +239,6 @@ public class AddEvent extends AppCompatActivity {
             return;
         }
 
-        if (imageUrl.isEmpty()) {
-            imageUrl = "https://yourdefaultimage.com/placeholder.jpg";
-        }
         int max = Integer.parseInt(maxText);
 
         // both dates must be selected before saving
@@ -194,7 +252,7 @@ public class AddEvent extends AppCompatActivity {
         Map<String, Object> eventMap = new HashMap<>();
         eventMap.put("title", title);
         eventMap.put("description", description);
-        eventMap.put("posterUrl", imageUrl);
+        eventMap.put("posterUrl", uploadedImageUrl);
         eventMap.put("organizerId", organizerId);
         eventMap.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
         eventMap.put("registrationStart", selectedStartDate);
@@ -309,4 +367,7 @@ public class AddEvent extends AppCompatActivity {
                 .setCancelable(false)
                 .show();
     }
+
+
+
 }

@@ -133,7 +133,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.orgButtonRow2.setVisibility(View.VISIBLE);
 
             holder.editUrl.setOnClickListener(v -> {
-                showUpdateDialog(v.getContext(), event, position);
+                //showUpdateDialog(v.getContext(), event, position);
+                Intent intent = new Intent(v.getContext(), EditPosterActivity.class);
+                intent.putExtra("EVENT_ID", event.getId());
+                v.getContext().startActivity(intent);
             });
 
             holder.viewAttendee.setOnClickListener(v -> {

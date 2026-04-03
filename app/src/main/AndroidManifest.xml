@@ -50,6 +50,7 @@
         <activity android:name=".EventHistoryActivity"/>
         <activity android:name=".NotificationsActivity"/>
         <activity android:name=".AccessibilityActivity"/>
+        <activity android:name=".EditPosterActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
