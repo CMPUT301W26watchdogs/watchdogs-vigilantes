@@ -60,7 +60,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         Event event = eventList.get(position);
         holder.titleText.setText(event.getTitle());
         holder.descriptionText.setText(event.getDescription());
-
+        holder.inviteButton.setVisibility(View.GONE);
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
             intent.putExtra("event_id", event.getId());
@@ -131,6 +131,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         if (isMyEventsPage) {
             holder.orgButtonRow1.setVisibility(View.VISIBLE);
             holder.orgButtonRow2.setVisibility(View.VISIBLE);
+            if(Boolean.TRUE.equals(event.getIsPrivate())) {
+                holder.inviteButton.setVisibility(View.VISIBLE);
+
+                holder.inviteButton.setOnClickListener(v -> {
+                    Intent intent = new Intent(v.getContext(), InviteActivity.class);
+                    intent.putExtra("event_id", event.getId());
+                    v.getContext().startActivity(intent);
+                });
+            }
 
             holder.editUrl.setOnClickListener(v -> {
                 //showUpdateDialog(v.getContext(), event, position);
@@ -228,7 +237,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText, statusBadge, eventLocationInfo, waitingCount, spotsCount;
         ImageView posterImageView;
-        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected, viewAttendeeEnrolled;
+        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected, viewAttendeeEnrolled, inviteButton;
         LinearLayout orgButtonRow1, orgButtonRow2;
 
         public EventViewHolder(@NotNull View itemView) {
@@ -249,6 +258,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             viewAttendeeEnrolled = itemView.findViewById(R.id.viewAttendeeEnrolled);
             orgButtonRow1 = itemView.findViewById(R.id.orgButtonRow1);
             orgButtonRow2 = itemView.findViewById(R.id.orgButtonRow2);
+            inviteButton = itemView.findViewById(R.id.inviteButton);
         }
     }
 
