@@ -38,7 +38,7 @@ public class AllEventsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
-    private String searchQuery = "";
+   private String searchQuery = "";
     private String activeFilter = "All";
     private TextView chipAll, chipSports, chipArts, chipMusic;
 

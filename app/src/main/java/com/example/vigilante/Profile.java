@@ -8,6 +8,8 @@ package com.example.vigilante;
 public class Profile {
     private String name;
     private String email;
+
+    private String phone;
     private String organizerId;
     private String id;
 
@@ -18,9 +20,10 @@ public class Profile {
     /**
 * This function takes all the necessary arguments required to create a user
  */
-    public Profile(String name , String email, String organizerId, String id, Boolean isOrganizer){
+    public Profile(String name , String email, String phone, String organizerId, String id, Boolean isOrganizer){
         this.name = name;
         this.email = email;
+        this.phone = phone;
         this.organizerId = organizerId;
         this.id = id;
         this.isOrganizer = isOrganizer;
@@ -35,6 +38,11 @@ public class Profile {
      * Getter function for email
      */
     public String getEmail() {return  email;}
+
+    /**
+     * Getter function for phone
+     */
+    public String getPhone() {return  phone;}
     /**
      * Getter function for organizerid
      */
@@ -59,6 +67,11 @@ public class Profile {
      * Setter function for email
      */
     public void setEmail(String email) { this.email = email; }
+
+    /**
+     * Setter function for phone
+     */
+    public void setPhone(String phone) { this.phone = phone; }
     /**
      * Setter function for organizer id
      */

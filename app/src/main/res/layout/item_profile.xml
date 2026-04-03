@@ -34,14 +34,43 @@
             app:layout_constraintTop_toTopOf="@id/item_profile_poster"
             app:layout_constraintStart_toEndOf="@id/item_profile_poster"
             app:layout_constraintEnd_toEndOf="parent" />
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/buttonRow"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/deleteProfile"
-            android:text="DELETE"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@id/item_profile_title"
             app:layout_constraintStart_toStartOf="@id/item_profile_title"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/deleteProfile"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Delete"
+                android:visibility="visible"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/inviteProfile"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Invite"
+                android:visibility="gone"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/inviteCoorg"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Co-org Invite"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
