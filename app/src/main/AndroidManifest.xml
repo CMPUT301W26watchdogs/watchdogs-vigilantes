@@ -54,6 +54,7 @@
         <activity android:name=".EditPosterActivity"/>
         <activity android:name=".NotificationLogActivity"/>
         <activity android:name=".InviteActivity"/>
+        <activity android:name=".CalendarActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
