@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//Gemini March 8th 2026, Help view a list of events from firebase
+// Gemini, 2026-03-08, Help view a list of events from firebase
+// Gemini, 2026-04-02, Organizers should be able to delete comments on their own events. Admins should be able to delete comments on any event.
 /**
 * This class is the engine for event class it uses event class to show the user all the events and options
  */
@@ -41,11 +42,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private boolean isMyEventsPageAdmin;
     private boolean isMyEventsPageUser;
 
-    public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser) {
+    private boolean isAdmin;
+
+    public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser, boolean isAdmin) {
         this.eventList = eventList;
         this.isMyEventsPage = isMyEventsPage;
         this.isMyEventsPageAdmin = isMyEventsPageAdmin;
         this.isMyEventsPageUser = isMyEventsPageUser;
+        this.isAdmin = isAdmin;
     }
 
     @NotNull
@@ -60,10 +64,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         Event event = eventList.get(position);
         holder.titleText.setText(event.getTitle());
         holder.descriptionText.setText(event.getDescription());
-
+        //holder.inviteButton.setVisibility(View.GONE);
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
             intent.putExtra("event_id", event.getId());
+            intent.putExtra("IS_ADMIN", isAdmin);
             v.getContext().startActivity(intent);
         });
 
@@ -101,6 +106,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                 holder.signUpEvent.setOnClickListener(v -> {
                                     Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
                                     intent.putExtra("event_id", event.getId());
+                                    intent.putExtra("IS_ADMIN", isMyEventsPageAdmin);
                                     v.getContext().startActivity(intent);
                                 });
                             } else if ("accepted".equals(status)) {
@@ -112,6 +118,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                 holder.signUpEvent.setText("Sign Up");
                                 holder.statusBadge.setText("DECLINED");
                                 holder.statusBadge.setBackgroundResource(R.drawable.bg_status_closed);
+                            }else if ("invited_coorg".equals(status)) {
+                                holder.signUpEvent.setText("Accept Co-Org Invite");
+                                holder.statusBadge.setText("INVITED (CO-ORG)");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_selected);
+
+                                holder.signUpEvent.setOnClickListener(v -> {
+                                    acceptCoOrganizerInvite(v.getContext(), event, position);
+                                });
+
+                            } else if ("accepted_coorg".equals(status)) {
+                                holder.signUpEvent.setText("Managing Event");
+                                holder.signUpEvent.setEnabled(false); // Disables the button!
+                                holder.statusBadge.setText("CO-ORGANIZER");
+                                holder.statusBadge.setBackgroundResource(R.drawable.bg_status_badge);
                             }
                         }
                     });
@@ -131,6 +151,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         if (isMyEventsPage) {
             holder.orgButtonRow1.setVisibility(View.VISIBLE);
             holder.orgButtonRow2.setVisibility(View.VISIBLE);
+            //if(Boolean.TRUE.equals(event.getIsPrivate())) {
+                holder.inviteButton.setVisibility(View.VISIBLE);
+
+                holder.inviteButton.setOnClickListener(v -> {
+                    Intent intent = new Intent(v.getContext(), InviteActivity.class);
+                    intent.putExtra("event_id", event.getId());
+                    v.getContext().startActivity(intent);
+                });
+           // }
 
             holder.editUrl.setOnClickListener(v -> {
                 //showUpdateDialog(v.getContext(), event, position);
@@ -228,7 +257,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText, statusBadge, eventLocationInfo, waitingCount, spotsCount;
         ImageView posterImageView;
-        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected, viewAttendeeEnrolled;
+        Button editUrl, deleteEvent, signUpEvent, viewAttendee, viewAttendeeCancelled, viewAttendeeSelected, viewAttendeeEnrolled, inviteButton;
         LinearLayout orgButtonRow1, orgButtonRow2;
 
         public EventViewHolder(@NotNull View itemView) {
@@ -249,6 +278,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             viewAttendeeEnrolled = itemView.findViewById(R.id.viewAttendeeEnrolled);
             orgButtonRow1 = itemView.findViewById(R.id.orgButtonRow1);
             orgButtonRow2 = itemView.findViewById(R.id.orgButtonRow2);
+            inviteButton = itemView.findViewById(R.id.inviteButton);
         }
     }
 
@@ -368,5 +398,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
+    }
+//Gemini, April 2nd 2026,  help send an notification for coorganizer invitation.
+    private void acceptCoOrganizerInvite(Context context, Event event, int position) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Update their status to official
+        db.collection("events").document(event.getId())
+                .collection("attendees").document(currentUserId)
+                .update("status", "accepted_coorg")
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "You are now a Co-Organizer!", Toast.LENGTH_SHORT).show();
+                    notifyItemChanged(position); // Refreshes the UI instantly
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

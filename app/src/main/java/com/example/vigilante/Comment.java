@@ -5,7 +5,7 @@ package com.example.vigilante;
  * This class is what creates a comment for a user.
  */
 public class Comment {
-    private String name, commentText, timeStamp;
+    private String name, commentText, timeStamp, id, userId;
 
     public Comment(){
     }
@@ -29,6 +29,14 @@ public class Comment {
      */
     public String getTimeStampText() {return  timeStamp;}
     /**
+     * Getter function for id
+     */
+    public String getId() { return id; }
+    /**
+     * Getter function for userId
+     */
+    public String getUserId() { return userId; }
+    /**
      * Setter function for name
      */
     public void setName(String name) { this.name = name; }
@@ -40,5 +48,14 @@ public class Comment {
      * Setter function for comment
      */
     public void setCommentText(String commentText) { this.commentText = commentText; }
+    // Gemini, 2026-04-02, Organizers should be able to delete comments on their own events. Admins should be able to delete comments on any event.
+    /**
+     * Setter function for id
+     */
+    public void setId(String id) { this.id = id; }
+    /**
+     * Setter function for userId
+     */
+    public void setUserId(String userId) { this.userId = userId; }
 
 }

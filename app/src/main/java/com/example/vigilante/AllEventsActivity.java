@@ -38,7 +38,7 @@ public class AllEventsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
-    private String searchQuery = "";
+   private String searchQuery = "";
     private String activeFilter = "All";
     private TextView chipAll, chipSports, chipArts, chipMusic;
 
@@ -67,7 +67,7 @@ public class AllEventsActivity extends AppCompatActivity {
         // updating the header and subtitle based on which type of event listing this is
         TextView header = findViewById(R.id.all_events_header);
         TextView subtitle = findViewById(R.id.eventsSubtitle);
-
+        boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
         String type = getIntent().getStringExtra("type");
         if (type == null) {
             type = "all";
@@ -75,19 +75,19 @@ public class AllEventsActivity extends AppCompatActivity {
         if (type.equals("all")) {
             header.setText("Upcoming Events");
             subtitle.setText("Explore events available near you");
-            eventAdapter = new EventAdapter(eventList, false, false, true);
+            eventAdapter = new EventAdapter(eventList, false, false, true, isAdmin);
             recyclerView.setAdapter(eventAdapter);
             fetchAllEvents();
         } else if (type.equals("myactivityorg")) {
             header.setText("Your Events");
             subtitle.setText("Events you are organizing");
-            eventAdapter = new EventAdapter(eventList, true, false, false);
+            eventAdapter = new EventAdapter(eventList, true, false, false, isAdmin);
             recyclerView.setAdapter(eventAdapter);
             fetchMyOrgEvents();
         } else if (type.equals("admin")) {
             header.setText("All Events");
             subtitle.setText("Manage all events on the platform");
-            eventAdapter = new EventAdapter(eventList, false, true, false);
+            eventAdapter = new EventAdapter(eventList, false, true, false, isAdmin);
             recyclerView.setAdapter(eventAdapter);
             fetchAdminEvents();
         }
