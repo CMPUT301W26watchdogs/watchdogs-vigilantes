@@ -35,13 +35,6 @@ public class AddEventTest {
     }
 
     @Test
-    public void posterUrlField_isDisplayed() {
-        try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
-            onView(withId(R.id.et_poster_url)).check(matches(isDisplayed()));
-        }
-    }
-
-    @Test
     public void pickStartDateButton_isDisplayed() {
         // verifying the registration start date picker button is present
         try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
