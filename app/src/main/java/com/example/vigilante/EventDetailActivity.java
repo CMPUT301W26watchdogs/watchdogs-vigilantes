@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
-* This class allows user to view event by scanning a qr code from their homescreen
+ * This class allows user to view event by scanning a qr code from their homescreen
  */
 
 // Gemini, 2026-04-02, Organizers should be able to delete comments on their own events. Admins should be able to delete comments on any event.
@@ -67,7 +67,7 @@ public class EventDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_detail);
 
         isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);
-        
+
         // If intent not passed, check if current user is admin based on email
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (!isAdmin && currentUser != null && "admin@admin.com".equals(currentUser.getEmail())) {
@@ -192,7 +192,15 @@ public class EventDetailActivity extends AppCompatActivity {
                                 // March 31 2026, Claude Opus 4.6, made lottery info button visible when user has any attendee status
                                 findViewById(R.id.lotteryInfoButton).setVisibility(View.VISIBLE);
 
-                                if ("pending".equals(status)) {
+                                // --- CO-ORGANIZER CHECK ADDED HERE ---
+                                if ("accepted_coorg".equals(status)) {
+                                    signUpStatus.setText("Your status: Co-Organizer");
+                                    registerButton.setText("You are a Co-Organizer");
+                                    registerButton.setEnabled(false);
+                                    registerButton.setVisibility(View.VISIBLE);
+                                    acceptButton.setVisibility(View.GONE);
+                                    declineButton.setVisibility(View.GONE);
+                                } else if ("pending".equals(status)) {
                                     signUpStatus.setText("Your status: Pending");
                                     registerButton.setText("Cancel SignUp");
                                     registerButton.setVisibility(View.VISIBLE);
@@ -404,7 +412,7 @@ public class EventDetailActivity extends AppCompatActivity {
 
     //Gemini , march 13th 2026, synchronize sign up button at eventdetail and eventadapter
     /**
-    * This function helps user to directly sign up from event details page
+     * This function helps user to directly sign up from event details page
      */
     private void performSignUp(String eventId, String userId) {
         if (geolocationRequired) {
@@ -516,7 +524,7 @@ public class EventDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to post comment!" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-//Gemini March 21st 2026, help me retrieve comments from firebase
+    //Gemini March 21st 2026, help me retrieve comments from firebase
     private void fetchAllComments(String eventId) {
         db.collection("events").document(eventId).collection("comments").orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener((value,error)-> {
             if(error != null){

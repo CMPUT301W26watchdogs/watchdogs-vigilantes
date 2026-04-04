@@ -64,7 +64,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         } else {
             holder.deleteProfile.setVisibility(View.VISIBLE);
             holder.inviteProfile.setVisibility(View.GONE);
-            holder.inviteCoorg.setVisibility(View.GONE);
+            holder.inviteCoorg.setVisibility(View.VISIBLE);
         }
         holder.deleteProfile.setOnClickListener(v -> {
             showDeleteDialog(v.getContext(), profile, position);
@@ -72,6 +72,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
 
         holder.inviteProfile.setOnClickListener(v -> {inviteSingleUser(v.getContext(), profile);});
+
+        holder.inviteCoorg.setOnClickListener(v -> {inviteCoOrganizer(v.getContext(), profile);});
 
     }
 
@@ -187,6 +189,28 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
         db.collection("notifications").add(notification);
     }
+    //Gemini April 2nd 2026, help send an notification for coorganizer invitation.
+    private void inviteCoOrganizer(Context context, Profile profile) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // 1. Add them to the attendees list with an 'invited_coorg' status
+        Map<String, Object> coorgData = new HashMap<>();
+        coorgData.put("userId", profile.getId());
+        coorgData.put("name", profile.getName());
+        coorgData.put("email", profile.getEmail());
+        coorgData.put("status", "invited_coorg"); // SPECIAL STATUS
+        coorgData.put("timestamp", FieldValue.serverTimestamp());
+
+        db.collection("events").document(eventId)
+                .collection("attendees").document(profile.getId())
+                .set(coorgData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, profile.getName() + " invited as Co-Organizer!", Toast.LENGTH_SHORT).show();
+
+                    // 2. Send the notification (satisfies User Story #2)
+                    sendNotification(profile.getId(), eventId, "Co-Organizer Invitation",
+                            "You have been invited to help organize an event!");
+                });
+    }
 
 }
