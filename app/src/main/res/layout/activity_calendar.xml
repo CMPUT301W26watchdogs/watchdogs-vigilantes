@@ -17,7 +17,7 @@
         android:padding="8dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
-        android:src="@android:drawable/ic_menu_revert"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:contentDescription="Back"
         android:clickable="true"
         android:focusable="true"

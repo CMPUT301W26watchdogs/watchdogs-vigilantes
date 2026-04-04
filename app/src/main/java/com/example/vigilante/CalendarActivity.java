@@ -82,10 +82,7 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         // back arrow navigates back to the home page
-        findViewById(R.id.backArrow).setOnClickListener(v -> {
-            startActivity(new Intent(CalendarActivity.this, HomePage.class));
-            finish();
-        });
+        findViewById(R.id.backArrow).setOnClickListener(v -> finish());
 
         // fetching all events from Firestore then loading the user's registered events
         fetchAllEvents();
