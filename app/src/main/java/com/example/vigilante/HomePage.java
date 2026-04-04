@@ -114,6 +114,10 @@ public class HomePage extends AppCompatActivity {
             startActivity(new Intent(this, NotificationsActivity.class));
         });
 
+        findViewById(R.id.calendarCard).setOnClickListener(v -> {
+            startActivity(new Intent(this, CalendarActivity.class));
+        });
+
         findViewById(R.id.scanQrButton).setOnClickListener(v -> {
             ScanOptions options = new ScanOptions();
             options.setDesiredBarcodeFormats(ScanOptions.QR_CODE); // only accepting QR codes, not barcodes
