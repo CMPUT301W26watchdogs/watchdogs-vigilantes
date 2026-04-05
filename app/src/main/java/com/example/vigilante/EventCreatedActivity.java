@@ -20,6 +20,10 @@ import com.google.zxing.common.BitMatrix;
 
 public class EventCreatedActivity extends AppCompatActivity {
 
+    /**
+     * setting up the success screen after event creation by displaying
+     * the event title and generating a QR code from the event's unique id
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,13 @@ public class EventCreatedActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * encoding the given string into a 400x400 QR code bitmap using ZXing's
+     * MultiFormatWriter and returning the resulting bitmap image
+     *
+     * @param content the string to encode into the QR code
+     * @return the generated QR code bitmap, or null if encoding fails
+     */
     // converting a string into a QR code bitmap using ZXing
     /* sources:
     - https://github.com/journeyapps/zxing-android-embedded

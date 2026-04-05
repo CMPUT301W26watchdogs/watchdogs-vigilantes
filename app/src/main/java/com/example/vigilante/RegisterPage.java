@@ -33,6 +33,7 @@ public class RegisterPage extends AppCompatActivity {
     private String selectedRole = "entrant";
     private TextView roleEntrant, roleOrganizer, roleAdmin;
 
+    /** setting up the registration form with role selection, input fields, and firebase account creation */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +126,7 @@ public class RegisterPage extends AppCompatActivity {
     }
 
     // March 31 2026, Claude Opus 4.6, built role selector UI toggle that highlights selected role and dims the others
+    /** highlighting the selected role button and resetting the others to the unselected style */
     private void selectRole(TextView selected) {
         roleEntrant.setBackground(getDrawable(R.drawable.bg_role_unselected));
         roleEntrant.setTextColor(getColor(R.color.text_primary));

@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class AdminPage extends AppCompatActivity {
 
+    /** setting up the admin dashboard with navigation buttons for events, profiles, organizers, images, and sign out */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +99,7 @@ public class AdminPage extends AppCompatActivity {
 
         setupBottomNav();
     }
+    /** configuring the bottom navigation bar with admin specific tab routing */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
 

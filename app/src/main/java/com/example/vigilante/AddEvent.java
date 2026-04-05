@@ -83,6 +83,7 @@ public class AddEvent extends AppCompatActivity {
             }
     );
 
+    /** initializing the event creation form with input fields, date pickers, image selector, and publish button */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +159,7 @@ public class AddEvent extends AppCompatActivity {
     }
 
     //Gemini, April 2, 2026, help me integrate firestorage with our add event activity
+    /** uploading the selected poster image to firebase storage then saving the event data */
     private void uploadImageAndSaveEvent() {
         // Basic validation first
         String title = titleInput.getText().toString().trim();

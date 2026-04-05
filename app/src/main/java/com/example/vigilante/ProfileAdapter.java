@@ -122,6 +122,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
     }
+    /**
+     * adding the selected user to the event's attendees as "selected"
+     * and then triggering a direct invitation notification to them
+     *
+     * @param context the current context for showing toasts
+     * @param profile the profile being invited
+     */
 //Gemini, April 2nd 2026 , how do i send notification to single user
     // 1. Adds the specific user to the event, then triggers their notification
     private void inviteSingleUser(Context context, Profile profile) {
@@ -153,6 +160,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
                 });
     }
 
+    /**
+     * checking if the invited user has notifications enabled before
+     * writing an invitation notification document to Firestore
+     *
+     * @param profile the profile receiving the invitation
+     */
     // 2. Checks preferences and prepares the notification text
     private void sendDirectInvitation(Profile profile) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -175,6 +188,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         });
     }
 
+    /**
+     * writing a notification document to the Firestore notifications collection
+     * with the given title and message for the specified user
+     *
+     * @param userId the uid of the user receiving the notification
+     * @param eventId the related event id
+     * @param title the notification title text
+     * @param message the notification body text
+     */
     // 3. The exact same helper you already had to write to the notifications collection
     private void sendNotification(String userId, String eventId, String title, String message) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -189,6 +211,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
         db.collection("notifications").add(notification);
     }
+    /**
+     * adding the selected user to the event's attendees with "invited_coorg" status
+     * and sending them a co organizer invitation notification
+     *
+     * @param context the current context for showing toasts
+     * @param profile the profile being invited as co organizer
+     */
     //Gemini April 2nd 2026, help send an notification for coorganizer invitation.
     private void inviteCoOrganizer(Context context, Profile profile) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

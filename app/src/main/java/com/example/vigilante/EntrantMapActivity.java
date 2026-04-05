@@ -26,6 +26,10 @@ public class EntrantMapActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleMap map;
     private String eventId;
 
+    /**
+     * setting up the map screen by getting the event id from the intent
+     * and initializing the Google Map fragment asynchronously
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,13 @@ public class EntrantMapActivity extends AppCompatActivity implements OnMapReadyC
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 
+    /**
+     * receiving the ready GoogleMap instance, querying Firestore for entrant
+     * locations in the event's attendees subcollection and placing a marker
+     * for each entrant that has latitude and longitude data
+     *
+     * @param googleMap the GoogleMap object ready for adding markers and moving camera
+     */
     // called by the Maps SDK once the GoogleMap is ready to use
     @Override
     public void onMapReady(GoogleMap googleMap) {

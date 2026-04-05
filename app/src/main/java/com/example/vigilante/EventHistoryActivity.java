@@ -29,6 +29,9 @@ public class EventHistoryActivity extends AppCompatActivity {
     private List<Map<String, String>> historyList;
     private FirebaseFirestore db;
 
+    /**
+     * setting up the event history screen with a RecyclerView showing all events the user participated in
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,10 @@ public class EventHistoryActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /**
+     * loading the current user's event history by iterating through all events
+     * and checking if the user exists in each event's attendees subcollection
+     */
     // loading the user's event history by checking every event's attendees subcollection US 01.02.03
     // Citation: Ved, March 11 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/get-data#get_multiple_documents_from_a_collection
     private void loadHistory() {
@@ -85,6 +92,10 @@ public class EventHistoryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * wiring up the bottom navigation bar with tab listeners
+     * that navigate to events, home/admin, notifications and profile screens
+     */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         boolean isAdmin = getIntent().getBooleanExtra("IS_ADMIN", false);

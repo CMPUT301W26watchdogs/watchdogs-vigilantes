@@ -23,17 +23,19 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
     private final List<Entrant> entrants; // the data set this adapter displays
     private final String eventId;
 
+    /** constructing the entrant adapter with a list of entrants and no event id */
     public EntrantAdapter(List<Entrant> entrants) {
         this.entrants = entrants;
         this.eventId = null;
     }
 
+    /** constructing the entrant adapter with a list of entrants and the event id for cancel functionality */
     public EntrantAdapter(List<Entrant> entrants, String eventId) {
         this.entrants = entrants;
         this.eventId = eventId;
     }
 
-    // called by RecyclerView when it needs a new row view, inflating the item layout and wrapping it in a ViewHolder
+    /** inflating the entrant item layout and wrapping it in a view holder */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,7 +44,7 @@ public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.ViewHold
         return new ViewHolder(view);
     }
 
-    // called by RecyclerView to fill a row with data at the given position
+    /** binding entrant data to the row and setting up the cancel button with a confirmation dialog */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // get the entrant for this row

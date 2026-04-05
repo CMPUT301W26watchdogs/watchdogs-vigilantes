@@ -22,6 +22,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         void onDeleteClick(Comment comment);
     }
 
+    /**
+     * creating the comment adapter with a list of comments, a flag controlling
+     * whether the delete button shows and a callback for handling deletions
+     *
+     * @param commentList the list of comments to display
+     * @param canDelete whether the delete button should be visible
+     * @param deleteClickListener callback triggered when a delete button is tapped
+     */
     public CommentAdapter(List<Comment> commentList, boolean canDelete, OnDeleteClickListener deleteClickListener) {
         this.commentList = commentList;
         this.canDelete = canDelete;
@@ -59,6 +67,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         return commentList.size();
     }
 
+    /**
+     * toggling whether the delete button is visible on comment cards
+     * and refreshing the entire list to apply the change
+     *
+     * @param canDelete true to show delete buttons, false to hide them
+     */
     public void setCanDelete(boolean canDelete) {
         this.canDelete = canDelete;
         notifyDataSetChanged();

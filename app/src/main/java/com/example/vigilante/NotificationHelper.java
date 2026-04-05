@@ -26,6 +26,7 @@ public class NotificationHelper {
     private static final String CHANNEL_DESC = "Notifications for event selection and updates";
     private static ListenerRegistration listenerRegistration;
 
+    /** building and displaying an android notification with a pending intent to the notifications screen */
     public static void showNotification(Context context, String title, String message, String eventId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

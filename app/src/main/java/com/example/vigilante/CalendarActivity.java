@@ -42,6 +42,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private String selectedDateStr = "";
 
+    /** initializing the calendar view, setting today's date and loading events from firestore */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +91,7 @@ public class CalendarActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /** fetching all events from firestore and storing them locally for calendar filtering */
     // fetching all events from Firestore and storing them locally for calendar filtering
     // Citation: Ved, March 18 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
     private void fetchAllEvents() {
@@ -111,6 +113,7 @@ public class CalendarActivity extends AppCompatActivity {
         });
     }
 
+    /** filtering events to only show ones matching the selected calendar date */
     // filtering events to only show ones whose registration start date matches the selected calendar date
     private void filterEventsForDate() {
         displayList.clear();
@@ -134,11 +137,13 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
+    /** normalizing a date from day, month, year ints to a consistent string for comparison */
     // normalizing a date from day, month, year ints to a consistent "d/M/yyyy" string for comparison
     static String normalizeDate(int day, int month, int year) {
         return day + "/" + month + "/" + year;
     }
 
+    /** normalizing an event date string to a consistent format for calendar comparison */
     // normalizing an event's date string to match our comparison format
     // handles both "d/M/yyyy" and potential extra whitespace
     // Citation: Ved, March 18 2025, Claude referred to https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
@@ -164,6 +169,7 @@ public class CalendarActivity extends AppCompatActivity {
         return trimmed;
     }
 
+    /** setting up the bottom navigation bar with tab listeners for page switching */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setOnTabSelectedListener(position -> {

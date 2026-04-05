@@ -72,6 +72,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         }
     }
 
+    /**
+     * showing a confirmation dialog before removing the poster image
+     * from both Firestore and Firebase Storage
+     *
+     * @param context the current context for showing the dialog
+     * @param event the event whose poster is being removed
+     * @param position the adapter position for updating the list after removal
+     */
     private void showRemoveDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Remove Image?");
@@ -97,6 +105,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         builder.show();
     }
 
+    /**
+     * deleting the actual image file from Firebase Storage using its download url
+     *
+     * @param url the Firebase Storage download url of the image to delete
+     */
     private void deleteFromStorage(String url) {
         if (url == null || url.isEmpty()) return;
         try {

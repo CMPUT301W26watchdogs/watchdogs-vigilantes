@@ -42,6 +42,10 @@ public class AllEventsActivity extends AppCompatActivity {
     private String activeFilter = "All";
     private TextView chipAll, chipSports, chipArts, chipMusic;
 
+    /**
+     * setting up the events listing screen with category chip filters, search bar
+     * and a RecyclerView that loads events based on the viewing mode (all, organizer, admin)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +126,10 @@ public class AllEventsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /**
+     * attaching click listeners to the category chips so tapping one
+     * updates the active filter and refreshes the event list
+     */
     // setting up category chip filter listeners for filtering events by type US 01.01.04
     // Citation: Ved, March 10 2025, Claude referred to https://developer.android.com/develop/ui/views/touch-and-input/click-handlers
     private void setupChipListeners() {
@@ -142,6 +150,10 @@ public class AllEventsActivity extends AppCompatActivity {
         chipMusic.setOnClickListener(chipListener);
     }
 
+    /**
+     * updating the chip backgrounds and text colors to visually highlight
+     * whichever category filter is currently active
+     */
     private void updateChipStyles() {
         chipAll.setBackgroundResource(activeFilter.equals("All") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
         chipAll.setTextColor(getColor(activeFilter.equals("All") ? R.color.white : R.color.text_primary));
@@ -155,6 +167,10 @@ public class AllEventsActivity extends AppCompatActivity {
         chipMusic.setBackgroundResource(activeFilter.equals("Music") ? R.drawable.bg_chip_selected : R.drawable.bg_chip_unselected);
         chipMusic.setTextColor(getColor(activeFilter.equals("Music") ? R.color.white : R.color.text_primary));
     }
+    /**
+     * filtering the full event list by matching both the active category chip
+     * and the current search query against event title, category and location
+     */
     // Gemini March 31st 2026 "How to implement a search bar"
     // applies the selected category filter to the full event list
     private void applyFilter() {
@@ -175,6 +191,10 @@ public class AllEventsActivity extends AppCompatActivity {
         eventAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * wiring up the bottom navigation bar with tab listeners
+     * for navigating between events, home/admin, notifications and profile
+     */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(0);

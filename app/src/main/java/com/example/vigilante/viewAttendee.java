@@ -42,6 +42,7 @@ public class viewAttendee extends AppCompatActivity {
     private String eventId;
     private String type;
 
+    /** initializing the attendee list view and configuring buttons based on the list type */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,6 +163,7 @@ public class viewAttendee extends AppCompatActivity {
         back_button.setOnClickListener(v -> finish());
     }
 
+    /** showing a dialog for the organizer to specify how many entrants to draw in the lottery */
     // lottery draw dialog letting organizer specify how many entrants to select US 02.05.01
     private void showDrawLotteryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -183,6 +185,7 @@ public class viewAttendee extends AppCompatActivity {
         builder.show();
     }
 
+    /** randomly selecting entrants from the pending list and notifying both selected and unselected */
     // performing the lottery draw by randomly selecting entrants from the pending list US 02.05.01
     // Citation: Ved, March 10 2025, Claude referred to https://stackoverflow.com/questions/4702036/take-n-random-elements-from-a-lista
     private void performLotteryDraw(int numToDraw) {
@@ -238,6 +241,7 @@ public class viewAttendee extends AppCompatActivity {
                 });
     }
 
+    /** sending a notification document to firestore for a specific user and event */
     // Gemini, 2026-03-31, Make entrants receive a notification (in app and Android notification) if selected or not selected for an event while in the app
     // Helper to send notification to Firestore
     private void sendNotification(String userId, String eventId, String title, String message) {
@@ -251,6 +255,7 @@ public class viewAttendee extends AppCompatActivity {
         db.collection("notifications").add(notification);
     }
 
+    /** drawing a single replacement entrant from the pending waitlist and notifying them */
     // drawing a replacement entrant from the pending waitlist when a selected entrant cancels or declines US 02.05.03
     // Citation: Ved, March 11 2025, Claude referred to https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
     private void drawReplacementFromWaitlist() {
@@ -290,6 +295,7 @@ public class viewAttendee extends AppCompatActivity {
                 });
     }
 
+    /** notifying all selected entrants while respecting their opt out preference */
     // sending notifications to all selected entrants, respecting opt out preference US 02.07.02
     private void sendNotificationToSelected() {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
@@ -321,6 +327,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
+    /** displaying a dialog for composing a custom notification to waiting list entrants */
     // showing a dialog to compose a notification message for all waiting list entrants US 02.07.01
     private void showNotifyWaitingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -344,6 +351,7 @@ public class viewAttendee extends AppCompatActivity {
         builder.show();
     }
 
+    /** sending a custom notification to all pending entrants on the waiting list */
     // sending a notification to all entrants on the waiting list with status pending US 02.07.01
     // Citation: Ved, March 12 2025, Claude referred to https://firebase.google.com/docs/firestore/manage-data/add-data#add_a_document
     private void sendNotificationToWaiting(String customMessage) {
@@ -375,6 +383,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
+    /** displaying a dialog for composing a custom notification to cancelled entrants */
     // Gemini, 2026-03-31, As an organizer, I want to send a notification to all cancelled entrants of an event
     // US 02.07.03: Show dialog to compose notification for all cancelled entrants
     private void showNotifyCancelledDialog() {
@@ -399,6 +408,7 @@ public class viewAttendee extends AppCompatActivity {
         builder.show();
     }
 
+    /** sending a custom notification to all cancelled entrants for this event */
     // US 02.07.03: Send a custom notification to all cancelled entrants for this event
     private void sendNotificationToCancelled(String customMessage) {
         db.collection("events").document(eventId).get().addOnSuccessListener(eventDoc -> {
@@ -429,6 +439,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
+    /** exporting the enrolled entrants list as a CSV file and opening a share dialog */
     // exporting the enrolled entrants list as a CSV file and opening a share dialog US 02.06.05
     // Citation: Ved, March 13 2025, Claude referred to https://developer.android.com/training/sharing/send#send-binary-content
     private void exportEnrolledCsv() {
@@ -469,6 +480,7 @@ public class viewAttendee extends AppCompatActivity {
         }
     }
 
+    /** escaping a CSV field value by wrapping in quotes if it contains commas, quotes or newlines */
     // escaping a CSV field value by wrapping in quotes if it contains commas, quotes or newlines US 02.06.05
     static String escapeCsvField(String field) {
         if (field == null) return "";
@@ -478,6 +490,7 @@ public class viewAttendee extends AppCompatActivity {
         return field;
     }
 
+    /** building a CSV string from a list of entrants with name, email and status columns */
     // building a CSV string from a list of entrants for export US 02.06.05
     static String buildCsvContent(List<Entrant> entrants) {
         StringBuilder csv = new StringBuilder();
@@ -490,6 +503,7 @@ public class viewAttendee extends AppCompatActivity {
         return csv.toString();
     }
 
+    /** loading attendees from firestore filtered by status and populating the recycler view */
     private void loadAttendees(String statusFilter) {
         com.google.firebase.firestore.Query query = db.collection("events").document(eventId).collection("attendees");
 
@@ -511,6 +525,7 @@ public class viewAttendee extends AppCompatActivity {
         });
     }
 
+    /** cancelling all pending or selected entrants for this event */
     // cancelling all pending or selected entrants for this event US 02.06.04
     private void cancelPendingEntrants() {
         String targetStatus = "selected".equals(type) ? "selected" : "pending";

@@ -26,6 +26,10 @@ public class AdminBrowseImagesActivity extends AppCompatActivity {
     private List<Event> imageEventList;
     private TextView emptyText;
 
+    /**
+     * setting up the admin image browser with a grid RecyclerView
+     * showing all event poster images from Firestore
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,10 @@ public class AdminBrowseImagesActivity extends AppCompatActivity {
         fetchImages();
     }
 
+    /**
+     * querying all events from Firestore and collecting only those
+     * with a non empty poster url to display in the image grid
+     */
     private void fetchImages() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").get().addOnSuccessListener(queryDocumentSnapshots -> {

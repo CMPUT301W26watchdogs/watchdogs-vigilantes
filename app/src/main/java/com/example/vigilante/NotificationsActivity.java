@@ -40,6 +40,10 @@ public class NotificationsActivity extends AppCompatActivity {
     private List<Map<String, String>> notificationList;
     private FirebaseFirestore db;
 
+    /**
+     * setting up the notifications screen with a RecyclerView that displays
+     * all notifications belonging to the currently signed in user
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,10 @@ public class NotificationsActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /**
+     * querying Firestore for all notifications belonging to the current user,
+     * sorting them by timestamp descending and populating the RecyclerView
+     */
     // querying Firestore for all notifications belonging to the current user, ordered by most recent US 01.04.03
     // Citation: Ved, March 12 2025, Claude referred to https://firebase.google.com/docs/firestore/query-data/order-limit-data
     private void loadNotifications() {
@@ -96,6 +104,10 @@ public class NotificationsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * wiring up the bottom navigation bar with tab listeners
+     * for navigating between events, home/admin, notifications and profile
+     */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(2);
@@ -217,6 +229,16 @@ public class NotificationsActivity extends AppCompatActivity {
             });
         }
 
+        /**
+         * processing an accept or decline action on an invitation notification,
+         * updating the attendee status in Firestore and removing the notification card
+         *
+         * @param v the view that was clicked
+         * @param eventId the event tied to this invitation
+         * @param userId the current user's uid
+         * @param action either "accepted" or "declined"
+         * @param position the adapter position of this notification card
+         */
         private void handleAction(View v, String eventId, String userId, String action, int position) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Map<String, String> entry = list.get(position);
@@ -285,6 +307,10 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * deleting the notification document from Firestore and removing
+         * the card from the adapter list with a toast confirmation
+         */
         private void cleanupNotification(View v, String notifId, int position, String toastMsg) {
             if (notifId != null) {
                 FirebaseFirestore.getInstance().collection("notifications").document(notifId).delete();

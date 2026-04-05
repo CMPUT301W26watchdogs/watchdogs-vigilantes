@@ -35,6 +35,10 @@ public class NotificationLogActivity extends AppCompatActivity {
     private List<Map<String, String>> notificationList;
     private FirebaseFirestore db;
 
+    /**
+     * setting up the admin notification log screen showing all notifications
+     * stored in Firestore ordered by most recent first
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +57,10 @@ public class NotificationLogActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /**
+     * querying all notifications from Firestore regardless of user,
+     * ordered by timestamp descending for the admin log view
+     */
     private void loadAllNotifications() {
         db.collection("notifications")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -74,6 +82,10 @@ public class NotificationLogActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * wiring up the bottom navigation bar with tab listeners
+     * for navigating between admin screens
+     */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         if (navBar != null) {
