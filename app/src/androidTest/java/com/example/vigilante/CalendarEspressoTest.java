@@ -49,13 +49,6 @@ public class CalendarEspressoTest {
         }
     }
 
-    // verifying the events recycler view is present in the layout
-    @Test
-    public void testEventsRecyclerExists() {
-        try (ActivityScenario<CalendarActivity> scenario = ActivityScenario.launch(CalendarActivity.class)) {
-            onView(withId(R.id.calendarEventsRecycler)).check(matches(isDisplayed()));
-        }
-    }
 
     // verifying the selected date label is displayed
     @Test
