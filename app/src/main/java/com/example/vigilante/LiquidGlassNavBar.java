@@ -82,6 +82,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         init(context);
     }
 
+    /** initializing the nav bar paints, layout, tab icons and labels */
     private void init(Context context) {
         setWillNotDraw(false);
 
@@ -171,6 +172,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         }
     }
 
+    /** recalculating tab width and pill position when the view size changes */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -180,6 +182,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         updateTabAppearance();
     }
 
+    /** setting the currently selected tab and updating the pill position without animation */
     public void setSelectedTab(int position) {
         selectedTab = position;
         if (tabWidth > 0) {
@@ -199,6 +202,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         this.listener = listener;
     }
 
+    /** animating the pill to the target tab with an overshoot effect, or snapping instantly if reduce motion is enabled */
     // Citation: Ved, March 14 2025, Claude referred to https://developer.android.com/reference/android/animation/ValueAnimator
     private void animateToTab(int position) {
         int prevTab = selectedTab;
@@ -229,6 +233,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         }
     }
 
+    /** updating icon tint, label color, font weight and scale based on distance from the pill */
     private void updateTabAppearance() {
         for (int i = 0; i < TAB_COUNT; i++) {
             float tabCenter = i * tabWidth + tabWidth / 2f;
@@ -248,6 +253,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         }
     }
 
+    /** blending two colors by the given ratio for smooth tab color transitions */
     private int blendColor(int from, int to, float ratio) {
         float ir = 1 - ratio;
         int a = (int) (Color.alpha(from) * ir + Color.alpha(to) * ratio);
@@ -257,6 +263,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         return Color.argb(a, r, g, b);
     }
 
+    /** drawing the bar background, glass pill and refraction glow in a custom draw pipeline */
     // March 31 2026, Claude Opus 4.6, fixed MissingSuperCall lint error by suppressing since custom draw pipeline calls dispatchDraw instead
     @SuppressLint("MissingSuperCall")
     @Override
@@ -274,11 +281,13 @@ public class LiquidGlassNavBar extends FrameLayout {
         super.dispatchDraw(canvas);
     }
 
+    /** skipping default child dispatch since draw() handles it to avoid double drawing */
     @Override
     protected void dispatchDraw(Canvas canvas) {
         // handled in draw() so skipping default to avoid double drawing children
     }
 
+    /** drawing a radial gradient glow above the bar to simulate light refraction through glass */
     private void drawRefractionGlow(Canvas canvas) {
         if (tabWidth == 0) return;
 
@@ -330,6 +339,7 @@ public class LiquidGlassNavBar extends FrameLayout {
         );
     }
 
+    /** drawing the white capsule pill with shadow and top highlight for a glass effect */
     private void drawGlassPill(Canvas canvas) {
         float halfW = tabWidth / 2f - pillHPad;
         pillRect.set(
@@ -352,11 +362,13 @@ public class LiquidGlassNavBar extends FrameLayout {
         canvas.drawRoundRect(highlightRect, pillCornerRadius / 2, pillCornerRadius / 2, pillHighlightPaint);
     }
 
+    /** intercepting all touch events so the nav bar handles taps and drags directly */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return true;
     }
 
+    /** handling tap and drag gestures to select tabs or slide the pill across the bar */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {

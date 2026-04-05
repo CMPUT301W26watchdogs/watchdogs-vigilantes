@@ -30,6 +30,10 @@ public class InviteActivity extends AppCompatActivity {
 
     private String searchQuery = "";
 
+    /**
+     * setting up the invite screen with a searchable list of all user profiles
+     * that can be invited to the current event
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,10 @@ public class InviteActivity extends AppCompatActivity {
         back_button.setOnClickListener(v -> finish());
     }
 
+    /**
+     * querying all user profiles from Firestore and storing them
+     * in the master list before applying the current search filter
+     */
     private void fetchAllProfiles() {
         db.collection("users")
                 .orderBy("name", Query.Direction.DESCENDING)
@@ -90,6 +98,10 @@ public class InviteActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * filtering the profile list by matching the search query against
+     * each profile's name, email and phone fields
+     */
     private void applyFilter() {
         profileList.clear(); // only clear filtered list
 

@@ -22,6 +22,12 @@ public class EventHistoryAdapter extends RecyclerView.Adapter<EventHistoryAdapte
 
     private List<Map<String, String>> historyList;
 
+    /**
+     * creating the adapter with the list of history entries where each entry
+     * is a map containing eventId, title, date and status strings
+     *
+     * @param historyList the list of event history entries to display
+     */
     public EventHistoryAdapter(List<Map<String, String>> historyList) {
         this.historyList = historyList;
     }

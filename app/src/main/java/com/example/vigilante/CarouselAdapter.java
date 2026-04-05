@@ -24,6 +24,13 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Carous
     private List<Event> events;
     private Context context;
 
+    /**
+     * creating the carousel adapter with the activity context and the list of
+     * featured events to display as swipeable cards
+     *
+     * @param context the activity context used for launching intents
+     * @param events the list of events to show in the carousel
+     */
     public CarouselAdapter(Context context, List<Event> events) {
         this.context = context;
         this.events = events;
@@ -92,6 +99,12 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.Carous
         return events;
     }
 
+    /**
+     * replacing the current event list with a new one and refreshing
+     * the carousel to show the updated cards
+     *
+     * @param newEvents the new list of events to display
+     */
     // updating the adapter data and refreshing the carousel
     public void updateEvents(List<Event> newEvents) {
         this.events = newEvents;

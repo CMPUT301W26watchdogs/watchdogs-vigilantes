@@ -17,6 +17,10 @@ public class AccessibilityActivity extends AppCompatActivity {
     private RadioGroup colorBlindGroup;
     private SwitchMaterial reduceMotionToggle;
 
+    /**
+     * setting up the accessibility settings screen with toggle controls
+     * for color blind mode and reduce motion preferences
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +67,10 @@ public class AccessibilityActivity extends AppCompatActivity {
         findViewById(R.id.backArrow).setOnClickListener(v -> finish());
     }
 
+    /**
+     * reading the saved accessibility preferences from SharedPreferences
+     * and updating the radio buttons and toggle switches to match
+     */
     // reading the current accessibility preferences and setting the UI controls to match
     // Citation: Ved, March 17 2025, Claude referred to https://developer.android.com/reference/android/widget/RadioGroup#check(int)
     private void loadCurrentSettings() {

@@ -38,6 +38,11 @@ public class ProfilePage extends AppCompatActivity {
 
     boolean isAdmin = false;
 
+    /**
+     * setting up the profile page by loading user data from Firestore,
+     * configuring role based button visibility and wiring up edit, signout
+     * and delete account actions
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,6 +193,12 @@ public class ProfilePage extends AppCompatActivity {
         AccessibilityHelper.apply(this);
     }
 
+    /**
+     * counting how many events the user has joined, been selected for
+     * and is still waiting on by checking every event's attendees subcollection
+     *
+     * @param userId the uid of the user whose stats are being loaded
+     */
     // loading event participation stats from Firestore counting events joined, selected, and waiting US 01.02.03
     private void loadProfileStats(String userId) {
         final int[] totalEvents = {0};
@@ -225,6 +236,10 @@ public class ProfilePage extends AppCompatActivity {
         });
     }
 
+    /**
+     * wiring up the bottom navigation bar with the profile tab pre selected
+     * and listeners for navigating to events, home/admin and notifications
+     */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(3);

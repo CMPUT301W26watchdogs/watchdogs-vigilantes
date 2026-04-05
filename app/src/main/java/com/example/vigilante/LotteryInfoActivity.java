@@ -19,6 +19,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class LotteryInfoActivity extends AppCompatActivity {
 
+    /**
+     * setting up the lottery info screen by loading event details, waitlist count
+     * and the current user's lottery status from Firestore
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

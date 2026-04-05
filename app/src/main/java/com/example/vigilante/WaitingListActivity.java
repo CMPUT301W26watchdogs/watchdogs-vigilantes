@@ -22,6 +22,11 @@ import java.util.List;
 
 public class WaitingListActivity extends AppCompatActivity {
 
+    /**
+     * setting up the waiting list screen with a RecyclerView showing all entrants
+     * on the event's waiting list loaded from Firestore, falling back to placeholder
+     * data if the query fails or returns empty
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +98,12 @@ public class WaitingListActivity extends AppCompatActivity {
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 
+    /**
+     * returning a list of hardcoded placeholder entrants used as fallback
+     * when Firestore data is unavailable or the query returns empty
+     *
+     * @return a list of five sample Entrant objects
+     */
     // returning 5 hardcoded entrants as fallback when Firestore data is not available, only for independent testing
     private List<Entrant> getPlaceholderEntrants() {
         List<Entrant> list = new ArrayList<>();

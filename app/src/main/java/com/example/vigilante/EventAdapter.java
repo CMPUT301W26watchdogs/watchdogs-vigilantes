@@ -44,6 +44,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     private boolean isAdmin;
 
+    /** constructing the event adapter with the event list and flags for page type and admin status */
     public EventAdapter(List<Event> eventList, boolean isMyEventsPage, boolean isMyEventsPageAdmin, boolean isMyEventsPageUser, boolean isAdmin) {
         this.eventList = eventList;
         this.isMyEventsPage = isMyEventsPage;
@@ -52,6 +53,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         this.isAdmin = isAdmin;
     }
 
+    /** inflating the event item layout and creating a new view holder */
     @NotNull
     @Override
     public EventViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
@@ -59,6 +61,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return new EventViewHolder(view);
     }
 
+    /** binding event data to the view holder and configuring sign up, cancel, delete and invite buttons based on user role */
     @Override
     public void onBindViewHolder(@NotNull EventViewHolder holder, int position) {
         Event event = eventList.get(position);
@@ -244,16 +247,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
     }
 
-    /**
-* This function returns the number of events
- */
+    /** returning the total number of events in the list */
     @Override
     public int getItemCount() {
         return eventList.size();
     }
-    /**
-* This class is a RecyclerView which holds and views our events
- */
+    /** caching references to the event card views for efficient recycling */
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleText, descriptionText, statusBadge, eventLocationInfo, waitingCount, spotsCount;
         ImageView posterImageView;
@@ -283,9 +282,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     //Gemini , March 9th 2026 , help with updating the collection in firebase to update my url
-    /**
-    * This is a helper function which shows the dialog box to update the url of our poster image
-     */
+    /** showing a dialog box for the organizer to update the event poster url */
     private void showUpdateDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Update Poster URL");
@@ -305,9 +302,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.show();
     }
 
-    /**
-* This is the helper function which helps us update our url in firebase
- */
+    /** saving the new poster url to firestore and refreshing the event card */
     private void updateEventPosterUrl(Context context, Event event, String newURL, int position) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -320,9 +315,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
     }
 
-    /**
-* This function helps admin to delete events
- */
+    /** showing a confirmation dialog for the admin to delete an event from firestore */
     private void showDeleteDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -340,9 +333,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.show();
     }
 
-    /**
-* This function allows user to sign up to an event.
- */
+    /** showing a confirmation dialog and registering the current user as a pending attendee for the event */
     private void showSignUpDialog(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -375,9 +366,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.show();
     }
 
-    /**
-* This function allows user to cancel registration from an event.
- */
+    /** cancelling the current user's registration for an event and updating their status in firestore */
     private void cancelSignUp(Context context, Event event, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -400,6 +389,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         builder.show();
     }
 //Gemini, April 2nd 2026,  help send an notification for coorganizer invitation.
+    /** accepting the co organizer invitation and updating the attendee status in firestore */
     private void acceptCoOrganizerInvite(Context context, Event event, int position) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();

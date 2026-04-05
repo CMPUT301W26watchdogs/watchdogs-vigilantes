@@ -22,6 +22,16 @@ public class TicketGenerator {
     private String attendeeName;
     private String ticketId;
 
+    /**
+     * creating a new ticket generator with the event and attendee info
+     * that will be printed on the PDF ticket
+     *
+     * @param eventTitle the name of the event
+     * @param eventDate the date string shown on the ticket
+     * @param eventLocation the venue or location text
+     * @param attendeeName the name of the person attending
+     * @param ticketId a unique identifier printed on the ticket stub
+     */
     public TicketGenerator(String eventTitle, String eventDate, String eventLocation,
                            String attendeeName, String ticketId) {
         this.eventTitle = eventTitle != null ? eventTitle : "Untitled Event";
@@ -31,6 +41,12 @@ public class TicketGenerator {
         this.ticketId = ticketId != null ? ticketId : "000000";
     }
 
+    /**
+     * building a single page PDF document containing the fully drawn ticket
+     * with event details, attendee name and a tear off stub
+     *
+     * @return the completed PdfDocument ready to be written to a file
+     */
     // building the full PDF document with the ticket drawn on a single page
     // Citation: Ved, March 16 2025, Claude referred to https://developer.android.com/reference/android/graphics/pdf/PdfDocument
     public PdfDocument generate() {
@@ -45,6 +61,12 @@ public class TicketGenerator {
         return document;
     }
 
+    /**
+     * drawing the complete ticket layout including outer border,
+     * dashed tear line and both the main and stub sections
+     *
+     * @param canvas the canvas to draw the ticket on
+     */
     // drawing the entire ticket layout on the canvas with border, dashed tear line and event details
     private void drawTicket(Canvas canvas) {
         // filling background white
@@ -73,6 +95,13 @@ public class TicketGenerator {
         drawStubSection(canvas, tearX);
     }
 
+    /**
+     * drawing the left side of the ticket with the brand name, event title,
+     * attendee name, date, location and confirmation status
+     *
+     * @param canvas the canvas to draw on
+     * @param tearX the x coordinate of the dashed tear line separating main from stub
+     */
     // drawing event title, attendee name, date and location on the left portion of the ticket
     private void drawMainSection(Canvas canvas, float tearX) {
         float leftMargin = 24;
@@ -141,6 +170,13 @@ public class TicketGenerator {
         canvas.drawText("#" + shortId, leftMargin, 190, idPaint);
     }
 
+    /**
+     * drawing the right side stub with event name, date, location
+     * and an "admit one" label for tearing off
+     *
+     * @param canvas the canvas to draw on
+     * @param tearX the x coordinate where the stub section begins
+     */
     // drawing the small stub on the right side with rotated event info for tearing off
     private void drawStubSection(Canvas canvas, float tearX) {
         float stubCenter = tearX + (PAGE_WIDTH - tearX) / 2f;
@@ -194,6 +230,15 @@ public class TicketGenerator {
         canvas.drawText("#" + shortId, stubCenter, 190, stubIdPaint);
     }
 
+    /**
+     * shortening text by trimming characters from the end and appending
+     * an ellipsis until it fits within the given pixel width
+     *
+     * @param text the string to truncate
+     * @param paint the Paint used to measure text width
+     * @param maxWidth the maximum allowed width in pixels
+     * @return the original text if it fits, or a truncated version with "..."
+     */
     // shortening text with an ellipsis if it exceeds the max width in pixels
     // Citation: Ved, March 16 2025, Claude referred to https://developer.android.com/reference/android/graphics/Paint#measureText(java.lang.String)
     static String truncateText(String text, Paint paint, float maxWidth) {

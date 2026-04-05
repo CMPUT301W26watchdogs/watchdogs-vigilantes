@@ -69,6 +69,7 @@ public class HomePage extends AppCompatActivity {
                 }
             });
 
+    /** initializing the home page layout with event carousel, quick access cards, qr scanner, and bottom nav */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +131,7 @@ public class HomePage extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /** fetching the five most recent events from firestore and populating the carousel */
     private void loadFeaturedEvents() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events")
@@ -164,6 +166,7 @@ public class HomePage extends AppCompatActivity {
                 });
     }
 
+    /** creating the dot indicators below the carousel matching the number of featured events */
     private void setupDots(int count) {
         dotsContainer.removeAllViews();
         for (int i = 0; i < count; i++) {
@@ -181,6 +184,7 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
+    /** updating the dot indicators to highlight the currently visible carousel page */
     private void updateDots(int activePosition) {
         for (int i = 0; i < dotsContainer.getChildCount(); i++) {
             View dot = dotsContainer.getChildAt(i);
@@ -198,6 +202,7 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
+    /** starting the automatic carousel rotation on a timed interval */
     private void startAutoScroll() {
         autoScrollHandler = new Handler(Looper.getMainLooper());
         autoScrollRunnable = new Runnable() {
@@ -213,12 +218,14 @@ public class HomePage extends AppCompatActivity {
         autoScrollHandler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY);
     }
 
+    /** stopping the automatic carousel rotation when the activity is paused */
     private void stopAutoScroll() {
         if (autoScrollHandler != null && autoScrollRunnable != null) {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
     }
 
+    /** pausing the auto scroll when the activity goes to the background */
     @Override
     protected void onPause() {
         super.onPause();
@@ -226,6 +233,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     // March 31 2026, Claude Opus 4.6, applying accessibility settings whenever the home page is resumed
+    /** reapplying accessibility settings and resuming the carousel auto scroll */
     @Override
     protected void onResume() {
         super.onResume();
@@ -235,10 +243,12 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
+    /** converting density independent pixels to actual screen pixels */
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
+    /** configuring the bottom navigation bar with tab listeners for events, notifications, and profile */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setSelectedTab(1);

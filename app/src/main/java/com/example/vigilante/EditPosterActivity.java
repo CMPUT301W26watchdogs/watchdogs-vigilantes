@@ -32,6 +32,9 @@ public class EditPosterActivity extends AppCompatActivity {
             }
     );
 
+    /**
+     * setting up the poster editing screen with gallery picker and upload confirmation button
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,10 @@ public class EditPosterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * uploading the selected image to Firebase Storage and updating
+     * the event's posterUrl field in Firestore with the download link
+     */
     private void uploadToFirebase() {
         Toast.makeText(this, "Uploading...", Toast.LENGTH_LONG).show();
 

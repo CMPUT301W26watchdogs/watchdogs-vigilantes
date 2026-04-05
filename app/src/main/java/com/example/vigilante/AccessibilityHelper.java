@@ -11,6 +11,12 @@ import android.view.View;
 
 public class AccessibilityHelper {
 
+    /**
+     * applying the user's accessibility preferences to the given activity's view tree,
+     * currently handling color blind filter overlay when enabled
+     *
+     * @param activity the activity whose views should be modified
+     */
     // applying color blind filter if enabled, skipping everything else that breaks button rendering
     public static void apply(Activity activity) {
         AccessibilityManager manager = new AccessibilityManager(activity);
@@ -22,6 +28,13 @@ public class AccessibilityHelper {
         applyColorBlindFilter(rootView, colorMode);
     }
 
+    /**
+     * applying a color matrix overlay to the root view that simulates how colors
+     * appear under different types of color blindness (deuteranopia, protanopia, tritanopia)
+     *
+     * @param view the root view to apply the filter on
+     * @param mode the color blind mode string from AccessibilityManager
+     */
     // applying a color matrix filter to simulate different types of color blindness
     // Citation: Ved, March 17 2025, Claude referred to https://developer.android.com/reference/android/graphics/ColorMatrix
     private static void applyColorBlindFilter(View view, String mode) {
@@ -64,6 +77,13 @@ public class AccessibilityHelper {
         view.setLayerType(View.LAYER_TYPE_HARDWARE, paint);
     }
 
+    /**
+     * checking if the reduce motion preference is turned on so callers
+     * can skip animations throughout the app
+     *
+     * @param activity the activity context used to read SharedPreferences
+     * @return true if the user has reduce motion enabled
+     */
     // checking if reduce motion is enabled so animations can be skipped throughout the app
     public static boolean shouldReduceMotion(Activity activity) {
         return new AccessibilityManager(activity).isReduceMotionEnabled();

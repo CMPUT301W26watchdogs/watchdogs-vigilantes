@@ -71,6 +71,7 @@ public class EventDetailActivity extends AppCompatActivity {
     private String organizerId;
     private boolean isAdmin = false;
 
+    /** setting up the event detail screen, loading event data from firestore, and configuring sign up buttons based on attendee status */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -294,6 +295,7 @@ public class EventDetailActivity extends AppCompatActivity {
         setupBottomNav();
     }
 
+    /** checking if the current user is an admin or organizer to allow comment deletion */
     private void checkCommentPermissions() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -302,6 +304,7 @@ public class EventDetailActivity extends AppCompatActivity {
         }
     }
 
+    /** showing a confirmation dialog and deleting the selected comment from firestore */
     private void deleteComment(Comment comment) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Comment")
@@ -319,7 +322,7 @@ public class EventDetailActivity extends AppCompatActivity {
                 .show();
     }
 
-    // handling the accept invitation flow by setting status to accepted US 01.05.01
+    /** accepting the lottery invitation by updating the attendee status to accepted in firestore */
     private void acceptInvitation(String eventId, String userId) {
         db.collection("events").document(eventId)
                 .collection("attendees").document(userId)
@@ -332,7 +335,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // handling the decline invitation flow by setting status to declined and triggering replacement draw US 01.05.01
+    /** declining the lottery invitation and triggering a replacement draw from the waitlist */
     private void declineInvitation(String eventId, String userId) {
         db.collection("events").document(eventId)
                 .collection("attendees").document(userId)
@@ -346,7 +349,7 @@ public class EventDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // randomly selecting a replacement entrant from pending waitlist after a decline US 01.05.01
+    /** randomly picking a replacement entrant from the pending waitlist after someone declines */
     // Citation: Ved, March 13 2025, Claude referred to https://docs.oracle.com/javase/8/docs/api/java/util/Random.html#nextInt-int-
     private void drawReplacementFromWaitlist(String eventId) {
         db.collection("events").document(eventId)
@@ -380,6 +383,7 @@ public class EventDetailActivity extends AppCompatActivity {
                 });
     }
 
+    /** counting the number of pending entrants on the waitlist and updating the text view */
     private void loadWaitlistCount(TextView waitlistCount) {
         db.collection("events").document(eventId)
                 .collection("attendees")
@@ -448,6 +452,7 @@ public class EventDetailActivity extends AppCompatActivity {
         });
     }
 
+    /** wiring up the bottom navigation bar with tab listeners for switching between screens */
     private void setupBottomNav() {
         LiquidGlassNavBar navBar = findViewById(R.id.bottomNav);
         navBar.setOnTabSelectedListener(position -> {
@@ -508,6 +513,7 @@ public class EventDetailActivity extends AppCompatActivity {
         }
     }
 
+    /** submitting the sign up data to firestore including optional geolocation coordinates */
     private void submitSignUp(String eventId, String userId, Double latitude, Double longitude) {
         db.collection("users").document(userId).get().addOnSuccessListener(userDoc -> {
             if (userDoc.exists()) {
@@ -541,6 +547,7 @@ public class EventDetailActivity extends AppCompatActivity {
         });
     }
 
+    /** handling the location permission result and continuing with sign up after the user responds */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -578,6 +585,14 @@ public class EventDetailActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * posting a new comment to the event's comments subcollection in Firestore
+     * and clearing the input field after successful upload
+     *
+     * @param eventId the event to post the comment on
+     * @param userId the current user's uid
+     * @param userName the display name shown next to the comment
+     */
     private void postComment(String eventId, String userId, String userName){
         String commentText = commentInput.getText().toString().trim();
         if (commentText.isEmpty()) {
@@ -597,6 +612,12 @@ public class EventDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to post comment!" + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+    /**
+     * listening for real time comment updates on this event using a Firestore snapshot listener
+     * and populating the comments RecyclerView as new comments arrive
+     *
+     * @param eventId the event whose comments are being loaded
+     */
     //Gemini March 21st 2026, help me retrieve comments from firebase
     private void fetchAllComments(String eventId) {
         db.collection("events").document(eventId).collection("comments").orderBy("timestamp", Query.Direction.ASCENDING).addSnapshotListener((value,error)-> {

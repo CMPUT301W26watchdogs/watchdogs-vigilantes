@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
+    /** checking if user is already logged in and redirecting to the appropriate home or admin page */
     @Override
     public void onStart() {
         super.onStart();
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /** setting up the login form with email and password fields and wiring login and register button listeners */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -31,6 +31,10 @@ public class AllProfiles extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
+    /**
+     * setting up the profiles listing screen and loading either all entrant
+     * profiles or organizer profiles based on the intent type parameter
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
