@@ -40,10 +40,13 @@ public class AcceptDeclineInvitationTest {
     @Before
     public void setUp() throws Exception {
         FirebaseAuth.getInstance().signOut();
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("ash@test.com", "ash123"));
-        Thread.sleep(1000);
+        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("vedentrant2@test.com", "test123"));
+        Thread.sleep(2000);
 
         db = FirebaseFirestore.getInstance();
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            throw new IllegalStateException("Sign-in failed — no current user");
+        }
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // setting up a test event document in Firestore
@@ -68,7 +71,7 @@ public class AcceptDeclineInvitationTest {
     public void selectedUser_seesAcceptAndDeclineButtons() throws Exception {
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
-        attendeeData.put("email", "ash@test.com");
+        attendeeData.put("email", "vedentrant2@test.com");
         attendeeData.put("userId", userId);
         attendeeData.put("status", "selected");
         Tasks.await(db.collection("events").document(TEST_EVENT_ID)
@@ -88,7 +91,7 @@ public class AcceptDeclineInvitationTest {
     public void pendingUser_seesSignUpButtonOnly() throws Exception {
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
-        attendeeData.put("email", "ash@test.com");
+        attendeeData.put("email", "vedentrant2@test.com");
         attendeeData.put("userId", userId);
         attendeeData.put("status", "pending");
         Tasks.await(db.collection("events").document(TEST_EVENT_ID)
@@ -108,7 +111,7 @@ public class AcceptDeclineInvitationTest {
     public void acceptedUser_seesEnrolledState() throws Exception {
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
-        attendeeData.put("email", "ash@test.com");
+        attendeeData.put("email", "vedentrant2@test.com");
         attendeeData.put("userId", userId);
         attendeeData.put("status", "accepted");
         Tasks.await(db.collection("events").document(TEST_EVENT_ID)
@@ -127,7 +130,7 @@ public class AcceptDeclineInvitationTest {
     public void declinedUser_canReSignUp() throws Exception {
         Map<String, Object> attendeeData = new HashMap<>();
         attendeeData.put("name", "Bash");
-        attendeeData.put("email", "ash@test.com");
+        attendeeData.put("email", "vedentrant2@test.com");
         attendeeData.put("userId", userId);
         attendeeData.put("status", "declined");
         Tasks.await(db.collection("events").document(TEST_EVENT_ID)

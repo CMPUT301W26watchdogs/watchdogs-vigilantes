@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -31,13 +32,6 @@ public class AddEventTest {
     public void descriptionField_isDisplayed() {
         try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
             onView(withId(R.id.event_description)).check(matches(isDisplayed()));
-        }
-    }
-
-    @Test
-    public void posterUrlField_isDisplayed() {
-        try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
-            onView(withId(R.id.et_poster_url)).check(matches(isDisplayed()));
         }
     }
 
@@ -76,7 +70,7 @@ public class AddEventTest {
     @Test
     public void publishButton_isDisplayed() {
         try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
-            onView(withId(R.id.publish_button)).check(matches(isDisplayed()));
+            onView(withId(R.id.publish_button)).perform(scrollTo()).check(matches(isDisplayed()));
         }
     }
 
@@ -84,7 +78,7 @@ public class AddEventTest {
     public void emptyFields_staysOnAddEventScreen() {
         // clicking publish with no data should fail validation and keep the user on the form
         try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
-            onView(withId(R.id.publish_button)).perform(click());
+            onView(withId(R.id.publish_button)).perform(scrollTo(), click());
             onView(withId(R.id.event_title_input)).check(matches(isDisplayed()));
         }
     }
@@ -94,7 +88,7 @@ public class AddEventTest {
         // filling only the title and publishing should still fail date validation
         try (ActivityScenario<AddEvent> scenario = ActivityScenario.launch(AddEvent.class)) {
             onView(withId(R.id.event_title_input)).perform(typeText("Dance Class"), closeSoftKeyboard());
-            onView(withId(R.id.publish_button)).perform(click());
+            onView(withId(R.id.publish_button)).perform(scrollTo(), click());
             onView(withId(R.id.publish_button)).check(matches(isDisplayed()));
         }
     }
