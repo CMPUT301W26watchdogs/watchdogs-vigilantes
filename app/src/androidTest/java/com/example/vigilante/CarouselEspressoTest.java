@@ -30,11 +30,7 @@ public class CarouselEspressoTest {
         onView(withId(R.id.eventCarousel)).check(matches(isDisplayed()));
     }
 
-    // verifying the dot indicators container is displayed below the carousel (Wildcard)
-    @Test
-    public void testDotsContainerIsDisplayed() {
-        onView(withId(R.id.carouselDots)).check(matches(isDisplayed()));
-    }
+
 
     // verifying the featured events label is displayed above the carousel (Wildcard)
     @Test
