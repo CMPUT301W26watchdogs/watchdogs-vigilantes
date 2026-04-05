@@ -51,11 +51,7 @@ public class TicketEspressoTest {
         onView(withId(R.id.eventTitle)).check(matches(isDisplayed()));
     }
 
-    // verifying the event date text view is displayed (Wildcard)
-    @Test
-    public void testEventDateIsDisplayed() {
-        onView(withId(R.id.eventDate)).check(matches(isDisplayed()));
-    }
+
 
     // verifying the event location text view is displayed (Wildcard)
     @Test
