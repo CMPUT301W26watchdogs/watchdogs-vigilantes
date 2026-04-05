@@ -62,6 +62,8 @@ public class EditPosterActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please choose an image first!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        findViewById(R.id.backArrow).setOnClickListener(v -> finish());
     }
 
     /**

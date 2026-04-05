@@ -57,6 +57,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     public void onBindViewHolder(@NotNull ProfileViewHolder holder, int position) {
         Profile profile = profileList.get(position);
         holder.nameText.setText(profile.getName());
+        holder.deleteProfile.setVisibility(View.VISIBLE);
         if (isInviteMode) {
             holder.deleteProfile.setVisibility(View.GONE);
             holder.inviteProfile.setVisibility(View.VISIBLE);
@@ -64,7 +65,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         } else {
             holder.deleteProfile.setVisibility(View.VISIBLE);
             holder.inviteProfile.setVisibility(View.GONE);
-            holder.inviteCoorg.setVisibility(View.VISIBLE);
+            holder.inviteCoorg.setVisibility(View.GONE);
         }
         holder.deleteProfile.setOnClickListener(v -> {
             showDeleteDialog(v.getContext(), profile, position);

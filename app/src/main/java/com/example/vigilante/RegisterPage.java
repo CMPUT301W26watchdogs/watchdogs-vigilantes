@@ -52,7 +52,6 @@ public class RegisterPage extends AppCompatActivity {
 
         roleEntrant = findViewById(R.id.roleEntrant);
         roleOrganizer = findViewById(R.id.roleOrganizer);
-        roleAdmin = findViewById(R.id.roleAdmin);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.registration_page), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -72,10 +71,6 @@ public class RegisterPage extends AppCompatActivity {
             selectedRole = "organizer";
         });
 
-        roleAdmin.setOnClickListener(v -> {
-            selectRole(roleAdmin);
-            selectedRole = "admin";
-        });
 
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,8 +127,6 @@ public class RegisterPage extends AppCompatActivity {
         roleEntrant.setTextColor(getColor(R.color.text_primary));
         roleOrganizer.setBackground(getDrawable(R.drawable.bg_role_unselected));
         roleOrganizer.setTextColor(getColor(R.color.text_primary));
-        roleAdmin.setBackground(getDrawable(R.drawable.bg_role_unselected));
-        roleAdmin.setTextColor(getColor(R.color.text_primary));
 
         selected.setBackground(getDrawable(R.drawable.bg_role_selected));
         selected.setTextColor(getColor(R.color.white));

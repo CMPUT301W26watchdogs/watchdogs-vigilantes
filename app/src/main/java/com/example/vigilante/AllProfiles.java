@@ -46,14 +46,23 @@ public class AllProfiles extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         profileList = new ArrayList<>();
-        profileAdapter = new ProfileAdapter(profileList, true, "null");
-
-        recyclerView.setAdapter(profileAdapter);
         String type = getIntent().getStringExtra("type");
         if(type.equals("all")) {
+            profileAdapter = new ProfileAdapter(profileList, true, "null");
+
+            recyclerView.setAdapter(profileAdapter);
             fetchAllProfiles();
         } else if (type.equals("org")){
+            profileAdapter = new ProfileAdapter(profileList, false, "null");
+
+            recyclerView.setAdapter(profileAdapter);
             fetchOrgProfiles();
+        } else if (type.equals("admin")) {
+            profileAdapter = new ProfileAdapter(profileList, false, "null");
+
+            recyclerView.setAdapter(profileAdapter);
+            fetchAllProfiles();
+
         }
 
         back_button.setOnClickListener(new View.OnClickListener() {

@@ -64,7 +64,7 @@ public class AdminPage extends AppCompatActivity {
         browseprofiles_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(AdminPage.this, AllProfiles.class);
-                intent.putExtra("type", "all");
+                intent.putExtra("type", "admin");
                 intent.putExtra("IS_ADMIN", true);
                 startActivity(intent);
                 //finish();
