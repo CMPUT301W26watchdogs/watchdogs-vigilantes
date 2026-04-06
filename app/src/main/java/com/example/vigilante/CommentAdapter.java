@@ -4,9 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +55,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.timeStampText.setText(comment.getTimeStampText());
         holder.commentText.setText(comment.getCommentText());
 
+        // loading the commenter's profile picture from Firestore
+        holder.avatarImage.setImageResource(R.drawable.ic_launcher_background);
+        String userId = comment.getUserId();
+        if (userId != null && !userId.isEmpty()) {
+            FirebaseFirestore.getInstance().collection("users").document(userId)
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        String picUrl = doc.getString("profilePicUrl");
+                        if (picUrl != null && !picUrl.isEmpty()) {
+                            Glide.with(holder.itemView.getContext())
+                                    .load(picUrl)
+                                    .transform(new CircleCrop())
+                                    .into(holder.avatarImage);
+                        }
+                    });
+        }
+
         if (canDelete) {
             holder.deleteButton.setVisibility(View.VISIBLE);
             holder.deleteButton.setOnClickListener(v -> {
@@ -81,6 +103,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView nameText, commentText, timeStampText;
         ImageButton deleteButton;
+        ImageView avatarImage;
 
         public CommentViewHolder(@NotNull View itemView) {
             super(itemView);
@@ -88,6 +111,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             timeStampText = itemView.findViewById(R.id.comment_timestamp);
             commentText = itemView.findViewById(R.id.comment_text);
             deleteButton = itemView.findViewById(R.id.delete_comment_button);
+            avatarImage = itemView.findViewById(R.id.comment_user_avatar);
         }
     }
 }
