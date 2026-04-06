@@ -143,7 +143,9 @@ public class HomePage extends AppCompatActivity {
                     for (QueryDocumentSnapshot doc : snapshots) {
                         Event event = doc.toObject(Event.class);
                         event.setId(doc.getId());
-                        featuredEvents.add(event);
+                        if(!Boolean.TRUE.equals(event.getIsPrivate())) {
+                            featuredEvents.add(event);
+                        }
                     }
 
                     if (featuredEvents.isEmpty()) {
