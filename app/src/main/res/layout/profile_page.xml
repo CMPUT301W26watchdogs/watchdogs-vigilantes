@@ -57,6 +57,7 @@
                 android:paddingBottom="8dp">
 
                 <FrameLayout
+                    android:id="@+id/avatarContainer"
                     android:layout_width="80dp"
                     android:layout_height="80dp">
 
@@ -74,6 +75,24 @@
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         tools:text="A" />
+
+                    <ImageView
+                        android:id="@+id/avatarImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        tools:src="@drawable/bg_circle_avatar" />
+
+                    <ImageView
+                        android:id="@+id/avatarCameraIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_circle_avatar"
+                        android:padding="4dp"
+                        android:src="@android:drawable/ic_menu_camera"
+                        app:tint="@color/white" />
                 </FrameLayout>
 
                 <TextView

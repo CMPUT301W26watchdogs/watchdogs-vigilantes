@@ -3,27 +3,35 @@
 package com.example.vigilante;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
 * This class is for the profile page it shows the user information, sign out button, and if user is organizer add and my events.
@@ -32,11 +40,24 @@ public class ProfilePage extends AppCompatActivity {
 
     private TextView nameTv, emailTv, phoneTv, avatarInitialTv;
     private TextView statEventsCount, statSelectedCount, statWaitingCount;
+    private ImageView avatarImage;
     private SwitchMaterial notificationToggle;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
     boolean isAdmin = false;
+
+    private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    if (imageUri != null) {
+                        uploadProfilePic(imageUri);
+                    }
+                }
+            }
+    );
 
     /**
      * setting up the profile page by loading user data from Firestore,
@@ -71,6 +92,13 @@ public class ProfilePage extends AppCompatActivity {
         statSelectedCount = findViewById(R.id.statSelectedCount);
         statWaitingCount = findViewById(R.id.statWaitingCount);
         notificationToggle = findViewById(R.id.notificationToggle);
+        avatarImage = findViewById(R.id.avatarImage);
+
+        findViewById(R.id.avatarContainer).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            galleryLauncher.launch(intent);
+        });
 
         if (mAuth.getCurrentUser() != null) {
             String userId = mAuth.getCurrentUser().getUid();
@@ -102,6 +130,16 @@ public class ProfilePage extends AppCompatActivity {
                         phoneTv.setText(phone);
                     } else {
                         phoneTv.setText("Not Provided");
+                    }
+
+                    String profilePicUrl = documentSnapshot.getString("profilePicUrl");
+                    if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                        avatarImage.setVisibility(View.VISIBLE);
+                        avatarInitialTv.setVisibility(View.GONE);
+                        Glide.with(ProfilePage.this)
+                                .load(profilePicUrl)
+                                .transform(new CircleCrop())
+                                .into(avatarImage);
                     }
 
                     Boolean notificationsEnabled = documentSnapshot.getBoolean("notificationsEnabled");
@@ -199,6 +237,39 @@ public class ProfilePage extends AppCompatActivity {
      *
      * @param userId the uid of the user whose stats are being loaded
      */
+    /**
+     * uploading the selected image to Firebase Storage under profile_pics
+     * and saving the download url to the user's Firestore document
+     *
+     * @param imageUri the uri of the image selected from the gallery
+     */
+    private void uploadProfilePic(Uri imageUri) {
+        String userId = mAuth.getCurrentUser().getUid();
+        Toast.makeText(this, "Uploading profile picture...", Toast.LENGTH_SHORT).show();
+
+        StorageReference fileRef = FirebaseStorage.getInstance()
+                .getReference("profile_pics")
+                .child(userId + ".jpg");
+
+        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                db.collection("users").document(userId)
+                        .update("profilePicUrl", uri.toString())
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(this, "Profile picture updated!", Toast.LENGTH_SHORT).show();
+                            avatarImage.setVisibility(View.VISIBLE);
+                            avatarInitialTv.setVisibility(View.GONE);
+                            Glide.with(ProfilePage.this)
+                                    .load(uri.toString())
+                                    .transform(new CircleCrop())
+                                    .into(avatarImage);
+                        });
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show();
+        });
+    }
+
     // loading event participation stats from Firestore counting events joined, selected, and waiting US 01.02.03
     private void loadProfileStats(String userId) {
         final int[] totalEvents = {0};
