@@ -62,7 +62,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.protobuf:protobuf-javalite:3.22.3")
     androidTestImplementation("com.google.protobuf:protobuf-javalite:3.22.3")
-    implementation(files("/Users/suryanshankur/Library/Android/sdk/platforms/android-36/android.jar"))
+    //implementation(files("/Users/suryanshankur/Library/Android/sdk/platforms/android-36/android.jar"))
 
 }
 configurations.configureEach {
