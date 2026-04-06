@@ -26,14 +26,18 @@
             android:value="AIzaSyD4u08r6LcjD43tR_wdR00Jn3nudAZG394" />
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Vigilante.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
         <activity android:name=".HomePage"/>
         <activity android:name=".RegisterPage"/>
         <activity android:name=".ProfilePage"/>
